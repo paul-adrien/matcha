@@ -1148,13 +1148,6 @@
     merge-source-map "^1.1.0"
     schema-utils "^2.7.0"
 
-"@ng-bootstrap/ng-bootstrap@^8.0.0":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-8.0.1.tgz#1a9de7605502bf6e728f1c26057d71a428460187"
-  integrity sha512-v/TyLbXOguEGiV1SuNzHoBeahGwCihBcB96LJz91DexPbM403jiLNxhoFtEYbAPRoPI9v3MILxSgOwCkdyeBVw==
-  dependencies:
-    tslib "^2.0.0"
-
 "@ngtools/webpack@11.0.6":
   version "11.0.6"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-11.0.6.tgz#1a1d7775022e7e6263f8d9ee2872d995163b3fc0"
@@ -1996,11 +1989,6 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
-
-boosted@^4.5.3:
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/boosted/-/boosted-4.5.3.tgz#53803c39cf8074350359be367632ab1d18ae0172"
-  integrity sha512-4hBI6dvj6sZ2T8S5S93saoZrvoAZfLAZVYHkHb3V/Hnmgt4yBh2xbuSWSkC3WD8UBV67hvezYisyrLa7xcWavA==
 
 bootstrap@^4.5.0:
   version "4.5.3"
@@ -5970,15 +5958,6 @@ next-tick@~1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
-ng-boosted@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/ng-boosted/-/ng-boosted-8.0.0.tgz#75137c2f30c17dfe834fa25b2bad89cbe8a9ef76"
-  integrity sha512-VJb6gEHLWUQRnHpsWkGuDevFZCGm68BXAT6MeBbbqQv7sjxAEgY4juVxpnynYvAPaqoU8cvGjpdimTweALgJBQ==
-  dependencies:
-    "@ng-bootstrap/ng-bootstrap" "^8.0.0"
-    boosted "^4.5.3"
-    tslib "^2.0.1"
-
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -8685,11 +8664,6 @@ tslib@^1.10.0, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
-
-tslib@^2.0.0, tslib@^2.0.1:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
-  integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
 
 tslint@~5.18.0:
   version "5.18.0"

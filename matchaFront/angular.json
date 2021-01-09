@@ -29,10 +29,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/boosted/scss/boosted.scss",
-              "node_modules/boosted/dist/css/orangeIcons.css",
-              "node_modules/boosted/dist/css/orangeHelvetica.css",
-              "node_modules/ng-boosted/style/ng-boosted.scss"
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": []
           },
