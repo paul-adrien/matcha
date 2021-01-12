@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+body, html {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: var(--primary-color) !important;
+  color: var(--color-text);
+
+
+  --primary-color: #9100ff;
+  --secondary-color: #FEDD00;
+  --color-text: black;
+  --color-reverse: white;
+}
