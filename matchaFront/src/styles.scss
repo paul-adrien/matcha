@@ -14,3 +14,14 @@ body, html {
   --color-text: black;
   --color-reverse: white;
 }
+
+.primary-button {
+  width: 100%;
+  text-align: center;
+  height: 40px;
+  background-color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}

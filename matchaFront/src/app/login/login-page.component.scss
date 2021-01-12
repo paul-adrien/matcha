@@ -8,8 +8,25 @@
   .logo {
     display: flex;
     flex-direction: column;
-    margin: 4rem 0;
-    width: 55%;
+    margin: 3rem 2rem;
+    width: 80%;
+    max-width: 30rem;
+  }
+
+  .cow {
+    position: absolute;
+    right: 3rem;
+    bottom: 3rem;
+    width: 16rem;
+    z-index: 0;
+  }
+
+  .cow-2 {
+    position: absolute;
+    left: 3rem;
+    bottom: 3rem;
+    width: 16rem;
+    z-index: 0;
   }
 
   .img {
@@ -19,13 +36,19 @@
 
   .container-login {
     background-color: var(--color-reverse);
-    width: 76%;
+    max-width: 30rem;
+    width: 80%;
+    height: 80%;
+    max-height: 24rem;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     border-radius: 4px;
+    margin-bottom: 2rem;
+    z-index: 5;
 
     .top-container {
-      height: 2rem;
+      height: 3rem;
       display: flex;
       background-color: lightgrey;
       border-radius: 4px 4px 0 0;
@@ -42,6 +65,25 @@
           border-radius: 4px 4px 0 0;
           background-color: var(--color-reverse);
         }
+      }
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      margin: 1rem;
+      height: 80%;
+      flex-grow: 1;
+      align-items: center;
+
+      input {
+        height: 45px;
+        width: 100%;
+        border: 1px solid #ddd;
+        transition: all 0.1s linear;
+        padding: 6px 12px;
+        border-radius: 4px;
       }
     }
   }
