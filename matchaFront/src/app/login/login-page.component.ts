@@ -2,15 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   template: `
-  <div class="cow">
-    <img class="img" src="./assets/cow.svg">
-  </div>
-  <div class="cow-2">
-    <img class="img" src="./assets/cow.svg">
-  </div>
   <div class="logo">
-    <img class="img" src="./assets/logo-matcha.svg">
-    <img class="img" src="./assets/slogan.svg">
+    <img class="img" src="./assets/bd-logo.svg">
   </div>
   <div class="container-login">
     <div class="top-container">

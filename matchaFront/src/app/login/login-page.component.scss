@@ -8,24 +8,9 @@
   .logo {
     display: flex;
     flex-direction: column;
-    margin: 3rem 2rem;
-    width: 80%;
-    max-width: 30rem;
-  }
-
-  .cow {
-    position: absolute;
-    right: 3rem;
-    bottom: 3rem;
-    width: 16rem;
-    z-index: 0;
-  }
-
-  .cow-2 {
-    position: absolute;
-    left: 3rem;
-    bottom: 3rem;
-    width: 16rem;
+    margin-top: 1rem;
+    width: 60%;
+    max-width: 22rem;
     z-index: 0;
   }
 
