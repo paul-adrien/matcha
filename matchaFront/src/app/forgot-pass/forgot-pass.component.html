@@ -1,0 +1,12 @@
+<form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+  <div class="form-container">
+    <input type="email"
+      class="form-control"
+      name="email"
+      [(ngModel)]="form.email"
+      required
+      email
+      #email="ngModel" placeholder="Email"/>
+    <button class="primary-button">Vérifier</button>
+  </div>
+</form>

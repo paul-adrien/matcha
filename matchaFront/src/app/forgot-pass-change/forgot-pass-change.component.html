@@ -1,0 +1,21 @@
+<form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+  <div class="form-container">
+    <input type="email"
+      class="form-control"
+      name="email"
+      [(ngModel)]="form.email"
+      required
+      email
+      #email="ngModel" placeholder="Email"/>
+    <input
+      type="password"
+      class="form-control"
+      name="password"
+      [(ngModel)]="form.password"
+      required
+      minlength="6"
+      #password="ngModel" placeholder="Password"
+    />
+    <button class="primary-button">Vérifier</button>
+  </div>
+</form>

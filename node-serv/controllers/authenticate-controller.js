@@ -16,10 +16,19 @@ exports.authenticate = (req,res) => {
         if(results.length > 0){
             bcrypt.compare(mdp, results[0]['mdp'], function(err, result) {
                 if(result == true){
-                    res.json({
-                        status:true,
-                        message:'successfully authenticated'
-                    })
+                    if (results[0]['acc_valid'] != 0)
+                    {
+                        
+                        res.json({
+                            status:true,
+                            message:'successfully authenticated'
+                        })
+                    } else {
+                        res.json({
+                            status:false,
+                            message:"your adress mail is not validated, check your mail to validate him"
+                        });
+                    }
                 } else {
                     res.json({
                     status:false,
@@ -31,7 +40,7 @@ exports.authenticate = (req,res) => {
         else{
           res.json({
               status:false,    
-            message:"Email does not exits"
+            message:"Username does not exits"
           });
         }
       }

@@ -55,7 +55,7 @@ import { AuthService } from '../_service/auth_service';
         />
         <div *ngIf="this.loginMode">Se souvenir de moi</div>
         <button class="primary-button">{{this.loginMode ? "Se connecter" : "Créer un compte"}}</button>
-        <div *ngIf="this.loginMode">Mot de passe oublié ?</div>
+        <a *ngIf="this.loginMode" routerLink="/forgotPass" routerLinkActive="active">Mot de passe oublié ?</a>
       </div>
     </form>
   </div>

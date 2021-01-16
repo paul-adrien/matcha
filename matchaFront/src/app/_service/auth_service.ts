@@ -28,8 +28,28 @@ export class AuthService {
       email: user.email,
       mdp: user.password,
       name: user.name,
-      prenom: user.prenom,
-      userName: user.username
+      prenom: user.prenom
+    }, httpOptions);
+  }
+
+  verify(user, id): Observable<any> {
+    return this.http.post(AUTH_API + 'verify', {
+      id: id,
+      email: user.email
+    }, httpOptions);
+  }
+
+  forgotPass_s(user): Observable<any> {
+    return this.http.post(AUTH_API + 'forgotPass_s', {
+      email: user.email
+    }, httpOptions);
+  }
+
+  forgotPass_c(user, id): Observable<any> {
+    return this.http.post(AUTH_API + 'forgotPass_c', {
+      id: id,
+      email: user.email,
+      mdp: user.password
     }, httpOptions);
   }
 }

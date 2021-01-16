@@ -14,6 +14,9 @@ CREATE TABLE users
     ville VARCHAR(255) DEFAULT '',
     latitude VARCHAR(255) DEFAULT '',
     longitude VARCHAR(255) DEFAULT '',
+    acc_valid INT(8),
+    acc_comp INT(8),
+    link VARCHAR(255) DEFAULT '',
     PRIMARY KEY (id)
 );
 
