@@ -4,6 +4,7 @@ import { VerifyComponent } from './verify/verify.component';
 import { LoginPageComponent } from './login/login-page.component';
 import { ForgotPassComponent } from './forgot-pass/forgot-pass.component';
 import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'verify/:id', component: VerifyComponent },
   { path: '', component: LoginPageComponent },
   { path: 'not-found', component: LoginPageComponent },
-  { path: '**', component: LoginPageComponent }
+  //{ path: '**', component: LoginPageComponent },
+  { path: 'home', component: HomeComponent },
 ];
 
 @NgModule({

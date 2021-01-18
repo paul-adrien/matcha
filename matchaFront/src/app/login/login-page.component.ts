@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_service/auth_service';
 
@@ -11,8 +12,7 @@ import { AuthService } from '../_service/auth_service';
       <div (click)="this.signInOrSignUp(false)" class="case" [class.select]="!this.loginMode">S'inscrire</div>
       <div (click)="this.signInOrSignUp(true)" class="case" [class.select]="this.loginMode">Se connecter</div>
     </div>
-    <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
-      <div class="form-container">
+    <form class="form-container" *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
         <input type="text"
           class="form-control"
           name="username"
@@ -56,7 +56,6 @@ import { AuthService } from '../_service/auth_service';
         <div *ngIf="this.loginMode">Se souvenir de moi</div>
         <button class="primary-button">{{this.loginMode ? "Se connecter" : "Créer un compte"}}</button>
         <a *ngIf="this.loginMode" routerLink="/forgotPass" routerLinkActive="active">Mot de passe oublié ?</a>
-      </div>
     </form>
   </div>
   `,
@@ -73,7 +72,7 @@ export class LoginPageComponent implements OnInit {
   isLoginFailed = false;
   errorMessage = '';
 
-  constructor(public authService: AuthService ) { }
+  constructor(public authService: AuthService, private route: Router ) { }
 
   ngOnInit(): void {
   }
@@ -84,7 +83,7 @@ export class LoginPageComponent implements OnInit {
 
   onSubmit()
   {
-    if (this.loginMode == false)
+    if (this.loginMode === false)
     {
       this.authService.register(this.form).subscribe(
         data => {
@@ -104,6 +103,7 @@ export class LoginPageComponent implements OnInit {
         data => {
           console.log(data);
           this.isLoginFailed = false;
+          this.route.navigate(["home"])
           //this.isLoggedIn = true;
           //window.location.reload();
         },

@@ -1,17 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 
+@font-face {
+  font-family: Montserrat;
+  src: url("./fonts/Montserrat/Montserrat-Regular.ttf")
+}
 
 body, html {
+  font-family: Montserrat !important;
   width: 100vw;
   height: 100vh;
   margin: 0;
   color: var(--color-text);
   background: var(--primary-color) !important;
+  overflow: hidden;
 
   --primary-color: #a366fb;
   --secondary-color: #fbcf0a;
   --color-text: black;
   --color-reverse: white;
+}
+
+input,button {
+  font-family: Montserrat;
 }
 
 .primary-button {
@@ -24,4 +34,5 @@ body, html {
   justify-content: center;
   border-radius: 4px;
   color: white;
+  border: 1px solid var(--secondary-color);
 }

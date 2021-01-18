@@ -9,6 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { VerifyComponent } from './verify/verify.component';
 import { ForgotPassComponent } from './forgot-pass/forgot-pass.component';
 import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
+import { HomeComponent } from './home/home.component';
+import { ProfileComponent } from './profile/profile.component';
+import { NavigationBarComponent } from './nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,10 @@ import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-chan
     VerifyComponent,
     ForgotPassComponent,
     ForgotPassChangeComponent,
-  ],
+    HomeComponent,
+    ProfileComponent,
+    NavigationBarComponent
+   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
