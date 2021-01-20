@@ -20,13 +20,15 @@ exports.authenticate = (req,res) => {
                     {
                         
                         res.json({
-                            status:true,
-                            message:'successfully authenticated'
+                            status: true,
+                            message:'successfully authenticated',
+                            user: results[0]
                         })
                     } else {
                         res.json({
                             status:false,
-                            message:"your adress mail is not validated, check your mail to validate him"
+                            message:"your adress mail is not validated, check your mail to validate him",
+                            user: results[0]
                         });
                     }
                 } else {

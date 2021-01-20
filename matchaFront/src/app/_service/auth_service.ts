@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from '@matcha/shared';
 
 const AUTH_API = 'http://localhost:8080/api/';
 
@@ -15,20 +16,20 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(user): Observable<any> {
+  login(user: Partial<User>): Observable<any> {
     return this.http.post(AUTH_API + 'authenticate', {
-      username: user.username,
+      username: user.userName,
       mdp: user.password
     }, httpOptions);
   }
 
-  register(user): Observable<any> {
+  register(user: Partial<User>): Observable<any> {
     return this.http.post(AUTH_API + 'register', {
-      username: user.username,
+      username: user.userName,
       email: user.email,
       mdp: user.password,
-      name: user.name,
-      prenom: user.prenom
+      name: user.lastName,
+      prenom: user.firstName
     }, httpOptions);
   }
 

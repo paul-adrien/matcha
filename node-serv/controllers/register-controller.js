@@ -5,7 +5,7 @@ var nodemailer = require('nodemailer');
  
 exports.register = (req,res) => {
 
-  connection.query('SELECT * FROM users WHERE userName = ?',[req.body.username], function (error, results, fields) {
+  connection.query('SELECT * FROM users WHERE userName = ?',[req.body.userName], function (error, results, fields) {
     if (error) {
         res.json({
             status:false,
@@ -66,7 +66,7 @@ exports.register = (req,res) => {
                     });
                     res.json({
                       status:true,
-                      data:results,
+                      data: results,
                       message:'user registered sucessfully'
                     })
                   }

@@ -17,7 +17,10 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@matcha/shared": ["libs/index.ts"]
+    },
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

@@ -1,6 +1,8 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_service/auth_service';
+import { User } from '@matcha/shared';
+
 
 @Component({
   template: `
@@ -15,24 +17,24 @@ import { AuthService } from '../_service/auth_service';
     <form class="form-container" *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
         <input type="text"
           class="form-control"
-          name="username"
-          [(ngModel)]="form.username"
+          name="userName"
+          [(ngModel)]="form.userName"
           minlength="3"
           maxlength="20"
           required
           #username="ngModel" placeholder="Nom d'utilisateur"/>
         <input *ngIf="!this.loginMode" type="text"
           class="form-control"
-          name="name"
-          [(ngModel)]="form.name"
+          name="lastName"
+          [(ngModel)]="form.lastName"
           required
           minlength="3"
           maxlength="20"
           #name="ngModel" placeholder="Nom"/>
         <input *ngIf="!this.loginMode" type="text"
           class="form-control"
-          name="prenom"
-          [(ngModel)]="form.prenom"
+          name="FirstName"
+          [(ngModel)]="form.firstName"
           required
           minlength="3"
           maxlength="20"
@@ -65,7 +67,7 @@ import { AuthService } from '../_service/auth_service';
 export class LoginPageComponent implements OnInit {
 
   public loginMode = false;
-  form: any = {};
+  form: Partial<User> = {};
   isSuccessful = false;
   isSignUpFailed = false;
   isLoggedIn = false;
@@ -88,6 +90,8 @@ export class LoginPageComponent implements OnInit {
       this.authService.register(this.form).subscribe(
         data => {
           console.log(data);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          this.route.navigate(["home/profile"])
           this.isSuccessful = true;
           this.isSignUpFailed = false;
         },
@@ -103,7 +107,8 @@ export class LoginPageComponent implements OnInit {
         data => {
           console.log(data);
           this.isLoginFailed = false;
-          this.route.navigate(["home"])
+          localStorage.setItem("user", JSON.stringify(data.user));
+          this.route.navigate(["home/profile"])
           //this.isLoggedIn = true;
           //window.location.reload();
         },
