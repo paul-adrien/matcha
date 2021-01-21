@@ -1,5 +1,7 @@
 var connection = require('./../config/db');
 const bcrypt = require('bcrypt');
+const config = require('../config/jwt.json');
+const jwt = require('jsonwebtoken');
 
 exports.authenticate = (req,res) => {
     var username = req.body.username;
@@ -18,11 +20,12 @@ exports.authenticate = (req,res) => {
                 if(result == true){
                     if (results[0]['acc_valid'] != 0)
                     {
-                        
+                        const token = jwt.sign({ id: results[0]['id'] }, config.secret, { expiresIn: '1d' });
                         res.json({
                             status: true,
                             message:'successfully authenticated',
-                            user: results[0]
+                            user: results[0],
+                            token: token
                         })
                     } else {
                         res.json({

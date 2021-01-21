@@ -15,5 +15,5 @@ export interface User {
     longitude: string,
     acc_valid: boolean,
     acc_comp: string,
-    link: string,
+    link: string
 }

@@ -6,6 +6,7 @@ import { ForgotPassComponent } from './forgot-pass/forgot-pass.component';
 import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { AuthGuard } from './_service/auth.guard';
 
 
 const routes: Routes = [
@@ -15,7 +16,7 @@ const routes: Routes = [
   { path: '', component: LoginPageComponent },
   { path: 'not-found', component: LoginPageComponent },
   //{ path: '**', component: LoginPageComponent },
-  { path: 'home', component: HomeComponent, children: [
+  { path: 'home', canActivate: [AuthGuard] , component: HomeComponent, children: [
      { path: 'profile', component: ProfileComponent }
 ] },
 ];

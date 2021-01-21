@@ -90,10 +90,12 @@ export class LoginPageComponent implements OnInit {
       this.authService.register(this.form).subscribe(
         data => {
           console.log(data);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          this.route.navigate(["home/profile"])
-          this.isSuccessful = true;
-          this.isSignUpFailed = false;
+          if (data.status === true) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+            this.route.navigate(["home"])
+            this.isSuccessful = true;
+            this.isSignUpFailed = false;
+          }
         },
         err => {
           this.errorMessage = err.error.message;
@@ -106,11 +108,16 @@ export class LoginPageComponent implements OnInit {
       this.authService.login(this.form).subscribe(
         data => {
           console.log(data);
-          this.isLoginFailed = false;
-          localStorage.setItem("user", JSON.stringify(data.user));
-          this.route.navigate(["home/profile"])
-          //this.isLoggedIn = true;
-          //window.location.reload();
+          if (data.status === true) {
+            this.isLoginFailed = false;
+            localStorage.clear();
+            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("id", JSON.stringify(data.user['id']));
+            localStorage.setItem("token", JSON.stringify(data.token));
+            this.route.navigate(["home"])
+            //this.isLoggedIn = true;
+            //window.location.reload();
+          }
         },
         err => {
           this.errorMessage = err.error.message;

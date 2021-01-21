@@ -16,15 +16,18 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   public user: User;
+  public token: string;
 
   ngOnInit(): void {
     const tmp = JSON.parse(localStorage.getItem('user'));
+    const token = JSON.parse(localStorage.getItem('token'));
+    this.token = token;
     this.user = {
       userName: tmp.userName,
       firstName: tmp.prenom,
-      lastName: tmp.name,
+      lastName: tmp.nom,
       birthate: tmp.date_naissance,
-      password: tmp.password,
+      password: tmp.mdp,
       email: tmp.email,
       id: tmp.id,
       genre: tmp.genre,
@@ -36,9 +39,9 @@ export class HomeComponent implements OnInit {
       longitude: tmp.longitude,
       acc_valid: tmp.acc_valid,
       acc_comp: tmp.acc_comp,
-      link: tmp.link,
-    }
-    console.log(this.user);
+      link: tmp.link
+    };
+    console.log(this.user, this.token);
   }
 
 }
