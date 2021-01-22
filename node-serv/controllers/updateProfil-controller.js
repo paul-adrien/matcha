@@ -1,7 +1,7 @@
 var connection = require('./../config/db');
  
 exports.updateProfil = (req,res) => {
-    connection.query('UPDATE users SET nom = ?, prenom = ?, email = ?, userName = ?, genre = ?, bio = ? WHERE email = ?',[req.body.lastName, req.body.firstName, req.body.email, req.body.userName, req.body.genre, req.body.bio, req.body.saveEmail], function (error, results, fields) {
+    connection.query('UPDATE users SET lastName = ?, firstName = ?, email = ?, userName = ?, gender = ?, bio = ? WHERE email = ?',[req.body.lastName, req.body.firstName, req.body.email, req.body.userName, req.body.gender, req.body.bio, req.body.saveEmail], function (error, results, fields) {
         if (error) {
             res.json({
                 status:false,

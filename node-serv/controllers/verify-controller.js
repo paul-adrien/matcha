@@ -15,7 +15,7 @@ exports.verify = (req,res) => {
         if(results.length > 0){
             if (id == results[0]['link'])
             {
-                connection.query('UPDATE users SET acc_valid = 1 WHERE email = ?',req.body.email, function (error, results, fields) {
+                connection.query('UPDATE users SET emailVerify = 1 WHERE email = ?',req.body.email, function (error, results, fields) {
                     if (error) {
                         res.json({
                             status:false,

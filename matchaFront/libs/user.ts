@@ -6,14 +6,14 @@ export interface User {
     password: string,
     userName: string,
     birthate: Date,
-    genre: string,
-    ori_sex: string,
+    gender: string,
+    showMe: string,
     bio: string,
     score: string,
     city: string,
     latitude: string,
     longitude: string,
-    acc_valid: boolean,
-    acc_comp: string,
+    emailVerify: boolean,
+    profileComplete: boolean,
     link: string
 }

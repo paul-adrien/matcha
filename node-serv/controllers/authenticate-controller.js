@@ -4,11 +4,11 @@ const config = require('../config/jwt.json');
 const jwt = require('jsonwebtoken');
 
 exports.authenticate = (req,res) => {
-    var username = req.body.username;
-    var mdp = req.body.mdp;
+    var userName = req.body.userName;
+    var password = req.body.password;
    
    
-    connection.query('SELECT * FROM users WHERE userName = ?',[username], function (error, results, fields) {
+    connection.query('SELECT * FROM users WHERE userName = ?',[userName], function (error, results, fields) {
         if (error) {
             res.json({
                 status:false,
@@ -16,9 +16,9 @@ exports.authenticate = (req,res) => {
             })
         } else {
         if(results.length > 0){
-            bcrypt.compare(mdp, results[0]['mdp'], function(err, result) {
+            bcrypt.compare(password, results[0]['password'], function(err, result) {
                 if(result == true){
-                    if (results[0]['acc_valid'] != 0)
+                    if (results[0]['emailVerify'] != 0)
                     {
                         const token = jwt.sign({ id: results[0]['id'] }, config.secret, { expiresIn: '1d' });
                         res.json({
@@ -37,7 +37,7 @@ exports.authenticate = (req,res) => {
                 } else {
                     res.json({
                     status:false,
-                    message:"username and password does not match mdp: "+mdp+" hash: "+results[0]['mdp']+" username: "+username+""
+                    message:"userName and password does not match password: "+password+" hash: "+results[0]['password']+" userName: "+userName+""
                     });
                 }
             });
@@ -45,7 +45,7 @@ exports.authenticate = (req,res) => {
         else{
           res.json({
               status:false,    
-            message:"Username does not exits"
+            message:"UserName does not exits"
           });
         }
       }

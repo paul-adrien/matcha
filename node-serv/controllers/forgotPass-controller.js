@@ -26,7 +26,7 @@ exports.forgotPass_send = (req,res) => {
                 
                 var mailOptions = {
                         from: '42.noreplymatcha@gmail.com',
-                        to: 'paul.adrien.76@gmail.com',
+                        to: 'gabin.guyot17@gmail.com',
                         subject: 'Please confirm your Email account',
                         html: 'Hello,<br> Please Click on the link to verify your email.<br><a href='+link+'>Click here to verify</a>'
                 };
@@ -63,7 +63,7 @@ exports.forgotPass_send = (req,res) => {
 
 exports.forgotPass_change = (req,res) => {
     var email = req.body.email;
-    var mdp = req.body.mdp;
+    var password = req.body.password;
     var id = req.body.id;
    
     connection.query('SELECT * FROM users WHERE email = ?',email, function (error, results, fields) {
@@ -77,12 +77,12 @@ exports.forgotPass_change = (req,res) => {
             if (id == results[0]['link'])
             {
                 bcrypt.genSalt(saltRounds, function(err, salt) {
-                    bcrypt.hash(mdp, salt, function(err, hash) {
-                        connection.query('UPDATE users SET mdp = ? WHERE email = ?',[hash, email], function (error, results, fields) {
+                    bcrypt.hash(password, salt, function(err, hash) {
+                        connection.query('UPDATE users SET password = ? WHERE email = ?',[hash, email], function (error, results, fields) {
                             if (error) {
                                 res.json({
                                     status:false,
-                                    message:'there are some error with query update mdp'
+                                    message:'there are some error with query update password'
                                 })
                             }else{
                                 res.json({

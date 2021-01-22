@@ -22,7 +22,7 @@ import { User } from '@matcha/shared';
           minlength="3"
           maxlength="20"
           required
-          #username="ngModel" placeholder="Nom d'utilisateur"/>
+          #userName="ngModel" placeholder="Nom d'utilisateur"/>
         <input *ngIf="!this.loginMode" type="text"
           class="form-control"
           name="lastName"
@@ -30,7 +30,7 @@ import { User } from '@matcha/shared';
           required
           minlength="3"
           maxlength="20"
-          #name="ngModel" placeholder="Nom"/>
+          #lastName="ngModel" placeholder="Nom"/>
         <input *ngIf="!this.loginMode" type="text"
           class="form-control"
           name="FirstName"
@@ -38,7 +38,7 @@ import { User } from '@matcha/shared';
           required
           minlength="3"
           maxlength="20"
-          #prenom="ngModel" placeholder="Prénom"/>
+          #firstName="ngModel" placeholder="Prénom"/>
         <input *ngIf="!this.loginMode" type="email"
           class="form-control"
           name="email"

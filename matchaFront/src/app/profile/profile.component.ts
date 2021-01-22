@@ -41,7 +41,7 @@ import { profilService } from '../_service/profil_service';
           required
           minlength="3"
           maxlength="20"
-          #prenom="ngModel" placeholder="Prénom"/>
+          #firstName="ngModel" placeholder="Prénom"/>
       <p *ngIf="!this.updateMode">{{form.firstName}}</p>
     </div>
     <div class="info-container">
@@ -65,12 +65,12 @@ import { profilService } from '../_service/profil_service';
     </div>
     <div class="info-container">
       <span class="info-top">Genre</span>
-      <select [(ngModel)]="form.genre" *ngIf="this.updateMode" name="Genre">
+      <select [(ngModel)]="form.gender" *ngIf="this.updateMode" name="Genre">
         <option id="Homme" name="Homme" value="0">Homme</option>
         <option id="Femme" name="Femme" value="1">Femme</option>
         <option id="Kamoulox" name="Kamoulox" value="2">Kamoulox</option>
       </select>
-      <p *ngIf="!this.updateMode">{{form.genre}}</p>
+      <p *ngIf="!this.updateMode">{{form.gender}}</p>
     </div>
         <button (ngSubmit)="onSubmit()" *ngIf="this.updateMode" class="primary-button">enregistrer</button>
   </form>

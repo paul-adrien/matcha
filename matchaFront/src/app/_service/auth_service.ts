@@ -18,18 +18,18 @@ export class AuthService {
 
   login(user: Partial<User>): Observable<any> {
     return this.http.post(AUTH_API + 'authenticate', {
-      username: user.userName,
-      mdp: user.password
+      userName: user.userName,
+      password: user.password
     }, httpOptions);
   }
 
   register(user: Partial<User>): Observable<any> {
     return this.http.post(AUTH_API + 'register', {
-      username: user.userName,
+      userName: user.userName,
       email: user.email,
-      mdp: user.password,
-      name: user.lastName,
-      prenom: user.firstName
+      password: user.password,
+      lastName: user.lastName,
+      firstName: user.firstName
     }, httpOptions);
   }
 
@@ -50,7 +50,7 @@ export class AuthService {
     return this.http.post(AUTH_API + 'forgotPass_c', {
       id: id,
       email: user.email,
-      mdp: user.password
+      password: user.password
     }, httpOptions);
   }
 }

@@ -23,7 +23,7 @@ export class profilService {
       lastName: user.lastName,
       firstName: user.firstName,
       bio: user.bio,
-      genre: user.genre,
+      gender: user.gender,
       saveEmail: saveEmail
     }, httpOptions);
   }

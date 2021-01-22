@@ -24,21 +24,21 @@ export class HomeComponent implements OnInit {
     this.token = token;
     this.user = {
       userName: tmp.userName,
-      firstName: tmp.prenom,
-      lastName: tmp.nom,
-      birthate: tmp.date_naissance,
-      password: tmp.mdp,
+      firstName: tmp.firstName,
+      lastName: tmp.lastName,
+      birthate: tmp.birthDate,
+      password: tmp.password,
       email: tmp.email,
       id: tmp.id,
-      genre: tmp.genre,
-      ori_sex: tmp.ori_sex,
+      gender: tmp.gender,
+      showMe: tmp.showMe,
       bio: tmp.bio,
       score: tmp.score,
       city: tmp.city,
       latitude: tmp.latitude,
       longitude: tmp.longitude,
-      acc_valid: tmp.acc_valid,
-      acc_comp: tmp.acc_comp,
+      emailVerify: tmp.emailVerify,
+      profileComplete: tmp.profileComplete,
       link: tmp.link
     };
     console.log(this.user, this.token);
