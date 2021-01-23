@@ -33,4 +33,10 @@ export class profilService {
       user_id: id
     }, httpOptions);
   }
+
+  whoLikeMe(id): Observable<any> {
+    return this.http.post(AUTH_API + 'whoLikeMe', {
+      user_id: id
+    }, httpOptions);
+  }
 }

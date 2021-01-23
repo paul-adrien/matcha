@@ -3,6 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
   selector: 'app-profil-card',
   template: `
+    <p>email: {{email}}</p>
     <p>firstname: {{firstName}}</p>
     <p>lastName: {{lastName}}</p>
     <p>birthday: {{birthday}}</p>
@@ -12,6 +13,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ProfilCardComponent implements OnInit {
 
   @Input() firstName: string;
+  @Input() email: string;
   @Input() lastName: string;
   @Input() birthday: string;
   @Input() index: number;

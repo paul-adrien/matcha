@@ -10,7 +10,8 @@
 </div>
 <div>
   <h3>Personnes ayant consulter votre profil</h3>
-  <app-profil-card *ngFor="let User of users; let i = index"
+  <app-profil-card *ngFor="let User of usersViews; let i = index"
+                    [email]="User.email"
                     [firstName]="User.firstName"
                     [lastName]="User.lastName"
                     [birthday]="User.birthday"
@@ -19,7 +20,8 @@
 </div>
 <div>
   <h3>Personnes qui vous ont likez</h3>
-  <app-profil-card *ngFor="let User of users; let i = index"
+  <app-profil-card *ngFor="let User of userslike; let i = index"
+                    [email]="User.email"
                     [firstName]="User.firstName"
                     [lastName]="User.lastName"
                     [birthday]="User.birthday"

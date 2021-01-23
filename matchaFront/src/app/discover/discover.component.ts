@@ -11,7 +11,8 @@ import { profilService } from '../_service/profil_service';
 export class DiscoverComponent implements OnInit {
   @Input() user: User;
 
-  public users = [];
+  public usersViews = [];
+  public userslike = [];
 
   constructor(private profilService: profilService) { }
 
@@ -20,7 +21,17 @@ export class DiscoverComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status === true) {
-          this.users = data.users;
+          this.usersViews = data.users;
+        }
+      },
+      err => {
+      }
+    );
+    this.profilService.whoLikeMe(this.user.id).subscribe(
+      data => {
+        console.log(data);
+        if (data.status === true) {
+          this.userslike = data.users;
         }
       },
       err => {
