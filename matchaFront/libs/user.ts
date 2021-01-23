@@ -15,5 +15,9 @@ export interface User {
     longitude: string,
     emailVerify: boolean,
     profileComplete: boolean,
-    link: string
+    link: string,
+    pictures: {
+      id: string;
+      url: string;
+    }[]
 }

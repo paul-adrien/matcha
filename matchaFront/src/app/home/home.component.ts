@@ -39,7 +39,15 @@ export class HomeComponent implements OnInit {
       longitude: tmp.longitude,
       emailVerify: tmp.emailVerify,
       profileComplete: tmp.profileComplete,
-      link: tmp.link
+      link: tmp.link,
+      pictures: [
+        {id: "picture1", url: tmp.picture1 as string},
+        {id: "picture2", url: tmp.picture2 as string},
+        {id: "picture3", url: tmp.picture3 as string},
+        {id: "picture4", url: tmp.picture4 as string},
+        {id: "picture5", url: tmp.picture5 as string},
+        {id: "picture6", url: tmp.picture6 as string},
+      ]
     };
     console.log(this.user, this.token);
   }

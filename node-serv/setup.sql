@@ -17,6 +17,12 @@ CREATE TABLE users
     emailVerify BOOLEAN,
     profileComplete BOOLEAN,
     link VARCHAR(255) DEFAULT '',
+    picture1 TEXT(32000),
+    picture2 TEXT(32000),
+    picture3 TEXT(32000),
+    picture4 TEXT(32000),
+    picture5 TEXT(32000),
+    picture6 TEXT(32000),
     PRIMARY KEY (id)
 );
 

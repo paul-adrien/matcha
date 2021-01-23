@@ -48,6 +48,7 @@ app.post('/api/forgotPass_s', authController.forgotPass_send);
 app.post('/api/forgotPass_c', authController.forgotPass_change);
 app.post('/api/verifyToken', verifyTokenController.verifyToken);
 app.post('/api/updateProfil', updateProfilController.updateProfil);
+app.post('/api/uploadPicture', updateProfilController.uploadPicture);
 app.post('/api/addTag', tagsController.addTag);
 app.post('/api/takeTags', tagsController.seeTag);
 app.post('/api/takeViewProfil', userController.takeViewProfil);

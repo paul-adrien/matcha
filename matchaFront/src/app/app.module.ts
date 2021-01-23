@@ -14,6 +14,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { NavigationBarComponent } from './nav-bar/nav-bar.component';
 import { DiscoverComponent } from './discover/discover.component';
 import { ProfilCardComponent } from './profil-card/profil-card.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { NgxImageCompressService } from 'ngx-image-compress';
+
 
 @NgModule({
   declarations: [
@@ -32,9 +35,10 @@ import { ProfilCardComponent } from './profil-card/profil-card.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ImageCropperModule
   ],
-  providers: [],
+  providers: [NgxImageCompressService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

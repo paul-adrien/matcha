@@ -36,7 +36,13 @@ export class profilService {
 
   whoLikeMe(id): Observable<any> {
     return this.http.post(AUTH_API + 'whoLikeMe', {
-      user_id: id
+      user_id: id }, httpOptions);
+    }
+
+  uploadPicture(picture: {url: string, id: string}, email: string): Observable<any> {
+    return this.http.post(AUTH_API + 'uploadPicture', {
+      picture: picture,
+      email
     }, httpOptions);
   }
 }
