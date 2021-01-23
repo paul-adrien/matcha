@@ -27,4 +27,10 @@ export class profilService {
       saveEmail: saveEmail
     }, httpOptions);
   }
+
+  takeViewProfil(id): Observable<any> {
+    return this.http.post(AUTH_API + 'takeViewProfil', {
+      user_id: id
+    }, httpOptions);
+  }
 }

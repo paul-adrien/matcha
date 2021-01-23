@@ -12,6 +12,8 @@ import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-chan
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NavigationBarComponent } from './nav-bar/nav-bar.component';
+import { DiscoverComponent } from './discover/discover.component';
+import { ProfilCardComponent } from './profil-card/profil-card.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { NavigationBarComponent } from './nav-bar/nav-bar.component';
     ForgotPassChangeComponent,
     HomeComponent,
     ProfileComponent,
-    NavigationBarComponent
+    NavigationBarComponent,
+    DiscoverComponent,
+    ProfilCardComponent
    ],
   imports: [
     BrowserModule,

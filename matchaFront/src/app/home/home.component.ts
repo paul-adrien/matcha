@@ -6,7 +6,7 @@ import { User } from '@matcha/shared';
   template: `
     <nav-bar></nav-bar>
     <div class="page">
-      <profile [user]="this.user"></profile>
+      <discover [user]="this.user"></discover>
     </div>
   `,
   styleUrls: ['./home.component.scss']

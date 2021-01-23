@@ -7,6 +7,8 @@ import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-chan
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_service/auth.guard';
+import { DiscoverComponent } from './discover/discover.component';
+import { ProfilCardComponent } from './profil-card/profil-card.component';
 
 
 const routes: Routes = [
@@ -17,7 +19,9 @@ const routes: Routes = [
   { path: 'not-found', component: LoginPageComponent },
   //{ path: '**', component: LoginPageComponent },
   { path: 'home', canActivate: [AuthGuard] , component: HomeComponent, children: [
-     { path: 'profile', component: ProfileComponent }
+     { path: 'profile', component: ProfileComponent },
+     { path: 'discover', component: DiscoverComponent },
+     { path: 'profil-card', component: ProfilCardComponent }
 ] },
 ];
 
