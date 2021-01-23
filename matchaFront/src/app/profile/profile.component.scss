@@ -22,7 +22,8 @@
     border-bottom: 1px solid #eaeaea;
     display: flex;
     position: sticky;
-    top: 0;
+    top: -1px;
+    z-index: 10;
 
     .case {
       width: 50%;

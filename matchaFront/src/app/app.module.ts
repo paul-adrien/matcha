@@ -38,6 +38,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     HttpClientModule,
     ImageCropperModule
   ],
+  exports: [FormsModule],
   providers: [NgxImageCompressService],
   bootstrap: [AppComponent]
 })

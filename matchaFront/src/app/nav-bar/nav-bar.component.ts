@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'nav-bar',
   template: `
-    <div class="case" *ngFor="let item of this.items" (click)="this.selectItem(item.id)">
+    <a class="case" *ngFor="let item of this.items" (click)="this.selectItem(item.id)" [routerLink]="item.route" routerLinkActive="active">
+
       <img [src]="item.selected ? item.src.check : item.src.default" >
-    </div>
+    </a>
   `,
   styleUrls: ['./nav-bar.component.scss']
 })
@@ -27,7 +28,7 @@ export class NavigationBarComponent implements OnInit {
       check: "./assets/home.svg",
       default: "./assets/home.svg"
     },
-    route: "profile",
+    route: "discover",
     selected: false,
 },
 {
