@@ -10,18 +10,34 @@ exports.addTag = (req,res) => {
         })
     } else {
       if(results.length > 0){
-        connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[req.body.tag_id, req.body.user_id], function (error, results, fields) {
-            if (error) {
-                res.json({
-                    status:false,
-                    message:'there are some error with query select email'
-                })
+        connection.query('SELECT * FROM user_tag WHERE user_id = ? AND tag_id = ?',[req.body.user_id, results[0]['tag_id']], function (error, result, fields) {
+          if (error) {
+              res.json({
+                  status:false,
+                  message:'there are some error with query select tag'
+              })
+          } else {
+            if (result.length == 0) {
+              connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[results[0]['tag_id'], req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    res.json({
+                        status:false,
+                        message:'there are some error with query select email'
+                    })
+                } else {
+                    res.json({
+                        status:true,
+                        message:'tag add'
+                    })
+                }
+              });
             } else {
-                res.json({
-                    status:true,
-                    message:'tag add'
-                })
+              res.json({
+                status:false,
+                message:'this tags already exist'
+            })
             }
+          }
         });
       } else {
         connection.query('INSERT INTO tag (name) VALUES (?)',[req.body.name], function (error, results, fields) {
@@ -73,42 +89,47 @@ exports.seeTag = (req,res) => {
         if (error) {
             res.json({
                 status:false,
-                message:'there are some error with query select tag_id'
+                message:'there are some error with query select tag_id',
+                tags_names: null
             })
         } else {
             if(results.length > 0){
                 var i = 0;
                 var tags;
-                while (results[i]) {
-                    connection.query('SELECT * FROM tag WHERE id = ?',[results[i]['tag_id']], function (error, results, fields) {
-                        if (error) {
-                            res.json({
-                                status:false,
-                                message:'there are some error with query select email'
-                            })
-                        } else {
-                            if(results.length > 0){
-                                tags[i] = results[0]['name'];
-                            }
-                            else {
-                                res.json({
-                                    status:false,
-                                    message:'there are some error with query select tag name'
-                                })
-                            }
-                        }
-                    });
+                test = results;
+                while (test && test[i]) {
+                  connection.query('SELECT * FROM tag WHERE id = ?',[test[i]['tag_id']], function (error, results, fields) {
+                      if (error) {
+                          res.json({
+                              status:false,
+                              message:'there are some error with query select email',
+                              tags_names: null
+                          })
+                      } else {
+                          if(results.length > 0){
+                              tags[i++] = results[0]['name'];
+                          }
+                          else {
+                            test = null;
+                              res.json({
+                                  status:false,
+                                  message:'there are some error with query select tag name',
+                                  tags_names: null
+                              });
+                          }
+                      }
+                  });
                 }
                 res.json({
                     status:true,
                     message:'select tags names',
-                    tags_name: tags
+                    tags_names: tags
                 });
             } else {
                 res.json({
                     status:true,
                     message:'no tag find',
-                    tags_name: null
+                    tags_names: null
                 });
             }
         }

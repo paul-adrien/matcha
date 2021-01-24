@@ -29,28 +29,29 @@ app.use(function(req, res, next) {
 
 var connection = require('./config/db');
 
-var authenticateController = require('./controllers/authenticate-controller');
-var registerController = require('./controllers/register-controller');
-var verifyController = require('./controllers/verify-controller');
-var forgotPassController = require('./controllers/forgotPass-controller');
+var authController = require('./controllers/auth-controller');
 var verifyTokenController = require('./controllers/verifyToken-controller');
 var updateProfilController = require('./controllers/updateProfil-controller');
 var tagsController = require('./controllers/tags-controller');
+var userController = require('./controllers/user-controller');
+var likeController = require('./controllers/like-controller');
 
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to plaurent NodeJS Mysql server." });
 });
 
 /* route to handle login and registration */
-app.post('/api/register', registerController.register);
-app.post('/api/authenticate', authenticateController.authenticate);
-app.post('/api/verify', verifyController.verify);
-app.post('/api/forgotPass_s', forgotPassController.forgotPass_send);
-app.post('/api/forgotPass_c', forgotPassController.forgotPass_change);
+app.post('/api/register', authController.register);
+app.post('/api/authenticate', authController.authenticate);
+app.post('/api/verify', authController.verifyEmail);
+app.post('/api/forgotPass_s', authController.forgotPass_send);
+app.post('/api/forgotPass_c', authController.forgotPass_change);
 app.post('/api/verifyToken', verifyTokenController.verifyToken);
 app.post('/api/updateProfil', updateProfilController.updateProfil);
 app.post('/api/addTag', tagsController.addTag);
 app.post('/api/takeTags', tagsController.seeTag);
+app.post('/api/takeViewProfil', userController.takeViewProfil);
+app.post('/api/whoLikeMe', likeController.whoLikeMe);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

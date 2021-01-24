@@ -22,7 +22,7 @@ CREATE TABLE users
 
 CREATE TABLE tag
 (
-    id INT NOT NULL AUTO_INCREMENT,
+    id VARCHAR NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -31,4 +31,10 @@ CREATE TABLE user_tag
 (
     tag_id VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE users_views
+(
+    viewed_id VARCHAR(255) NOT NULL,
+    views_id VARCHAR(255) NOT NULL
 );
