@@ -44,3 +44,9 @@ CREATE TABLE users_views
     viewed_id VARCHAR(255) NOT NULL,
     views_id VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE users_like
+(
+    liked_id VARCHAR(255) NOT NULL,
+    like_id VARCHAR(255) NOT NULL
+);

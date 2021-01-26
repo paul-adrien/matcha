@@ -6,6 +6,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
 import { forkJoin } from "rxjs";
+import { userService } from '../_service/user_service';
 
 @Component({
   selector: "profile",
@@ -262,40 +263,42 @@ export class ProfileComponent implements OnInit {
     private route: Router,
     private sanitizer: DomSanitizer,
     private imageCompress: NgxImageCompressService,
+    private userService: userService
   ) { }
 
   ngOnInit() {
-    const tmp = JSON.parse(localStorage.getItem('user'));
-
-    this.user = {
-      userName: tmp.userName,
-      firstName: tmp.firstName,
-      lastName: tmp.lastName,
-      birthate: tmp.birthDate,
-      password: tmp.password,
-      email: tmp.email,
-      id: tmp.id,
-      gender: tmp.gender,
-      showMe: tmp.showMe,
-      bio: tmp.bio,
-      score: tmp.score,
-      city: tmp.city,
-      latitude: tmp.latitude,
-      longitude: tmp.longitude,
-      emailVerify: tmp.emailVerify,
-      profileComplete: tmp.profileComplete,
-      link: tmp.link,
-      pictures: [
-        {id: "picture1", url: tmp.picture1 as string},
-        {id: "picture2", url: tmp.picture2 as string},
-        {id: "picture3", url: tmp.picture3 as string},
-        {id: "picture4", url: tmp.picture4 as string},
-        {id: "picture5", url: tmp.picture5 as string},
-        {id: "picture6", url: tmp.picture6 as string},
-      ]
-    };
-    this.form = this.user;
-    this.saveEmail = this.user.email;
+    this.user = this.userService.setUserNull();
+    this.userService.getUser(JSON.parse(localStorage.getItem('id'))).then(res => {
+      this.user = {
+        userName: res["userName"],
+        firstName: res["firstName"],
+        lastName: res["lastName"],
+        birthate: res["birthDate"],
+        password: res["password"],
+        email: res["email"],
+        id: res["id"],
+        gender: res["gender"],
+        showMe: res["showMe"],
+        bio: res["bio"],
+        score: res["score"],
+        city: res["city"],
+        latitude: res["latitude"],
+        longitude: res["longitude"],
+        emailVerify: res["emailVerify"],
+        profileComplete: res["profileComplete"],
+        link: res["link"],
+        pictures: [
+          {id: "picture1", url: res["picture1"] as string},
+          {id: "picture2", url: res["picture2"] as string},
+          {id: "picture3", url: res["picture3"] as string},
+          {id: "picture4", url: res["picture4"] as string},
+          {id: "picture5", url: res["picture5"] as string},
+          {id: "picture6", url: res["picture6"] as string},
+        ]
+      };
+      this.form = this.user;
+      this.saveEmail = this.user.email;
+    });
   }
 
   public changeUpdateMode(updateMode: boolean) {

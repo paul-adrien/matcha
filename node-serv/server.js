@@ -53,6 +53,7 @@ app.post('/api/addTag', tagsController.addTag);
 app.post('/api/takeTags', tagsController.seeTag);
 app.post('/api/takeViewProfil', userController.takeViewProfil);
 app.post('/api/whoLikeMe', likeController.whoLikeMe);
+app.post('/api/getUser', userController.getUser);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

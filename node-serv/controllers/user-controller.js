@@ -79,3 +79,31 @@ exports.takeViewProfil = (req,res) => {
         }
     };
 }
+
+exports.getUser = (req,res) => {
+    var id = req.body.id;
+
+    connection.query('SELECT * FROM users WHERE id = ?',[id], function (error, results, fields) {
+        if (error) {
+            res.json({
+                status:false,
+                message:'there are some error with query select user',
+                user: null
+            })
+        } else {
+            if(results.length > 0){
+                res.json({
+                    status: true,
+                    message:'successfully get user',
+                    user: results[0],
+                })
+            } else {
+                res.json({
+                    status:false,
+                    message:"User does not exist",
+                    user: null
+                });
+            }
+        }
+    });
+}

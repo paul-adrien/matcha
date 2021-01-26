@@ -2,6 +2,74 @@ var connection = require('./../config/db');
  
 exports.addTag = (req,res) => {
 
+    async function getTag() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    }
+
+    async function tagExist() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM user_tag WHERE user_id = ? AND tag_id = ?',[req.body.user_id, results[0]['tag_id']], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    }
+
+    async function newTag() {
+        return new Promise( resultat => 
+            connection.query('INSERT INTO tag (name) VALUES (?)',[req.body.name], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    }
+
+    async function insertTag() {
+        return new Promise( resultat => 
+            connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[results[0]['tag_id'], req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    }
+
   connection.query('SELECT * FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
     if (error) {
         res.json({
