@@ -28,7 +28,7 @@ CREATE TABLE users
 
 CREATE TABLE tag
 (
-    id VARCHAR NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -47,6 +47,6 @@ CREATE TABLE users_views
 
 CREATE TABLE users_like
 (
-    liked_id VARCHAR(255) NOT NULL,
-    like_id VARCHAR(255) NOT NULL
+    liked_id VARCHAR(255) NOT NULL, /*celui qui est liker*/
+    like_id VARCHAR(255) NOT NULL /*celui qui like*/
 );

@@ -7,7 +7,7 @@ exports.likeOrDislike = (req,res) => {
 
     async function lOrD() {
         return new Promise( resultat => 
-            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.userLike_id, req.body.user_id], function (error, results, fields) {
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
                     resultat(null);
                 } else {
@@ -24,11 +24,17 @@ exports.likeOrDislike = (req,res) => {
 
     async function addLike() {
         return new Promise( resultat =>
-            connection.query('INSERT INTO users_like (liked_id, like_id) VALUES (?, ?)',[req.body.userLike_id, req.body.user_id], function (error, results, fields) {
+            connection.query('INSERT INTO users_like (liked_id, like_id) VALUES (?, ?)',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
                     resultat(error);
                 } else {
-                    resultat(results);
+                    connection.query('UPDATE users SET nbLikes = nbLikes+1 WHERE id = ?',[req.body.like_id], function (error, results, fields) {
+                        if (error) {
+                            resultat(error);
+                        } else {
+                            resultat(results);
+                        }
+                    });
                 }
             })
         )
@@ -36,11 +42,17 @@ exports.likeOrDislike = (req,res) => {
 
     async function dellLike() {
         return new Promise( resultat =>
-            connection.query('DELETE FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.userLike_id, req.body.user_id], function (error, results, fields) {
+            connection.query('DELETE FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
                     resultat(error);
                 } else {
-                    resultat(results);
+                    connection.query('UPDATE users SET nbLikes = nbLikes-1 WHERE id = ?',[req.body.like_id], function (error, results, fields) {
+                        if (error) {
+                            resultat(error);
+                        } else {
+                            resultat(results);
+                        }
+                    });
                 }
             })
         )
@@ -52,13 +64,13 @@ exports.likeOrDislike = (req,res) => {
             result = await addLike();
             res.json({
                 status:true,
-                message:'like user '+result+'',
+                message:'like user',
            });
         } else {
             result = await dellLike();
             res.json({
                 status:true,
-                message:'unlike user '+result+'',
+                message:'unlike user',
            });
         }
     };
@@ -138,6 +150,47 @@ exports.whoLikeMe = (req,res) => {
                 status:false,
                 message:'pas de like',
                 users: null
+            });
+        }
+    };
+}
+
+exports.likeOrNot = (req,res) => {
+
+    likeOrNot();
+
+    async function getIfLike() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function likeOrNot() {
+        like = await getIfLike();
+        if (like !== null)
+        {
+            res.json({
+                status:true,
+                message:'like',
+                like: 1
+            });
+        }
+        else {
+            res.json({
+                status:false,
+                message:'pas de like',
+                like: 0
             });
         }
     };

@@ -36,7 +36,7 @@ exports.register = (req,res) => {
             bcrypt.genSalt(saltRounds, function(err, salt) {
               bcrypt.hash(req.body.password, salt, function(err, hash) {
                 var rand = Math.floor((Math.random() * 100) + 54);
-                connection.query('INSERT INTO users (email, password, userName, lastName, firstName, emailVerify, profileComplete, link) VALUES (?, ?, ?, ?, ?, 0, 0, ?)',[req.body.email, hash, req.body.userName, req.body.lastName, req.body.firstName, rand], function (error, results, fields) {
+                connection.query('INSERT INTO users (email, password, userName, lastName, firstName, emailVerify, profileComplete, link, nbLikes) VALUES (?, ?, ?, ?, ?, 0, 0, ?, 0)',[req.body.email, hash, req.body.userName, req.body.lastName, req.body.firstName, rand], function (error, results, fields) {
                   if (error) {
                     res.json({
                         status:false,

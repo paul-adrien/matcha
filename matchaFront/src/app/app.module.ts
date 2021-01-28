@@ -16,6 +16,8 @@ import { DiscoverComponent } from './discover/discover.component';
 import { ProfilCardComponent } from './profil-card/profil-card.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { ProfilMatchComponent } from './profil-match/profil-match.component';
+import { TagsComponent } from './tags/tags.component';
 
 
 @NgModule({
@@ -29,7 +31,9 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     ProfileComponent,
     NavigationBarComponent,
     DiscoverComponent,
-    ProfilCardComponent
+    ProfilCardComponent,
+    ProfilMatchComponent,
+    TagsComponent
    ],
   imports: [
     BrowserModule,

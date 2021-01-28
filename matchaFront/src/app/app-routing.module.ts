@@ -9,6 +9,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './_service/auth.guard';
 import { DiscoverComponent } from './discover/discover.component';
 import { ProfilCardComponent } from './profil-card/profil-card.component';
+import { ProfilMatchComponent } from './profil-match/profil-match.component';
+import { TagsComponent } from './tags/tags.component';
 
 
 const routes: Routes = [
@@ -17,12 +19,14 @@ const routes: Routes = [
   { path: 'verify/:id', component: VerifyComponent },
   { path: '', component: LoginPageComponent },
   { path: 'not-found', component: LoginPageComponent },
-  //{ path: '**', component: LoginPageComponent },
   { path: 'home', canActivate: [AuthGuard] , component: HomeComponent, children: [
      { path: 'profile', component: ProfileComponent },
      { path: 'discover', component: DiscoverComponent },
-     { path: 'profil-card', component: ProfilCardComponent }
+     { path: 'profil-card', component: ProfilCardComponent },
+     { path: 'tags', component: TagsComponent },
+     { path: 'profil-match/:id', component: ProfilMatchComponent }
 ] },
+  { path: '**', component: LoginPageComponent },
 ];
 
 @NgModule({

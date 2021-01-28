@@ -70,4 +70,60 @@ export class userService {
       id: id
     }, httpOptions);
   }
+
+  like(user_id, like_id) {
+    return new Promise(resolve => {
+      this.likehttp(user_id, like_id).subscribe(
+        data => {
+          console.log(data);
+          if (data.status === true) {
+            resolve(data.like);
+          } else {
+            resolve(null)
+          }
+        },
+        err => {
+        }
+      );
+    });
+  }
+
+  likehttp(user_id, like_id): Observable<any> {
+    return this.http.post(AUTH_API + 'like', {
+      user_id: user_id,
+      like_id: like_id
+    }, httpOptions);
+  }
+
+  likeOrNot(user_id, like_id): Observable<any> {
+    return this.http.post(AUTH_API + 'likeOrNot', {
+      user_id: user_id,
+      like_id: like_id
+    }, httpOptions);
+  }
+
+  getAllTags(): Observable<any> {
+    return this.http.post(AUTH_API + 'getAllTags', {
+    }, httpOptions);
+  }
+
+  getYourTags(id): Observable<any> {
+    return this.http.post(AUTH_API + 'getYourTags', {
+      id: id
+    }, httpOptions);
+  }
+
+  addNonExistTag(name, id): Observable<any> {
+    return this.http.post(AUTH_API + 'addNonExistTag', {
+      id: id,
+      name: name
+    }, httpOptions);
+  }
+
+  addExistTag(user_id, tag_id): Observable<any> {
+    return this.http.post(AUTH_API + 'addExistTag', {
+      user_id: user_id,
+      tag_id: tag_id
+    }, httpOptions);
+  }
 }

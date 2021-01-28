@@ -58,6 +58,7 @@ import { User } from '@matcha/shared';
         <div *ngIf="this.loginMode">Se souvenir de moi</div>
         <button class="primary-button">{{this.loginMode ? "Se connecter" : "Créer un compte"}}</button>
         <a *ngIf="this.loginMode" routerLink="/forgotPass" routerLinkActive="active">Mot de passe oublié ?</a>
+        <p>{{errorMessage}}</p>
     </form>
   </div>
   `,
@@ -117,6 +118,8 @@ export class LoginPageComponent implements OnInit {
             this.route.navigate(["home"])
             //this.isLoggedIn = true;
             //window.location.reload();
+          } else {
+            this.errorMessage = data.message;
           }
         },
         err => {

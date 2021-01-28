@@ -1,206 +1,221 @@
 var connection = require('./../config/db');
- 
-exports.addTag = (req,res) => {
+var forEach = require('async-foreach').forEach;
+  
+exports.getAllTags = (req,res) => {
 
-    async function getTag() {
-        return new Promise( resultat => 
-            connection.query('SELECT * FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
-                if (error) {
-                    resultat(null);
-                } else {
-                    if (results && results.length > 0) {
-                        resultat(results);
-                    }
-                    else{
-                        resultat(null);
-                    }
-                }
-            })
-        )
-    }
-
-    async function tagExist() {
-        return new Promise( resultat => 
-            connection.query('SELECT * FROM user_tag WHERE user_id = ? AND tag_id = ?',[req.body.user_id, results[0]['tag_id']], function (error, results, fields) {
-                if (error) {
-                    resultat(null);
-                } else {
-                    if (results && results.length > 0) {
-                        resultat(results);
-                    }
-                    else{
-                        resultat(null);
-                    }
-                }
-            })
-        )
-    }
-
-    async function newTag() {
-        return new Promise( resultat => 
-            connection.query('INSERT INTO tag (name) VALUES (?)',[req.body.name], function (error, results, fields) {
-                if (error) {
-                    resultat(null);
-                } else {
-                    if (results && results.length > 0) {
-                        resultat(results);
-                    }
-                    else{
-                        resultat(null);
-                    }
-                }
-            })
-        )
-    }
-
-    async function insertTag() {
-        return new Promise( resultat => 
-            connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[results[0]['tag_id'], req.body.user_id], function (error, results, fields) {
-                if (error) {
-                    resultat(null);
-                } else {
-                    if (results && results.length > 0) {
-                        resultat(results);
-                    }
-                    else{
-                        resultat(null);
-                    }
-                }
-            })
-        )
-    }
-
-  connection.query('SELECT * FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
-    if (error) {
-        res.json({
-            status:false,
-            message:'there are some error with query select name tag'
-        })
-    } else {
-      if(results.length > 0){
-        connection.query('SELECT * FROM user_tag WHERE user_id = ? AND tag_id = ?',[req.body.user_id, results[0]['tag_id']], function (error, result, fields) {
-          if (error) {
-              res.json({
-                  status:false,
-                  message:'there are some error with query select tag'
-              })
-          } else {
-            if (result.length == 0) {
-              connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[results[0]['tag_id'], req.body.user_id], function (error, results, fields) {
-                if (error) {
-                    res.json({
-                        status:false,
-                        message:'there are some error with query select email'
-                    })
-                } else {
-                    res.json({
-                        status:true,
-                        message:'tag add'
-                    })
-                }
-              });
-            } else {
-              res.json({
-                status:false,
-                message:'this tags already exist'
-            })
-            }
-          }
-        });
-      } else {
-        connection.query('INSERT INTO tag (name) VALUES (?)',[req.body.name], function (error, results, fields) {
-            if (error) {
-                res.json({
-                    status:false,
-                    message:'there are some error with insert tag'
-                })
-            } else {
-                connection.query('SELECT * FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
-                    if (error) {
-                        res.json({
-                            status:false,
-                            message:'there are some error with query select name tag'
-                        })
-                    } else {
-                        if (results[0].length > 0) {
-                            connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[results[0][id], req.body.user_id], function (error, results, fields) {
-                                if (error) {
-                                    res.json({
-                                        status:false,
-                                        message:'there are some error with query select email'
-                                    })
-                                } else {
-                                    res.json({
-                                        status:true,
-                                        message:'tag add'
-                                    })
-                                }
-                            });
-                        } else {
-                            res.json({
-                                status:false,
-                                message:'error insert tag'
-                            })
-                        }
-                    }
-                });
-            }
-        });
-      }
-    }
-  });
-}
-
-exports.seeTag = (req,res) => {
-
-    connection.query('SELECT * FROM user_tag WHERE user_id = ?',[req.body.user_id], function (error, results, fields) {
+    connection.query('SELECT * FROM tag',[], function (error, results, fields) {
         if (error) {
             res.json({
                 status:false,
-                message:'there are some error with query select tag_id',
-                tags_names: null
+                message:'there are some error with query select user',
+                tags: null
             })
         } else {
             if(results.length > 0){
-                var i = 0;
-                var tags;
-                test = results;
-                while (test && test[i]) {
-                  connection.query('SELECT * FROM tag WHERE id = ?',[test[i]['tag_id']], function (error, results, fields) {
-                      if (error) {
-                          res.json({
-                              status:false,
-                              message:'there are some error with query select email',
-                              tags_names: null
-                          })
-                      } else {
-                          if(results.length > 0){
-                              tags[i++] = results[0]['name'];
-                          }
-                          else {
-                            test = null;
-                              res.json({
-                                  status:false,
-                                  message:'there are some error with query select tag name',
-                                  tags_names: null
-                              });
-                          }
-                      }
-                  });
-                }
                 res.json({
-                    status:true,
-                    message:'select tags names',
-                    tags_names: tags
-                });
+                    status: true,
+                    message:'successfully get tag(s)',
+                    tags: results,
+                })
             } else {
                 res.json({
-                    status:true,
-                    message:'no tag find',
-                    tags_names: null
+                    status:false,
+                    message:"dont find any tag(s)",
+                    tags: null
                 });
             }
         }
     });
-  }
-  
+}
+
+exports.getYourTags = (req,res) => {
+    resultat = [];
+
+    getAllTags();
+
+    async function getTagsId(id) {
+        return new Promise( resultat => 
+            connection.query('SELECT tag_id FROM user_tag WHERE user_id = ?',[id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function getTagName(id) {
+        return new Promise( resultat => 
+            connection.query('SELECT name FROM tag WHERE id = ?',[id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function getAllName(tags_id) {
+        var i = 0;
+        return new Promise(resolve => {
+            forEach(tags_id, async function(tag) {
+                result = await getTagName(tag['tag_id'])
+                if(result && result.length > 0){
+                    if (!resultat || resultat.length === 0)
+                        resultat = [result[0]];
+                    else
+                        resultat.push(result[0]);
+                }
+                i++;
+                if (i === tags_id.length) {
+                    resolve(resultat);
+                }
+            });
+        });
+    }
+
+    async function getAllTags() {
+        tags_id = await getTagsId(req.body.id);
+        if (tags_id !== undefined)
+        {
+            resultat = await getAllName(tags_id)
+            
+            if (resultat !== null)
+            {
+                res.json({
+                    status:true,
+                    message:'tags user',
+                    tags: resultat
+               });
+            }
+        }
+        else {
+            res.json({
+                status:false,
+                message:'pas de tag',
+                tags: null
+            });
+        }
+    };
+}
+
+exports.addExistTag = (req,res) => {
+    
+    connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[req.body.tag_id, req.body.user_id], function (error, results, fields) {
+        if (error) {
+            res.json({
+                status:false,
+                user: results[0],
+                message:'tag was not insert'
+            });
+        } else {
+            res.json({
+                status:true,
+                user: results[0],
+                message:'tag was add'
+            });
+        }
+    });
+}
+
+exports.addNonExistTag = (req,res) => {
+    resultat = [];
+
+    getAllTags();
+
+    async function getTagId() {
+        return new Promise( resultat => 
+            connection.query('SELECT id FROM tag WHERE name = ?',[req.body.name], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function insertUserTag(id) {
+        return new Promise( resolve => 
+            connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[id, req.body.id], function (error, results, fields) {
+                if (error) {
+                    resolve(null);
+                } else {
+                    resolve(1);
+                }
+            })
+        )
+    };
+
+    async function insertTag() {
+        return new Promise( resolve => 
+            connection.query('INSERT INTO tag (name) VALUES (?)',[req.body.name], function (error, results, fields) {
+                if (error) {
+                    resolve(null);
+                } else {
+                    resolve(1);
+                }
+            })
+        )
+    };
+
+    async function getAllTags() {
+        tags_id = await getTagId();
+        if (tags_id === null)
+        {
+            resultat = await insertTag()
+            
+            if (resultat && resultat == 1)
+            {
+                tags_id = await getTagId();
+                if (tags_id && tags_id.length > 0) {
+                    await insertUserTag(tags_id[0]['id'])
+                } else {
+                    res.json({
+                        status:false,
+                        message:'erreur get id tag',
+                        tags: null
+                    });
+                }
+                res.json({
+                    status:true,
+                    message:'tags user insert',
+                    tags: resultat
+               });
+            }
+        }
+        else {
+            console.log(tags_id[0]['id']);
+            if ((await insertUserTag(tags_id[0]['id']))) {
+                res.json({
+                    status:true,
+                    message:'tags already exist and insert usertag',
+                    tags: resultat
+                });
+            } else {
+                res.json({
+                    status:false,
+                    message:'tag was not insert usertag',
+                    tags: resultat
+                });
+            }
+        }
+    };
+}

@@ -21,3 +21,8 @@ export interface User {
       url: string;
     }[]
 }
+
+export interface Tags {
+  id: string,
+  name: string,
+}

@@ -224,6 +224,7 @@ import { userService } from '../_service/user_service';
           enregistrer
         </button>
       </form>
+      <app-tags *ngIf="!this.updateMode"></app-tags>
       <div class="cropper-container" [style.display]="this.showCropper ? null : 'none'">
         <image-cropper
               class="cropper"

@@ -49,11 +49,16 @@ app.post('/api/forgotPass_c', authController.forgotPass_change);
 app.post('/api/verifyToken', verifyTokenController.verifyToken);
 app.post('/api/updateProfil', updateProfilController.updateProfil);
 app.post('/api/uploadPicture', updateProfilController.uploadPicture);
-app.post('/api/addTag', tagsController.addTag);
-app.post('/api/takeTags', tagsController.seeTag);
 app.post('/api/takeViewProfil', userController.takeViewProfil);
 app.post('/api/whoLikeMe', likeController.whoLikeMe);
 app.post('/api/getUser', userController.getUser);
+app.post('/api/likeOrNot', likeController.likeOrNot);
+app.post('/api/like', likeController.likeOrDislike);
+app.post('/api/like', likeController.likeOrDislike);
+app.post('/api/getAllTags', tagsController.getAllTags);
+app.post('/api/getYourTags', tagsController.getYourTags);
+app.post('/api/addExistTag', tagsController.addExistTag);
+app.post('/api/addNonExistTag', tagsController.addNonExistTag);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
