@@ -92,17 +92,17 @@ export class TagsComponent implements OnInit {
     this.userService.addNonExistTag(this.form.name, JSON.parse(localStorage.getItem('id'))).subscribe(
       data => {
         console.log(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    this.userService.getYourTags(JSON.parse(localStorage.getItem('id'))).subscribe(
-      data => {
-        console.log(data);
-        if (data.status === true) {
-          this.YourTags = data.tags;
-        }
+        this.userService.getYourTags(JSON.parse(localStorage.getItem('id'))).subscribe(
+          data => {
+            console.log(data);
+            if (data.status === true) {
+              this.YourTags = data.tags;
+            }
+          },
+          err => {
+            console.log(err);
+          }
+        );
       },
       err => {
         console.log(err);

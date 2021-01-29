@@ -88,7 +88,7 @@ exports.getYourTags = (req,res) => {
 
     async function getAllTags() {
         tags_id = await getTagsId(req.body.id);
-        if (tags_id !== undefined)
+        if (tags_id !== null)
         {
             resultat = await getAllName(tags_id)
             
@@ -112,22 +112,50 @@ exports.getYourTags = (req,res) => {
 }
 
 exports.addExistTag = (req,res) => {
-    
-    connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[req.body.tag_id, req.body.user_id], function (error, results, fields) {
-        if (error) {
-            res.json({
-                status:false,
-                user: results[0],
-                message:'tag was not insert'
+
+    addTags();
+
+    async function checkIfTag(tag_id, user_tag) {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM user_tag WHERE tag_id = ? AND user_id = ?',[tag_id, user_tag], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(1);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function addTags() {
+        if ((await checkIfTag(req.body.tag_id, req.body.user_id)) === null) {
+            connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)',[req.body.tag_id, req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    res.json({
+                        status:false,
+                        message:'tag was not insert'
+                    });
+                } else {
+                    res.json({
+                        status:true,
+                        message:'tag was add'
+                    });
+                }
             });
         } else {
             res.json({
-                status:true,
-                user: results[0],
-                message:'tag was add'
+                status:false,
+                message:'tag already exist'
             });
         }
-    });
+    };
+    
+    
 }
 
 exports.addNonExistTag = (req,res) => {
@@ -143,6 +171,23 @@ exports.addNonExistTag = (req,res) => {
                 } else {
                     if (results && results.length > 0) {
                         resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function checkIfTag(tag_id, user_tag) {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM user_tag WHERE tag_id = ? AND user_id = ?',[tag_id, user_tag], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(1);
                     }
                     else{
                         resultat(null);
@@ -177,45 +222,61 @@ exports.addNonExistTag = (req,res) => {
     };
 
     async function getAllTags() {
-        tags_id = await getTagId();
-        if (tags_id === null)
-        {
-            resultat = await insertTag()
-            
-            if (resultat && resultat == 1)
+        if (req.body.name && req.body.name.length > 0 && req.body.name[0] == '#') {
+            tags_id = await getTagId();
+            if (tags_id === null)
             {
-                tags_id = await getTagId();
-                if (tags_id && tags_id.length > 0) {
-                    await insertUserTag(tags_id[0]['id'])
+                resultat = await insertTag()
+                
+                if (resultat && resultat == 1)
+                {
+                    tags_id = await getTagId();
+                    if (tags_id && tags_id.length > 0) {
+                        await insertUserTag(tags_id[0]['id'])
+                    } else {
+                        res.json({
+                            status:false,
+                            message:'erreur get id tag',
+                            tags: null
+                        });
+                    }
+                    res.json({
+                        status:true,
+                        message:'tags user insert',
+                        tags: resultat
+                });
+                }
+            }
+            else {
+                if ((await checkIfTag(tags_id[0]['id'], req.body.id)) === null) {
+                    if ((await insertUserTag(tags_id[0]['id']))) {
+                        res.json({
+                            status:true,
+                            message:'tags already exist and insert usertag',
+                            tags: resultat
+                        });
+                    } else {
+                        res.json({
+                            status:false,
+                            message:'tag was not insert usertag',
+                            tags: resultat
+                        });
+                    }
                 } else {
                     res.json({
                         status:false,
-                        message:'erreur get id tag',
-                        tags: null
+                        message:'tag already exist',
+                        tags: resultat
                     });
                 }
-                res.json({
-                    status:true,
-                    message:'tags user insert',
-                    tags: resultat
-               });
+                
             }
-        }
-        else {
-            console.log(tags_id[0]['id']);
-            if ((await insertUserTag(tags_id[0]['id']))) {
-                res.json({
-                    status:true,
-                    message:'tags already exist and insert usertag',
-                    tags: resultat
-                });
-            } else {
-                res.json({
-                    status:false,
-                    message:'tag was not insert usertag',
-                    tags: resultat
-                });
-            }
+        } else {
+            res.json({
+                status:false,
+                message:'tag was not valid',
+                tags: resultat
+            });
         }
     };
 }
