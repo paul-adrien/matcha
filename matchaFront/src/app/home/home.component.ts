@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
       userName: tmp.userName,
       firstName: tmp.firstName,
       lastName: tmp.lastName,
-      birthate: tmp.birthDate,
+      birthDate: tmp.birthDate,
       password: tmp.password,
       email: tmp.email,
       id: tmp.id,

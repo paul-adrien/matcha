@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './login/login-page.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VerifyComponent } from './verify/verify.component';
 import { ForgotPassComponent } from './forgot-pass/forgot-pass.component';
 import { ForgotPassChangeComponent } from './forgot-pass-change/forgot-pass-change.component';
@@ -40,7 +40,8 @@ import { TagsComponent } from './tags/tags.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ImageCropperModule
+    ImageCropperModule,
+    ReactiveFormsModule
   ],
   exports: [FormsModule],
   providers: [NgxImageCompressService],

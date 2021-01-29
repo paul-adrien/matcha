@@ -12,11 +12,7 @@ exports.getAllTags = (req,res) => {
             })
         } else {
             if(results.length > 0){
-                res.json({
-                    status: true,
-                    message:'successfully get tag(s)',
-                    tags: results,
-                })
+                res.json(results)
             } else {
                 res.json({
                     status:false,
@@ -74,9 +70,9 @@ exports.getYourTags = (req,res) => {
                 result = await getTagName(tag['tag_id'])
                 if(result && result.length > 0){
                     if (!resultat || resultat.length === 0)
-                        resultat = [result[0]];
+                    resultat = [result[0]];
                     else
-                        resultat.push(result[0]);
+                    resultat.push(result[0]);
                 }
                 i++;
                 if (i === tags_id.length) {
@@ -94,11 +90,7 @@ exports.getYourTags = (req,res) => {
             
             if (resultat !== null)
             {
-                res.json({
-                    status:true,
-                    message:'tags user',
-                    tags: resultat
-               });
+                res.json(resultat);
             }
         }
         else {

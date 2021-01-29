@@ -5,7 +5,7 @@ export interface User {
     email: string,
     password: string,
     userName: string,
-    birthate: Date,
+    birthDate: Date,
     gender: string,
     showMe: string,
     bio: string,

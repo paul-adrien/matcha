@@ -132,7 +132,7 @@ exports.whoLikeMe = (req,res) => {
 
     async function takeAllUsers(resultat) {
         users = await getUsersId();
-        if (users !== undefined)
+        if (users !== null)
         {
             resultat = await funForEach(users)
             

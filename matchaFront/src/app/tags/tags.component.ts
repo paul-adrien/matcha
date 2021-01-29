@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentChecked, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
 import { userService } from '../_service/user_service';
 import { Tags } from '../../../libs/user';
 
@@ -13,7 +13,7 @@ import { Tags } from '../../../libs/user';
           [(ngModel)]="form.id"
           required
           #id="ngModel">
-        <option *ngFor="let tag of tags" value="{{tag.id}}">{{tag.name}}</option>
+        <option *ngFor="let tag of tags | async" value="{{tag.id}}">{{tag.name}}</option>
       </select>
       <button type="submit">Ajouté</button>
     </form>
@@ -27,47 +27,30 @@ import { Tags } from '../../../libs/user';
   </div>
   <div>
     <strong>Vos tags</strong>
-    <p><span *ngFor="let yTag of YourTags">{{yTag.name}} </span></p>
+    <p><span *ngFor="let yTag of YourTags | async">{{yTag.name}} </span></p>
   </div>
   `,
-  styleUrls: ['./tags.component.scss']
+  styleUrls: ['./tags.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TagsComponent implements OnInit {
+export class TagsComponent implements AfterContentInit {
 
-  tags = [];
-  YourTags = [];
+  tags = this.userService.getAllTags();
+  YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
 
   public form: Partial<Tags> = {};
 
-  constructor(private userService: userService) { }
+  constructor(private userService: userService, private cd: ChangeDetectorRef) { }
 
-  ngOnInit(): void {
-    this.userService.getAllTags().subscribe(
-      data => {
-        console.log(data);
-        if (data.status === true) {
-          this.tags = data.tags;
-        }
-      },
-      err => {
-      }
-    );
+  ngAfterContentInit(){
 
-    this.userService.getYourTags(JSON.parse(localStorage.getItem('id'))).subscribe(
-      data => {
-        console.log(data);
-        if (data.status === true) {
-          this.YourTags = data.tags;
-        }
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.tags = this.userService.getAllTags();
+    this.YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
+
   }
 
-  addExistTag() {
-    this.userService.addExistTag(JSON.parse(localStorage.getItem('id')), this.form.id).subscribe(
+    addExistTag() {
+      this.userService.addExistTag(JSON.parse(localStorage.getItem('id')), this.form.id).subscribe(
       data => {
         console.log(data);
       },
@@ -75,39 +58,20 @@ export class TagsComponent implements OnInit {
         console.log(err);
       }
     );
-    this.userService.getYourTags(JSON.parse(localStorage.getItem('id'))).subscribe(
-      data => {
-        console.log(data);
-        if (data.status === true) {
-          this.YourTags = data.tags;
-        }
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.cd.detectChanges();
   }
 
   addNewTag() {
     this.userService.addNonExistTag(this.form.name, JSON.parse(localStorage.getItem('id'))).subscribe(
       data => {
         console.log(data);
-        this.userService.getYourTags(JSON.parse(localStorage.getItem('id'))).subscribe(
-          data => {
-            console.log(data);
-            if (data.status === true) {
-              this.YourTags = data.tags;
-            }
-          },
-          err => {
-            console.log(err);
-          }
-        );
+        this.YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
       },
       err => {
         console.log(err);
       }
     );
+    this.cd.detectChanges();
   }
 
 }

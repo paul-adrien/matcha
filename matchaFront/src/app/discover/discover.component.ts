@@ -24,7 +24,7 @@ export class DiscoverComponent implements OnInit {
         userName: res["userName"],
         firstName: res["firstName"],
         lastName: res["lastName"],
-        birthate: res["birthDate"],
+        birthDate: res["birthDate"],
         password: res["password"],
         email: res["email"],
         id: res["id"],

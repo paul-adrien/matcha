@@ -7,7 +7,50 @@ import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
 import { forkJoin } from "rxjs";
 import { userService } from '../_service/user_service';
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import {differenceInCalendarYears, differenceInYears, isAfter, isBefore} from 'date-fns'
 
+
+
+function ValidatorLength(control: FormControl) {
+ if (control.value.length < 3) {
+   return {error: "3 caractères minimum"}
+ } else if (control.value.length > 20) {
+   return {error: "20 caractères maximum"}
+ }
+}
+
+function ValidatorBio(control: FormControl) {
+  if (control.value.length === 0) {
+    return {error: "Champs obligatoire"}
+  } else if (control.value.length > 300) {
+    return {error: "300 caractères maximun"}
+  }
+}
+
+function ValidatorEmail(control: FormControl) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (!re.test(String(control.value).toLowerCase())) {
+    return {error: "Mauvais format"}
+  }
+}
+
+function ValidatorBirthDate(control: FormControl) {
+  if (isBefore(new Date(control.value), new Date("1900-01-01"))) {
+    return {error: "Vous êtes mort"}
+  } else if (isAfter(new Date(control.value), new Date())) {
+    return {error: "Vous venez du futur"}
+  } else if (differenceInYears(new Date(), new Date(control.value)) < 18) {
+    return {error: "Avez-vous 18 ans ?"}
+  }
+}
+
+
+function ValidatorSelect(control: FormControl) {
+  if (control.value === "") {
+    return {error: "Veuillez sélectionner une option"}
+  }
+}
 @Component({
   selector: "profile",
   template: `
@@ -29,11 +72,15 @@ import { userService } from '../_service/user_service';
       <div *ngIf="!this.updateMode" class="big-profile-picture">
         <img [src]="this.user.pictures[0].url ? this.user.pictures[0].url : './assets/user.svg'" />
       </div>
+      <div>
+      <span>{{this.form.userName}}</span>
+      <span>{{this.form.firstName}} {{this.form.lastName}}</span>
+      </div>
       <div class="profile-pictures" *ngIf="this.updateMode">
         <form class="grid">
           <label class="profile-picture" for="fileInput1">
             <input
-              [disabled]="this.form.pictures[0].url"
+              [disabled]="this.form.pictures[0]?.url"
               id="fileInput1"
               class="input-file"
               accept="image/*"
@@ -51,7 +98,7 @@ import { userService } from '../_service/user_service';
           </label>
           <label class="profile-picture" for="fileInput2">
             <input
-              [disabled]="this.form.pictures[1].url"
+              [disabled]="this.form.pictures[1]?.url"
               id="fileInput2"
               class="input-file"
               accept="image/*"
@@ -68,7 +115,7 @@ import { userService } from '../_service/user_service';
           </label>
           <label class="profile-picture" for="fileInput3">
             <input
-              [disabled]="this.form.pictures[2].url"
+              [disabled]="this.form.pictures[2]?.url"
               id="fileInput3"
               class="input-file"
               accept="image/*"
@@ -85,7 +132,7 @@ import { userService } from '../_service/user_service';
           </label>
           <label class="profile-picture" for="fileInput4">
             <input
-              [disabled]="this.form.pictures[3].url"
+              [disabled]="this.form.pictures[3]?.url"
               id="fileInput4"
               class="input-file"
               accept="image/*"
@@ -102,7 +149,7 @@ import { userService } from '../_service/user_service';
           </label>
           <label class="profile-picture" for="fileInput5">
             <input
-              [disabled]="this.form.pictures[4].url"
+              [disabled]="this.form.pictures[4]?.url"
               id="fileInput5"
               class="input-file"
               accept="image/*"
@@ -119,7 +166,7 @@ import { userService } from '../_service/user_service';
           </label>
           <label class="profile-picture" for="fileInput6">
             <input
-              [disabled]="this.form.pictures[5].url"
+              [disabled]="this.form.pictures[5]?.url"
               id="fileInput6"
               class="input-file"
               accept="image/*"
@@ -136,87 +183,99 @@ import { userService } from '../_service/user_service';
           </label>
         </form>
       </div>
-      <form class="form-container" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+      <form [formGroup]="this.userForm" *ngIf="this.updateMode" class="form-container" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
         <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Nom d'utilisateur</span>
           <input
             type="text"
-            name="userName"
-            [(ngModel)]="form.userName"
+            formControlName="userName"
+            id="userName"
             required
-            minlength="3"
-            maxlength="20"
-            #userName="ngModel"
             placeholder="Nom d'utilisateur"
           />
+          <div class="error" *ngIf="this.userForm.get('userName').errors?.error">{{this.userForm.get('userName').errors.error}}</div>
         </div>
         <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Nom</span>
           <input
             type="text"
-            name="lastName"
-            [(ngModel)]="form.lastName"
+            formControlName="lastName"
             required
-            minlength="3"
-            maxlength="20"
-            #lastName="ngModel"
             placeholder="Nom"
           />
+          <div class="error" *ngIf="this.userForm.get('lastName').errors?.error">{{this.userForm.get('lastName').errors.error}}</div>
+
         </div>
         <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Prénom</span>
           <input
             *ngIf="this.updateMode"
             type="text"
-            name="FirstName"
-            [(ngModel)]="form.firstName"
+            formControlName="firstName"
             required
-            minlength="3"
-            maxlength="20"
-            #firstName="ngModel"
             placeholder="Prénom"
           />
+          <div class="error" *ngIf="this.userForm.get('firstName').errors?.error">{{this.userForm.get('firstName').errors.error}}</div>
         </div>
         <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Email</span>
           <input
-            *ngIf="this.updateMode"
-            type="text"
-            name="email"
-            [(ngModel)]="form.email"
+            formControlName="email"
             required
-            email
-            #email="ngModel"
             placeholder="Email"
           />
+          <div class="error" *ngIf="this.userForm.get('email').errors?.error">{{this.userForm.get('email').errors.error}}</div>
+
+        </div>
+        <div *ngIf="this.updateMode" class="info-container">
+          <span class="info-top">Date de naissance</span>
+          <input
+            type="date"
+            formControlName="birthDate"
+            min="1900-01-01"
+            max="{{this.date | date:'yyyy-MM-dd'}}"
+            required
+            placeholder="Date de naissance"
+          />
+          <div class="error" *ngIf="this.userForm.get('birthDate').errors?.error">{{this.userForm.get('birthDate').errors.error}}</div>
+
         </div>
         <div *ngIf="this.updateMode || form.bio" class="info-container">
           <span class="info-top">Bio</span>
           <textarea
-            *ngIf="this.updateMode"
             type="text"
             class="form-control"
-            name="bio"
-            [(ngModel)]="form.bio"
-            #bio="ngModel"
+            formControlName="bio"
             placeholder="bio"
           ></textarea>
-          <p *ngIf="!this.updateMode">{{ form.bio }}</p>
+          <div class="error" *ngIf="this.userForm.get('bio').errors?.error">{{this.userForm.get('bio').errors.error}}</div>
         </div>
         <div *ngIf="this.updateMode || form.gender" class="info-container">
-          <span class="info-top">Genre</span>
+          <span class="info-top">Je suis un(e)</span>
           <select
-            [(ngModel)]="form.gender"
             *ngIf="this.updateMode"
-            name="Genre"
+            formControlName="gender"
           >
-            <option id="Homme" name="Homme" value="0">Homme</option>
-            <option id="Femme" name="Femme" value="1">Femme</option>
-            <option id="Kamoulox" name="Kamoulox" value="2">Kamoulox</option>
+            <option id="Homme" name="Homme" value="1">Homme</option>
+            <option id="Femme" name="Femme" value="2">Femme</option>
+            <option id="Kamoulox" name="Kamoulox" value="3">Kamoulox</option>
           </select>
-          <p *ngIf="!this.updateMode">{{ form.gender }}</p>
+          <div class="error" *ngIf="this.userForm.get('gender').errors?.error">{{this.userForm.get('gender').errors.error}}</div>
         </div>
+        <div *ngIf="this.updateMode || form.gender" class="info-container">
+          <span class="info-top">Je veux rencontrer</span>
+          <select
+            formControlName="showMe"
+          >
+            <option id="Homme" name="Homme" value="1">des hommes</option>
+            <option id="Femme" name="Femme" value="2">des femmes</option>
+            <option id="Kamoulox" name="Kamoulox" value="3">les deux</option>
+          </select>
+          <div class="error" *ngIf="this.userForm.get('showMe').errors?.error">{{this.userForm.get('showMe').errors.error}}</div>
+        </div>
+        <app-tags></app-tags>
         <button
+          [disabled]="!this.userForm.valid"
           (ngSubmit)="onSubmit()"
           *ngIf="this.updateMode"
           class="primary-button"
@@ -224,14 +283,13 @@ import { userService } from '../_service/user_service';
           enregistrer
         </button>
       </form>
-      <app-tags *ngIf="!this.updateMode"></app-tags>
       <div class="cropper-container" [style.display]="this.showCropper ? null : 'none'">
         <image-cropper
               class="cropper"
               [imageChangedEvent]="imageChangedEvent"
               [maintainAspectRatio]="true"
               format="jpeg"
-              [imageQuality]="80"
+              [imageQuality]="90"
               [backgroundColor]="'transparent'"
               [style.display]="this.showCropper ? null : 'none'"
               (imageCropped)="imageCropped($event)"
@@ -249,7 +307,19 @@ import { userService } from '../_service/user_service';
 export class ProfileComponent implements OnInit {
   @Input() user: User;
 
+  public date = new Date()
+
   public form: Partial<User> = {};
+  public userForm = new FormGroup({
+    userName: new FormControl('', ValidatorLength),
+    firstName: new FormControl('', ValidatorLength),
+    lastName: new FormControl('', ValidatorLength),
+    birthDate: new FormControl('', ValidatorBirthDate),
+    gender: new FormControl('', ValidatorSelect),
+    showMe: new FormControl('', ValidatorSelect),
+    bio: new FormControl('', ValidatorBio),
+    email: new FormControl('', ValidatorEmail)
+  })
   public url = "";
   public updateMode = false;
   public saveEmail = "";
@@ -269,12 +339,12 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.userService.setUserNull();
-    this.userService.getUser(JSON.parse(localStorage.getItem('id'))).then(res => {
+    this.userService.getUser(JSON.parse(localStorage.getItem('id'))).then((res: User) => {
       this.user = {
         userName: res["userName"],
         firstName: res["firstName"],
         lastName: res["lastName"],
-        birthate: res["birthDate"],
+        birthDate: res["birthDate"],
         password: res["password"],
         email: res["email"],
         id: res["id"],
@@ -297,6 +367,16 @@ export class ProfileComponent implements OnInit {
           {id: "picture6", url: res["picture6"] as string},
         ]
       };
+      this.userForm.patchValue({
+        userName: res.userName,
+        firstName: res.firstName,
+        lastName: res.lastName,
+        birthDate: res.birthDate,
+        gender: res.gender,
+        showMe: res.showMe,
+        bio: res.bio,
+        email: res.email
+      })
       this.form = this.user;
       this.saveEmail = this.user.email;
     });
@@ -325,12 +405,10 @@ export class ProfileComponent implements OnInit {
 
   public onSubmit() {
     forkJoin(this.form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))).subscribe(el => console.log(el))
-    this.profilService.update(this.form, this.saveEmail).subscribe(
+    this.profilService.update(this.userForm.getRawValue(), this.saveEmail).subscribe(
       (data) => {
         console.log(data);
         if (data.status == true) {
-          localStorage.removeItem("user");
-          localStorage.setItem("user", JSON.stringify(data.user));
           this.route.navigate(["home"]);
           window.location.reload();
         }

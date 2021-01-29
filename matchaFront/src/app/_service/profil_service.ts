@@ -23,7 +23,9 @@ export class profilService {
       lastName: user.lastName,
       firstName: user.firstName,
       bio: user.bio,
+      birthDate: user.birthDate,
       gender: user.gender,
+      showMe: user.showMe,
       saveEmail: saveEmail
     }, httpOptions);
   }

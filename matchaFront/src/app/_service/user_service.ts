@@ -23,7 +23,7 @@ export class userService {
       userName: '',
       firstName: '',
       lastName: '',
-      birthate: null,
+      birthDate: null,
       password: '',
       email: '',
       id: '',
@@ -103,14 +103,11 @@ export class userService {
   }
 
   getAllTags(): Observable<any> {
-    return this.http.post(AUTH_API + 'getAllTags', {
-    }, httpOptions);
+    return this.http.get(AUTH_API + 'getAllTags', httpOptions);
   }
 
   getYourTags(id): Observable<any> {
-    return this.http.post(AUTH_API + 'getYourTags', {
-      id: id
-    }, httpOptions);
+    return this.http.get(AUTH_API + `getYourTags/${id}`, httpOptions);
   }
 
   addNonExistTag(name, id): Observable<any> {

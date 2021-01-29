@@ -9,7 +9,7 @@ import { userService } from '../_service/user_service';
   <p>email: {{user.email}}</p>
   <p>firstname: {{user.firstName}}</p>
   <p>lastName: {{user.lastName}}</p>
-  <p>birthday: {{user.birthate}}</p>
+  <p>birthday: {{user.birthDate}}</p>
   <button (click)="like()">{{isLike}} like</button>
   `,
   styleUrls: ['./profil-match.component.scss']
@@ -37,7 +37,7 @@ export class ProfilMatchComponent implements OnInit {
         userName: res["userName"],
         firstName: res["firstName"],
         lastName: res["lastName"],
-        birthate: res["birthDate"],
+        birthDate: res["birthDate"],
         password: res["password"],
         email: res["email"],
         id: res["id"],

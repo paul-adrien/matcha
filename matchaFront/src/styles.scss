@@ -17,6 +17,13 @@
   src: url("./fonts/Montserrat/Montserrat-Regular.ttf")
 }
 
+@font-face {
+  font-family: Montserrat-light;
+  src: url("./fonts/Montserrat/Montserrat-Light.ttf");
+  font-weight: 300;
+
+}
+
 body, html {
   font-family: Montserrat !important;
   width: 100vw;
