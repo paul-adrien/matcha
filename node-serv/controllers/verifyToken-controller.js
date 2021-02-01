@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 exports.verifyToken = (req,res) => {
     var token = req.body.token;
     var id = req.body.id;
-    var vId = { id: id};
 
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
