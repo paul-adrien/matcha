@@ -35,6 +35,7 @@ var updateProfilController = require('./controllers/updateProfil-controller');
 var tagsController = require('./controllers/tags-controller');
 var userController = require('./controllers/user-controller');
 var likeController = require('./controllers/like-controller');
+var matchController = require('./controllers/match-controller');
 
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to plaurent NodeJS Mysql server." });
@@ -60,7 +61,7 @@ app.get('/api/getYourTags/:id', tagsController.getYourTags);
 app.post('/api/addExistTag', tagsController.addExistTag);
 app.post('/api/addNonExistTag', tagsController.addNonExistTag);
 app.post('/api/deleteTag', tagsController.deleteTag);
-
+app.post('/api/getSuggestion', matchController.getSuggestion);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
