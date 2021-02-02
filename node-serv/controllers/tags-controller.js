@@ -27,6 +27,7 @@ exports.getAllTags = (req,res) => {
 exports.getYourTags = (req,res) => {
     resultat = [];
 
+
     getAllTags();
 
     async function getTagsId(id) {
@@ -67,12 +68,12 @@ exports.getYourTags = (req,res) => {
         var i = 0;
         return new Promise(resolve => {
             forEach(tags_id, async function(tag) {
-                result = await getTagName(tag['tag_id'])
+                result = await getTagName(tag['tag_id']);
                 if(result && result.length > 0){
                     if (!resultat || resultat.length === 0)
-                    resultat = [result[0]];
+                    resultat = [{id: tag.tag_id, name: result[0].name}];
                     else
-                    resultat.push(result[0]);
+                    resultat.push({id: tag.tag_id, name: result[0].name});
                 }
                 i++;
                 if (i === tags_id.length) {
@@ -83,7 +84,7 @@ exports.getYourTags = (req,res) => {
     }
 
     async function getAllTags() {
-        tags_id = await getTagsId(req.body.id);
+        tags_id = await getTagsId(req.params.id);
         if (tags_id !== null)
         {
             resultat = await getAllName(tags_id)
@@ -271,4 +272,20 @@ exports.addNonExistTag = (req,res) => {
             });
         }
     };
+}
+
+exports.deleteTag = (req,res) => {
+    connection.query('DELETE FROM user_tag WHERE tag_id = ? AND user_id = ?',[req.body.tag_id, req.body.user_id], function (error, results, fields) {
+        if (error) {
+            res.json({
+                status:false,
+                message:'tag not deleted'
+            });
+        } else {
+            res.json({
+                status:true,
+                message:'tag deleted'
+            });
+        }
+    })
 }

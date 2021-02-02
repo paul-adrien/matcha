@@ -1,3 +1,4 @@
+import { Tags } from './../../../libs/user';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -102,12 +103,12 @@ export class userService {
     }, httpOptions);
   }
 
-  getAllTags(): Observable<any> {
-    return this.http.get(AUTH_API + 'getAllTags', httpOptions);
+  getAllTags(): Observable<Tags[]> {
+    return this.http.get<Tags[]>(AUTH_API + 'getAllTags', httpOptions);
   }
 
-  getYourTags(id): Observable<any> {
-    return this.http.get(AUTH_API + `getYourTags/${id}`, httpOptions);
+  getYourTags(id: string): Observable<Tags[]> {
+    return this.http.get<Tags[]>(AUTH_API + `getYourTags/${id}`, httpOptions);
   }
 
   addNonExistTag(name, id): Observable<any> {
@@ -119,6 +120,13 @@ export class userService {
 
   addExistTag(user_id, tag_id): Observable<any> {
     return this.http.post(AUTH_API + 'addExistTag', {
+      user_id: user_id,
+      tag_id: tag_id
+    }, httpOptions);
+  }
+
+  deleteTag(user_id, tag_id): Observable<any> {
+    return this.http.post(AUTH_API + 'deleteTag', {
       user_id: user_id,
       tag_id: tag_id
     }, httpOptions);

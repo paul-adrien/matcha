@@ -1,77 +1,102 @@
-import { AfterContentChecked, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
+import { Tags } from './../../../libs/user';
+import { AfterContentChecked, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { userService } from '../_service/user_service';
-import { Tags } from '../../../libs/user';
+import { Subject, Observable } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-tags',
   template: `
-  <div>
-    <label for="repeatSelect1">Ajouter un tag parmis ceux existant:</label>
-    <form class="form-container" name="form" (ngSubmit)="f.form.valid && addExistTag()" #f="ngForm" novalidate >
-      <select class="form-control"
+  <span class="info-top">Vos interêts</span>
+  <form *ngIf="(this.tags$ | async) && (this.yourTags$ | async)" class="form-container" name="form" #f="ngForm" novalidate >
+      <select
           name="id"
           [(ngModel)]="form.id"
           required
-          #id="ngModel">
-        <option *ngFor="let tag of tags | async" value="{{tag.id}}">{{tag.name}}</option>
+          #id="ngModel" [value]="'default'"
+          (change)="this.addExistTag()">
+        <option value="default">Choisir un tag</option>
+        <option *ngFor="let tag of this.tags$ | async" [value]="tag.id" [disabled]="this.disabledTags(tag, this.yourTags$ | async)" >{{tag.name}}</option>
       </select>
-      <button type="submit">Ajouté</button>
+      <span class="or">OU</span>
+      <input name="tag" [(ngModel)]="form.name" type='text' pattern='#[a-zA-ZÀ-ÿ0-9]' placeholder="#..." (keyup.enter)="this.addNewTag()"/>
     </form>
-  </div>
-  <div>
-    <form class="form-container" name="form" (ngSubmit)="addNewTag()" #f="ngForm" novalidate>
-      <label for="ajout">Ajouter un nouveau tag</label>
-      <input name="tag" [(ngModel)]="form.name" type='text' pattern='#[a-zA-ZÀ-ÿ0-9]' placeholder="#..." required/>
-      <button type="submit">Ajouté</button>
-    </form>
-  </div>
-  <div>
-    <strong>Vos tags</strong>
-    <p><span *ngFor="let yTag of YourTags | async">{{yTag.name}} </span></p>
+  <div class="tag-container">
+    <div class="tag" *ngFor="let yTag of this.yourTags$ | async">
+    <span>{{yTag.name}}</span>
+    <img src="./assets/x.svg" (click)="this.deleteTag(yTag)"></div>
   </div>
   `,
   styleUrls: ['./tags.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TagsComponent implements AfterContentInit {
+export class TagsComponent implements  OnDestroy {
 
-  tags = this.userService.getAllTags();
-  YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
+  private unsubscribe = new Subject<void>();
 
-  public form: Partial<Tags> = {};
+  public yourTags$: Observable<Tags[]>;
+  public tags$: Observable<Tags[]>;
+  public form: Partial<Tags> = {id: 'default'};
 
-  constructor(private userService: userService, private cd: ChangeDetectorRef) { }
 
-  ngAfterContentInit(){
-
-    this.tags = this.userService.getAllTags();
-    this.YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
-
+  constructor(private userService: userService, private cd: ChangeDetectorRef) {
   }
 
-    addExistTag() {
-      this.userService.addExistTag(JSON.parse(localStorage.getItem('id')), this.form.id).subscribe(
+
+  ngOnInit() {
+    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
+    this.tags$ = this.userService.getAllTags();
+  }
+
+  addExistTag() {
+    this.userService.addExistTag(JSON.parse(localStorage.getItem('id')), this.form.id).subscribe(
       data => {
         console.log(data);
+        this.ngOnInit()
+        this.cd.detectChanges();
       },
       err => {
         console.log(err);
       }
     );
-    this.cd.detectChanges();
   }
 
   addNewTag() {
     this.userService.addNonExistTag(this.form.name, JSON.parse(localStorage.getItem('id'))).subscribe(
       data => {
         console.log(data);
-        this.YourTags = this.userService.getYourTags(JSON.parse(localStorage.getItem('id')));
+        this.ngOnInit()
+        this.cd.detectChanges();
       },
       err => {
         console.log(err);
       }
     );
-    this.cd.detectChanges();
   }
 
+  deleteTag(tag: Tags) {
+    this.userService.deleteTag(JSON.parse(localStorage.getItem('id')), tag.id).subscribe(
+      data => {
+        console.log(data);
+        this.ngOnInit()
+        this.cd.detectChanges();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  disabledTags(tag: Tags, yourTags: Tags[]) {
+    let res = false;
+    res = yourTags && !!yourTags.find(el => el.id.toString() === tag.id.toString())
+    return res;
+  }
+
+
+  ngOnDestroy() {
+   this.unsubscribe.next();
+   this.unsubscribe.complete();
+  }
 }

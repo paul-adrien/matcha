@@ -1,5 +1,5 @@
 import { Router } from "@angular/router";
-import { Component, Input, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core";
 import { User } from "@matcha/shared";
 import { profilService } from "../_service/profil_service";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -303,6 +303,7 @@ function ValidatorSelect(control: FormControl) {
     </div>
   `,
   styleUrls: ["./profile.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ProfileComponent implements OnInit {
   @Input() user: User;
@@ -409,8 +410,7 @@ export class ProfileComponent implements OnInit {
       (data) => {
         console.log(data);
         if (data.status == true) {
-          this.route.navigate(["home"]);
-          window.location.reload();
+          this.route.navigate(["home/profile"]);
         }
       },
       (err) => { }
