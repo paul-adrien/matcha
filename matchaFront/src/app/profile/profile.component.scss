@@ -15,6 +15,14 @@
     }
   }
 
+  .content-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-family: Montserrat-semi-bold;
+  }
+
   .header-bar {
     width: 100%;
     height: 3rem;
@@ -50,6 +58,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 
     .grid {
       max-width: 40rem;
@@ -60,7 +69,6 @@
       grid-gap: 1rem;
       grid-auto-rows: minmax(10px, auto);
     }
-
 
     .profile-picture {
       width: 100%;
@@ -78,7 +86,6 @@
         border-radius: 1rem;
         width: 100%;
       }
-
 
       .delete {
         position: absolute;
@@ -98,11 +105,19 @@
   .big-profile-picture {
     display: flex;
     align-items: center;
-    flex-direction: column;
+    justify-content: center;
     width: 100%;
     margin: 1rem 0.5rem;
 
-    img {
+    .chevron {
+      margin: 0 1rem;
+      cursor: pointer;
+      &.hidden {
+        visibility: hidden;
+      }
+    }
+
+    .picture {
       background: white;
       box-shadow: 0px 0px 11px 0px lightgrey;
       max-height: 13rem;
@@ -113,7 +128,6 @@
       object-fit: contain;
       border-radius: 1rem;
     }
-
   }
   .input-file {
     display: none;
@@ -127,43 +141,53 @@
     margin: 1rem 0;
     align-items: center;
 
-    .info-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
+    input,
+    select {
+      height: 1.5rem;
+      transition: all 0.1s linear;
+      padding: 6px 12px;
+      border: none;
+      font-family: Montserrat;
+    }
 
-      .info-top {
-        margin: 6px 12px;
-        font-family: Montserrat-semi-bold;
-      }
+    select {
+      height: 2rem;
+      background-color: white;
+    }
 
-
-      input,select {
-        height: 1.5rem;
-        transition: all 0.1s linear;
-        padding: 6px 12px;
-        border: none;
-        font-family: Montserrat;
-      }
-
-      select {
-        height: 2rem;
-        background-color: white;
-      }
-
-      textarea {
-        min-height: 6rem;
-        transition: all 0.1s linear;
-        padding: 6px 12px;
-        border: none;
-        resize: none;
-        font-family: Montserrat;
-      }
+    textarea {
+      min-height: 6rem;
+      transition: all 0.1s linear;
+      padding: 6px 12px;
+      border: none;
+      resize: none;
+      font-family: Montserrat;
     }
 
     .primary-button {
       margin-top: 1.5rem;
     }
+  }
+
+  .info-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-top {
+    margin: 6px 12px;
+    font-family: Montserrat-semi-bold;
+  }
+
+  .info-bottom {
+    //height: 1.5rem;
+    transition: all 0.1s linear;
+    padding: 9px 12px;
+    border: none;
+    font-family: Montserrat;
+    overflow-wrap: break-word;
+    background-color: #eaeaea;
   }
 
   .cropper-container {
@@ -174,7 +198,7 @@
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: center;
-    background-color:rgba(0,0,0,.3);
+    background-color: rgba(0, 0, 0, 0.3);
     top: 0;
     z-index: 11;
 
@@ -200,6 +224,10 @@
     margin: 6px 12px;
     color: red;
     font-family: Montserrat-light;
-  }
+    width: 100%;
 
+    &.picture {
+      text-align: center;
+    }
+  }
 }

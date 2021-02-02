@@ -1,26 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '@matcha/shared';
+import { Component, OnInit } from "@angular/core";
+import { User } from "@matcha/shared";
 
 @Component({
-  selector: 'home',
+  selector: "home",
   template: `
     <nav-bar></nav-bar>
     <div class="page">
       <router-outlet [routerLink]="this.user"></router-outlet>
     </div>
   `,
-  styleUrls: ['./home.component.scss']
+  styleUrls: ["./home.component.scss"],
 })
 export class HomeComponent implements OnInit {
-
-  constructor() { }
+  constructor() {}
 
   public user: User;
   public token: string;
 
   ngOnInit(): void {
-    const tmp = JSON.parse(localStorage.getItem('user'));
-    const token = JSON.parse(localStorage.getItem('token'));
+    const tmp = JSON.parse(localStorage.getItem("user"));
+    const token = JSON.parse(localStorage.getItem("token"));
     this.token = token;
     this.user = {
       userName: tmp.userName,
@@ -41,15 +40,14 @@ export class HomeComponent implements OnInit {
       profileComplete: tmp.profileComplete,
       link: tmp.link,
       pictures: [
-        {id: "picture1", url: tmp.picture1 as string},
-        {id: "picture2", url: tmp.picture2 as string},
-        {id: "picture3", url: tmp.picture3 as string},
-        {id: "picture4", url: tmp.picture4 as string},
-        {id: "picture5", url: tmp.picture5 as string},
-        {id: "picture6", url: tmp.picture6 as string},
-      ]
+        { id: "picture1", url: tmp.picture1 as string },
+        { id: "picture2", url: tmp.picture2 as string },
+        { id: "picture3", url: tmp.picture3 as string },
+        { id: "picture4", url: tmp.picture4 as string },
+        { id: "picture5", url: tmp.picture5 as string },
+        { id: "picture6", url: tmp.picture6 as string },
+      ],
     };
     console.log(this.user, this.token);
   }
-
 }
