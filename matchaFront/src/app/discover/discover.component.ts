@@ -6,7 +6,42 @@ import { userService } from '../_service/user_service';
 
 @Component({
   selector: 'discover',
-  templateUrl: './discover.component.html',
+  template: `
+  <div *ngIf="this.user.profileComplete, else error">
+    <div class="row">
+      <div class="col-md-6 col-sm-6">
+        <h2>Bienvenue {{user.firstName}} {{user.lastName}} </h2>
+        <div style="width: 200px; height: 200px; background-color: grey;">PHOTO</div>
+      </div>
+      <div class="col-md-6 col-sm-6">
+        <button type="button" class="btn btn-lg btn-primary" disabled>0 Like</button>
+        <button type="button" class="btn btn-lg btn-primary" disabled>Score de popularité: 0</button>
+      </div>
+    </div>
+    <div>
+      <h3>Personnes ayant consulter votre profil</h3>
+      <app-profil-card *ngFor="let User of usersViews; let i = index"
+      [email]="User.email"
+      [firstName]="User.firstName"
+      [lastName]="User.lastName"
+      [birthday]="User.birthday"
+      [index]="i"
+      [id]="User.id"></app-profil-card>
+    </div>
+    <div>
+      <h3>Personnes qui vous ont likez</h3>
+      <app-profil-card *ngFor="let User of userslike; let i = index"
+      [email]="User.email"
+      [firstName]="User.firstName"
+      [lastName]="User.lastName"
+      [birthday]="User.birthday"
+      [index]="i"
+      [id]="User.id"></app-profil-card>
+    </div>
+    <a (click)="viewProfils()"><button>Voir les profil qui match</button></a>
+  </div>
+  <ng-template #error>Complètes ton profil bg</ng-template>
+  `,
   styleUrls: ['./discover.component.scss']
 })
 export class DiscoverComponent implements OnInit {
