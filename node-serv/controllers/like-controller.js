@@ -161,7 +161,7 @@ exports.likeOrNot = (req,res) => {
 
     async function getIfLike() {
         return new Promise( resultat => 
-            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
                     resultat(null);
                 } else {

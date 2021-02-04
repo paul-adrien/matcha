@@ -60,7 +60,7 @@ export class ProfilMatchComponent implements OnInit {
           {id: "picture6", url: res["picture6"] as string},
         ]
       };
-      this.userService.likeOrNot(this.user.id, JSON.parse(localStorage.getItem('id'))).subscribe(
+      this.userService.likeOrNot(JSON.parse(localStorage.getItem('id')), this.user.id).subscribe(
         data => {
           console.log(data);
           this.isLike = data.like;
@@ -72,7 +72,7 @@ export class ProfilMatchComponent implements OnInit {
   }
 
   like() {
-    this.userService.like(this.user.id, JSON.parse(localStorage.getItem('id'))).then(res => {
+    this.userService.like(JSON.parse(localStorage.getItem('id')), this.user.id).then(res => {
       if (res === null)
         this.isLike = -1;
       else if (this.isLike == 0)

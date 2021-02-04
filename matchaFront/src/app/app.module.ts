@@ -18,6 +18,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ProfilMatchComponent } from './profil-match/profil-match.component';
 import { TagsComponent } from './tags/tags.component';
+import { SuggestionComponent } from './suggestion/suggestion.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { TagsComponent } from './tags/tags.component';
     DiscoverComponent,
     ProfilCardComponent,
     ProfilMatchComponent,
-    TagsComponent
+    TagsComponent,
+    SuggestionComponent
    ],
   imports: [
     BrowserModule,

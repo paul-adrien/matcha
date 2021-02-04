@@ -11,6 +11,7 @@ import { DiscoverComponent } from './discover/discover.component';
 import { ProfilCardComponent } from './profil-card/profil-card.component';
 import { ProfilMatchComponent } from './profil-match/profil-match.component';
 import { TagsComponent } from './tags/tags.component';
+import { SuggestionComponent } from './suggestion/suggestion.component';
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
      { path: 'discover', component: DiscoverComponent },
      { path: 'profil-card', component: ProfilCardComponent },
      { path: 'tags', component: TagsComponent },
+     { path: 'suggestion', component: SuggestionComponent },
      { path: 'profil-match/:id', component: ProfilMatchComponent }
 ] },
   { path: '**', component: LoginPageComponent },

@@ -15,7 +15,7 @@ export class DiscoverComponent implements OnInit {
   public usersViews = [];
   public userslike = [];
 
-  constructor(private profilService: profilService, private userService: userService) {}
+  constructor(private profilService: profilService, private userService: userService, private router: Router) {}
 
   ngOnInit(): void {
     this.user = this.userService.setUserNull();
@@ -68,5 +68,9 @@ export class DiscoverComponent implements OnInit {
         }
       );
     })
+  }
+
+  viewProfils() {
+    this.router.navigate(["home/suggestion"]);
   }
 }

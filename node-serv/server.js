@@ -55,7 +55,6 @@ app.post('/api/whoLikeMe', likeController.whoLikeMe);
 app.post('/api/getUser', userController.getUser);
 app.post('/api/likeOrNot', likeController.likeOrNot);
 app.post('/api/like', likeController.likeOrDislike);
-app.post('/api/like', likeController.likeOrDislike);
 app.get('/api/getAllTags', tagsController.getAllTags);
 app.get('/api/getYourTags/:id', tagsController.getYourTags);
 app.post('/api/addExistTag', tagsController.addExistTag);
