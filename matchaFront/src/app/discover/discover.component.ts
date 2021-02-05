@@ -7,7 +7,7 @@ import { userService } from '../_service/user_service';
 @Component({
   selector: 'discover',
   template: `
-  <div *ngIf="this.user.profileComplete, else error">
+  <div class="content" *ngIf="this.user.profileComplete, else error">
     <div class="row">
       <div class="col-md-6 col-sm-6">
         <h2>Bienvenue {{user.firstName}} {{user.lastName}} </h2>

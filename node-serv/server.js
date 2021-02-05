@@ -61,6 +61,8 @@ app.post('/api/addExistTag', tagsController.addExistTag);
 app.post('/api/addNonExistTag', tagsController.addNonExistTag);
 app.post('/api/deleteTag', tagsController.deleteTag);
 app.post('/api/getSuggestion', matchController.getSuggestion);
+app.post('/api/sortUsersBy', matchController.sortUsersBy);
+app.post('/api/filtreUsersBy', matchController.filtreUsersBy);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

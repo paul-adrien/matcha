@@ -26,3 +26,11 @@ export interface Tags {
   id: string;
   name: string;
 }
+
+export interface Filtre{
+  maxAge: number;
+  minAge: number;
+  score: number;
+  local: number;
+  tags: number;
+}
