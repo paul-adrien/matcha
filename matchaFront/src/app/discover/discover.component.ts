@@ -20,6 +20,7 @@ import { userService } from "../_service/user_service";
     >
       <app-profil-card [user]="this.user$ | async"></app-profil-card>
       <app-profil-card
+        [user]="userSuggestion"
         *ngFor="let userSuggestion of this.usersSuggestion$ | async"
       ></app-profil-card>
       <!--
@@ -51,7 +52,7 @@ import { userService } from "../_service/user_service";
   `,
   styleUrls: ["./discover.component.scss"],
 })
-export class DiscoverComponent {
+export class DiscoverComponent implements OnInit {
   public user$: Observable<User>;
   public usersSuggestion$: Observable<User[]>;
   public usersViews = [];
@@ -67,7 +68,42 @@ export class DiscoverComponent {
     this.usersSuggestion$ = this.matchService.getSuggestion(localStorage.getItem("id"));
   }
 
+  ngOnInit() {
+    this.getCurrentLocation();
+    this.matchService.getSuggestion(localStorage.getItem("id")).subscribe(el => console.log(el));
+  }
+
   viewProfils() {
     this.router.navigate(["home/suggestion"]);
+  }
+
+  public getCurrentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(position => {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        this.userService
+          .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
+          .subscribe(
+            el => console.log(el),
+            error => {
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  console.log("User denied the request for Geolocation.");
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  console.log("Location information is unavailable.");
+                  break;
+                case error.TIMEOUT:
+                  console.log("The request to get user location timed out.");
+                  break;
+                case error.UNKNOWN_ERROR:
+                  console.log("An unknown error occurred.");
+                  break;
+              }
+            }
+          );
+      });
+    }
   }
 }

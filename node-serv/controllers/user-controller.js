@@ -105,3 +105,22 @@ exports.getUser = (req,res) => {
         }
     });
 }
+
+exports.updatePosition = (req,res) => {
+    var id = req.params.id;
+    var lat = req.body.latitude;
+    var long = req.body.longitude;
+    console.log(id)
+
+    connection.query('UPDATE users SET latitude = ?, longitude = ? WHERE id = ?',[lat, long, id], function (error, results, fields) {
+        if (error) {
+            res.json({
+                status:false,
+                message:'there are some error with query update user position',
+                user: null
+            })
+        } else {
+            res.json("Position update !")
+        }
+    });
+}

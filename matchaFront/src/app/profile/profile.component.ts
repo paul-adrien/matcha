@@ -12,17 +12,17 @@ import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from 
 import { tap } from "rxjs/operators";
 
 function ValidatorLength(control: FormControl) {
-  if (control.value.length < 3) {
+  if (control.value?.length < 3) {
     return { error: "3 caractères minimum" };
-  } else if (control.value.length > 20) {
+  } else if (control.value?.length > 20) {
     return { error: "20 caractères maximum" };
   }
 }
 
 function ValidatorBio(control: FormControl) {
-  if (control.value.length === 0) {
+  if (control.value?.length === 0) {
     return { error: "Champs obligatoire" };
-  } else if (control.value.length > 300) {
+  } else if (control.value?.length > 300) {
     return { error: "300 caractères maximun" };
   }
 }
@@ -311,7 +311,6 @@ export class ProfileComponent implements OnInit {
   constructor(
     private profilService: profilService,
     private route: Router,
-    private sanitizer: DomSanitizer,
     private imageCompress: NgxImageCompressService,
     private userService: userService
   ) {}

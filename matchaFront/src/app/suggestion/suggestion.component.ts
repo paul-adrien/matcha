@@ -99,7 +99,7 @@ export class SuggestionComponent implements OnInit {
     this.matchService.getSuggestion(JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);
-        this.usersMatch = data.userMatch;
+        this.usersMatch = data;
       },
       err => {
         console.log(err);
