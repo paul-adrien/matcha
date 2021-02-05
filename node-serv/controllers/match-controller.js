@@ -57,13 +57,13 @@ exports.getSuggestion = (req,res) => {
     };
 
     function oriSex(user, otherUser) {
-      if (user[0].gender == 1 && (user[0].showMe == 1 || user[0].showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 1 || otherUser.showMe == 3))
+      if (user.gender == 1 && (user.showMe == 1 || user.showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 1 || otherUser.showMe == 3))
         return 5;
-      else if (user[0].gender == 1 && (user[0].showMe == 2 || user[0].showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 1 || otherUser.showMe == 3))
+      else if (user.gender == 1 && (user.showMe == 2 || user.showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 1 || otherUser.showMe == 3))
         return 5;
-      else if (user[0].gender == 2 && (user[0].showMe == 1 || user[0].showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 2 || otherUser.showMe == 3))
+      else if (user.gender == 2 && (user.showMe == 1 || user.showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 2 || otherUser.showMe == 3))
         return 5;
-      else if (user[0].gender == 2 && (user[0].showMe == 2 || user[0].showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 2 || otherUser.showMe == 3))
+      else if (user.gender == 2 && (user.showMe == 2 || user.showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 2 || otherUser.showMe == 3))
         return 5;
       else
         return 0;
@@ -165,13 +165,8 @@ exports.getSuggestion = (req,res) => {
                       usersMatch.splice(indexOfSM, 1); // on supprime tous les sMatch == 0
                     }
 
-                    //console.log(usersMatch);
-
-                    res.json({
-                        status:true,
-                        message: 'get other user and sMatch',
-                        userMatch: usersMatch
-                   });
+                    res.json( usersMatch
+                   );
                 } else {
                     res.json({
                         status:false,

@@ -5,10 +5,10 @@
   background-color: white;
 
   .case {
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(100% / 3);
-
+    width: calc(100% / 4);
   }
 }

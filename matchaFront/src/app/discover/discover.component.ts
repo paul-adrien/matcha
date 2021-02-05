@@ -1,24 +1,29 @@
-import { Router } from '@angular/router';
-import { Component, Input, OnInit } from '@angular/core';
-import { User } from '@matcha/shared';
-import { profilService } from '../_service/profil_service';
-import { userService } from '../_service/user_service';
+import { matchService } from "./../_service/match_service";
+import { Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
+import { User } from "@matcha/shared";
+import { profilService } from "../_service/profil_service";
+import { userService } from "../_service/user_service";
 
 @Component({
-  selector: 'discover',
+  selector: "discover",
   template: `
-  <div class="content" *ngIf="this.user.profileComplete, else error">
-    <div class="row">
-      <div class="col-md-6 col-sm-6">
-        <h2>Bienvenue {{user.firstName}} {{user.lastName}} </h2>
-        <div style="width: 200px; height: 200px; background-color: grey;">PHOTO</div>
-      </div>
-      <div class="col-md-6 col-sm-6">
-        <button type="button" class="btn btn-lg btn-primary" disabled>0 Like</button>
-        <button type="button" class="btn btn-lg btn-primary" disabled>Score de popularité: 0</button>
-      </div>
-    </div>
-    <div>
+    <div
+      *ngIf="
+        (this.user$ | async)?.profileComplete !== undefined &&
+          (this.user$ | async)?.profileComplete &&
+          (this.usersSuggestion$ | async) !== undefined;
+        else error
+      "
+      class="content-suggestion"
+    >
+      <app-profil-card [user]="this.user$ | async"></app-profil-card>
+      <app-profil-card
+        *ngFor="let userSuggestion of this.usersSuggestion$ | async"
+      ></app-profil-card>
+      <!--
+      <div>
       <h3>Personnes ayant consulter votre profil</h3>
       <app-profil-card *ngFor="let User of usersViews; let i = index"
       [email]="User.email"
@@ -37,72 +42,29 @@ import { userService } from '../_service/user_service';
       [birthday]="User.birthday"
       [index]="i"
       [id]="User.id"></app-profil-card>
+    </div>-->
+      <app-profil-card (click)="viewProfils()"
+        ><button>Voir les profil qui match</button></app-profil-card
+      >
     </div>
-    <a (click)="viewProfils()"><button>Voir les profil qui match</button></a>
-  </div>
-  <ng-template #error>Complètes ton profil bg</ng-template>
+    <ng-template #error>Complètes ton profil bg</ng-template>
   `,
-  styleUrls: ['./discover.component.scss']
+  styleUrls: ["./discover.component.scss"],
 })
-export class DiscoverComponent implements OnInit {
-
-  public user: User;
+export class DiscoverComponent {
+  public user$: Observable<User>;
+  public usersSuggestion$: Observable<User[]>;
   public usersViews = [];
   public userslike = [];
 
-  constructor(private profilService: profilService, private userService: userService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.user = this.userService.setUserNull();
-    this.userService.getUser(JSON.parse(localStorage.getItem('id'))).then(res => {
-      this.user = {
-        userName: res["userName"],
-        firstName: res["firstName"],
-        lastName: res["lastName"],
-        birthDate: res["birthDate"],
-        password: res["password"],
-        email: res["email"],
-        id: res["id"],
-        gender: res["gender"],
-        showMe: res["showMe"],
-        bio: res["bio"],
-        score: res["score"],
-        city: res["city"],
-        latitude: res["latitude"],
-        longitude: res["longitude"],
-        emailVerify: res["emailVerify"],
-        profileComplete: res["profileComplete"],
-        link: res["link"],
-        pictures: [
-          {id: "picture1", url: res["picture1"] as string},
-          {id: "picture2", url: res["picture2"] as string},
-          {id: "picture3", url: res["picture3"] as string},
-          {id: "picture4", url: res["picture4"] as string},
-          {id: "picture5", url: res["picture5"] as string},
-          {id: "picture6", url: res["picture6"] as string},
-        ]
-      };
-      this.profilService.takeViewProfil(this.user.id).subscribe(
-        data => {
-          console.log(data);
-          if (data.status === true) {
-            this.usersViews = data.users;
-          }
-        },
-        err => {
-        }
-      );
-      this.profilService.whoLikeMe(this.user.id).subscribe(
-        data => {
-          console.log(data);
-          if (data.status === true) {
-            this.userslike = data.users;
-          }
-        },
-        err => {
-        }
-      );
-    })
+  constructor(
+    private profilService: profilService,
+    private matchService: matchService,
+    private userService: userService,
+    private router: Router
+  ) {
+    this.user$ = this.userService.getUser(JSON.parse(localStorage.getItem("id")));
+    this.usersSuggestion$ = this.matchService.getSuggestion(localStorage.getItem("id"));
   }
 
   viewProfils() {

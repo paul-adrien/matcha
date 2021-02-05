@@ -1,33 +1,41 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { User } from "@matcha/shared";
+import { Component, OnInit, Input } from "@angular/core";
+import { Router } from "@angular/router";
+import { differenceInYears } from "date-fns";
 
 @Component({
-  selector: 'app-profil-card',
+  selector: "app-profil-card",
   template: `
-    <p>email: {{email}}</p>
-    <p>firstname: {{firstName}}</p>
-    <p>lastName: {{lastName}}</p>
-    <p>birthday: {{birthday}}</p>
+    <div class="big-profile-picture">
+      <img
+        class="picture"
+        [src]="
+          this.user?.pictures[0]?.url && this.user?.pictures[0]?.url !== null
+            ? this.user?.pictures[0].url
+            : './assets/user.svg'
+        "
+      />
+    </div>
+    <div class="content-name">
+      <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
+      <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
+    </div>
     <a (click)="viewProfil()"><button>Voir le profil complet</button></a>
   `,
-  styleUrls: ['./profil-card.component.scss']
+  styleUrls: ["./profil-card.component.scss"],
 })
 export class ProfilCardComponent implements OnInit {
+  @Input() user: User;
 
-  @Input() firstName: string;
-  @Input() email: string;
-  @Input() lastName: string;
-  @Input() birthday: string;
-  @Input() index: number;
-  @Input() id: number;
+  constructor(private router: Router) {}
 
-  constructor(private router: Router, ) { }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   viewProfil() {
-    this.router.navigate(["home/profil-match/" + this.id]);
+    this.router.navigate(["home/profil-view/" + this.user.id]);
   }
 
+  public getAge(birthDate: Date) {
+    return differenceInYears(new Date(), new Date(birthDate));
+  }
 }

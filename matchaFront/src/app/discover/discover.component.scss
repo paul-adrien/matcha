@@ -1,4 +1,13 @@
-.content {
+:host {
+  display: flex;
+  width: 100%;
   height: 100%;
   overflow: scroll;
+  flex-direction: column;
+
+  .content-suggestion {
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+  }
 }

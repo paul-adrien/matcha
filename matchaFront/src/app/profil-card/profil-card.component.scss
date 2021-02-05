@@ -1,0 +1,43 @@
+:host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .content-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-family: Montserrat-semi-bold;
+  }
+
+  .big-profile-picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1rem 0.5rem;
+
+    .chevron {
+      margin: 0 1rem;
+      cursor: pointer;
+      &.hidden {
+        visibility: hidden;
+      }
+    }
+
+    .picture {
+      background: white;
+      box-shadow: 0px 0px 11px 0px lightgrey;
+      max-height: 13rem;
+      max-width: 13rem;
+      min-height: 8rem;
+      min-width: 8rem;
+      width: 40%;
+      object-fit: contain;
+      border-radius: 1rem;
+    }
+  }
+}

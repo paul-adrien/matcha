@@ -5,10 +5,11 @@ import { profilService } from "../_service/profil_service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
-import { forkJoin } from "rxjs";
+import { forkJoin, Observable } from "rxjs";
 import { userService } from "../_service/user_service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
+import { tap } from "rxjs/operators";
 
 function ValidatorLength(control: FormControl) {
   if (control.value.length < 3) {
@@ -66,55 +67,55 @@ function ValidatorSelect(control: FormControl) {
       <div *ngIf="!this.updateMode" class="big-profile-picture">
         <img
           class="chevron"
-          [class.hidden]="!this.user.pictures[0] || this.primaryPictureId === 0"
+          [class.hidden]="!this.user?.pictures[0] || this.primaryPictureId === 0"
           (click)="this.primaryPictureId = this.primaryPictureId - 1"
           src="./assets/chevron-left.svg"
         />
         <img
           class="picture"
           [src]="
-            this.user.pictures[this.primaryPictureId] &&
-            this.user.pictures[this.primaryPictureId].url
-              ? this.user.pictures[this.primaryPictureId].url
+            this.user?.pictures[this.primaryPictureId] &&
+            this.user?.pictures[this.primaryPictureId].url
+              ? this.user?.pictures[this.primaryPictureId].url
               : './assets/user.svg'
           "
         />
         <img
           class="chevron"
           [class.hidden]="
-            !this.user.pictures[0] || !this.user.pictures[this.primaryPictureId + 1].url
+            !this.user?.pictures[0] || !this.user?.pictures[this.primaryPictureId + 1].url
           "
           (click)="this.primaryPictureId = this.primaryPictureId + 1"
           src="./assets/chevron-right.svg"
         />
       </div>
       <div *ngIf="!this.updateMode" class="content-name">
-        <span>{{ this.form.userName }} {{ this.getAge(this.form.birthDate) }} ans</span>
-        <span>{{ this.form.firstName }} {{ this.form.lastName }}</span>
+        <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
+        <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
       </div>
       <div *ngIf="!this.updateMode" class="form-container">
         <div class="info-container">
           <span class="info-top">Je suis</span>
           <span class="info-bottom">{{
-            this.form.gender !== undefined && this.genderOptions[this.form.gender.toString()]
+            this.user?.gender !== undefined && this.genderOptions[this.user?.gender.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Je veux rencontrer</span>
           <span class="info-bottom">{{
-            this.form.showMe !== undefined && this.showOptions[this.form.showMe.toString()]
+            this.user?.showMe !== undefined && this.showOptions[this.user?.showMe.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Bio</span>
-          <span class="info-bottom">{{ this.form.bio }}</span>
+          <span class="info-bottom">{{ this.user?.bio }}</span>
         </div>
         <app-tags [showMode]="'true'"></app-tags>
       </div>
       <div class="profile-pictures" *ngIf="this.updateMode">
         <form class="grid">
           <label
-            *ngFor="let picture of this.form.pictures; let index = index"
+            *ngFor="let picture of this.user?.pictures; let index = index"
             class="profile-picture"
             [for]="'fileInput' + (index + 1)"
           >
@@ -205,7 +206,7 @@ function ValidatorSelect(control: FormControl) {
             {{ this.userForm.get("birthDate").errors.error }}
           </div>
         </div>
-        <div *ngIf="this.updateMode || form.bio" class="info-container">
+        <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Bio</span>
           <textarea
             type="text"
@@ -217,7 +218,7 @@ function ValidatorSelect(control: FormControl) {
             {{ this.userForm.get("bio").errors.error }}
           </div>
         </div>
-        <div *ngIf="this.updateMode || form.gender" class="info-container">
+        <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Je suis un(e)</span>
           <select *ngIf="this.updateMode" formControlName="gender">
             <option id="Homme" name="Homme" value="1">Homme</option>
@@ -228,7 +229,7 @@ function ValidatorSelect(control: FormControl) {
             {{ this.userForm.get("gender").errors.error }}
           </div>
         </div>
-        <div *ngIf="this.updateMode || form.gender" class="info-container">
+        <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Je veux rencontrer</span>
           <select formControlName="showMe">
             <option id="Homme" name="Homme" value="1">des hommes</option>
@@ -272,8 +273,6 @@ function ValidatorSelect(control: FormControl) {
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ProfileComponent implements OnInit {
-  @Input() user: User;
-
   public genderOptions: { [key_id: string]: string } = {
     "1": "un Homme",
     "2": "une Femme",
@@ -288,8 +287,8 @@ export class ProfileComponent implements OnInit {
 
   public primaryPictureId = 0;
   public date = new Date();
-  public form: Partial<User> = {};
 
+  public user: User;
   public userForm = new FormGroup({
     userName: new FormControl("", ValidatorLength),
     firstName: new FormControl("", ValidatorLength),
@@ -318,35 +317,7 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.user = this.userService.setUserNull();
-    this.userService.getUser(JSON.parse(localStorage.getItem("id"))).then((res: User) => {
-      this.user = {
-        userName: res["userName"],
-        firstName: res["firstName"],
-        lastName: res["lastName"],
-        birthDate: res["birthDate"],
-        password: res["password"],
-        email: res["email"],
-        id: res["id"],
-        gender: res["gender"],
-        showMe: res["showMe"],
-        bio: res["bio"],
-        score: res["score"],
-        city: res["city"],
-        latitude: res["latitude"],
-        longitude: res["longitude"],
-        emailVerify: res["emailVerify"],
-        profileComplete: res["profileComplete"],
-        link: res["link"],
-        pictures: [
-          { id: "picture1", url: res["picture1"] as string },
-          { id: "picture2", url: res["picture2"] as string },
-          { id: "picture3", url: res["picture3"] as string },
-          { id: "picture4", url: res["picture4"] as string },
-          { id: "picture5", url: res["picture5"] as string },
-          { id: "picture6", url: res["picture6"] as string },
-        ],
-      };
+    this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(res => {
       this.userForm.patchValue({
         userName: res.userName,
         firstName: res.firstName,
@@ -357,8 +328,8 @@ export class ProfileComponent implements OnInit {
         bio: res.bio,
         email: res.email,
       });
-      this.form = this.user;
-      this.saveEmail = this.user.email;
+      this.user = res;
+      this.saveEmail = res.email;
     });
   }
 
@@ -368,13 +339,13 @@ export class ProfileComponent implements OnInit {
 
   public onSubmit() {
     forkJoin(
-      this.form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
+      this.user.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
     ).subscribe(el => console.log(el));
     this.profilService.update(this.userForm.getRawValue(), this.saveEmail, true).subscribe(
       data => {
         console.log(data);
         if (data.status == true) {
-          this.route.navigate(["home/profile"]);
+          this.ngOnInit();
         }
       },
       err => {}
@@ -382,7 +353,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public checkHasPicture() {
-    if (this.form.pictures.every(picture => picture.url === "")) {
+    if (this.user.pictures.every(picture => picture.url === "" || picture.url === null)) {
       return true;
     } else {
       return false;
@@ -390,8 +361,8 @@ export class ProfileComponent implements OnInit {
   }
 
   public delete(id: string) {
-    this.form.pictures[id].url = "delete";
-    this.form.pictures = this.form.pictures.sort((a, b) => {
+    this.user.pictures[id].url = "delete";
+    this.user.pictures = this.user.pictures.sort((a, b) => {
       if (a.url === "delete" || a.url === null) {
         return 1;
       } else if (b.url === "delete" || b.url === null) {
@@ -403,7 +374,7 @@ export class ProfileComponent implements OnInit {
         return 0;
       }
     });
-    this.form.pictures = this.form.pictures.map(picture => {
+    this.user.pictures = this.user.pictures.map(picture => {
       if (picture.url === "delete") {
         return { ...picture, url: "" };
       } else {
@@ -442,8 +413,8 @@ export class ProfileComponent implements OnInit {
 
     this.imageCompress.compressFile(imgResultBeforeCompress, -1, 50, 50).then(result => {
       imgResultAfterCompress = result;
-      this.form.pictures[this.pictureId].url = imgResultAfterCompress;
-      this.form.pictures = this.form.pictures.sort((a, b) => {
+      this.user.pictures[this.pictureId].url = imgResultAfterCompress;
+      this.user.pictures = this.user.pictures.sort((a, b) => {
         if (a.url === "" || a.url === null) {
           return 1;
         } else if (b.url === "" || b.url === null) {

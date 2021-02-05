@@ -52,7 +52,7 @@ import { switchMap, takeUntil } from "rxjs/operators";
         (keyup.enter)="this.addNewTag()"
       />
     </form>
-    <div class="tag-container">
+    <div *ngIf="(this.yourTags$ | async)?.length > 0" class="tag-container">
       <div class="tag" *ngFor="let yTag of this.yourTags$ | async">
         <span>{{ yTag.name }}</span>
         <img *ngIf="!this.showMode" src="./assets/x.svg" (click)="this.deleteTag(yTag)" />
@@ -67,8 +67,8 @@ export class TagsComponent implements OnDestroy {
 
   private unsubscribe = new Subject<void>();
 
-  public yourTags$: Observable<Tags[]>;
-  public tags$: Observable<Tags[]>;
+  public yourTags$: Observable<Tags[]> = new Observable<Tags[]>();
+  public tags$: Observable<Tags[]> = new Observable<Tags[]>();
   public form: Partial<Tags> = { id: "default" };
 
   constructor(private userService: userService, private cd: ChangeDetectorRef) {}
@@ -121,7 +121,10 @@ export class TagsComponent implements OnDestroy {
 
   disabledTags(tag: Tags, yourTags: Tags[]) {
     let res = false;
-    res = yourTags && !!yourTags.find(el => el.id.toString() === tag.id.toString());
+    res =
+      yourTags &&
+      yourTags.length > 0 &&
+      !!yourTags.find(el => el.id.toString() === tag.id.toString());
     return res;
   }
 

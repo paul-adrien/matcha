@@ -92,11 +92,9 @@ exports.getUser = (req,res) => {
             })
         } else {
             if(results.length > 0){
-                res.json({
-                    status: true,
-                    message:'successfully get user',
-                    user: results[0],
-                })
+                res.json(
+                    results[0]
+                )
             } else {
                 res.json({
                     status:false,
