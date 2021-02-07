@@ -37,6 +37,43 @@ var userController = require('./controllers/user-controller');
 var likeController = require('./controllers/like-controller');
 var matchController = require('./controllers/match-controller');
 
+async function calcScore() {
+	users = connection.query('SELECT * FROM users',[], async function (error, results, fields) {
+        if (error) {
+			console.log('error get users');
+        } else {
+            if(results && results.length > 0){
+				await Promise.all(results.map(async function(user) {
+					if (user != null) {
+						if (user.nbViews >= 1000){
+							scoreViews = 50;
+						} else {
+							scoreViews = (100 + (((user.nbViews - 1000) / 1000) * 100)) / 2;
+						}
+						if (user.nbLikes >= user.nbViews) {
+							user.score = Math.round(scoreViews + 50);
+						} else {
+							user.score = Math.round(scoreViews + ((100 + ((user.nbLikes - user.nbViews) / user.nbViews)) / 2));
+						}
+						console.log(user.score);
+						connection.query('UPDATE users SET score = ? WHERE id = ?',[user.score, user.id], function (error, results, fields) {
+							if (error) {
+								console.log('error update score');
+							} else {
+								console.log('update score');
+							}
+						})
+					}
+				}));
+			} else {
+				console.log('error get users');
+			}
+        }
+	});
+}
+
+setInterval(calcScore, 30000);
+
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to plaurent NodeJS Mysql server." });
 });
