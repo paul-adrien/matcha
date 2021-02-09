@@ -1,5 +1,5 @@
 import { userService } from "./../_service/user_service";
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { User } from "@matcha/shared";
 
 @Component({
@@ -11,6 +11,7 @@ import { User } from "@matcha/shared";
     </div>
   `,
   styleUrls: ["./home.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
   constructor(private userService: userService) {}

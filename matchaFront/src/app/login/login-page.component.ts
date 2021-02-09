@@ -119,7 +119,6 @@ export class LoginPageComponent implements OnInit {
           console.log(data);
           if (data.status === true) {
             localStorage.clear();
-            localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("id", JSON.stringify(data.user["id"]));
             localStorage.setItem("token", JSON.stringify(data.token));
             this.route.navigate(["home/discover"]);

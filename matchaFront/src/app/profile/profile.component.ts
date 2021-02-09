@@ -1,15 +1,21 @@
 import { Router } from "@angular/router";
-import { ChangeDetectionStrategy, Component, Input, OnInit } from "@angular/core";
-import { User } from "@matcha/shared";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+} from "@angular/core";
+import { Tags, User } from "@matcha/shared";
 import { profilService } from "../_service/profil_service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
-import { forkJoin, Observable } from "rxjs";
+import { forkJoin, interval, Observable, Subject } from "rxjs";
 import { userService } from "../_service/user_service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
-import { tap } from "rxjs/operators";
+import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
 
 function ValidatorLength(control: FormControl) {
   if (control.value?.length < 3) {
@@ -110,7 +116,11 @@ function ValidatorSelect(control: FormControl) {
           <span class="info-top">Bio</span>
           <span class="info-bottom">{{ this.user?.bio }}</span>
         </div>
-        <app-tags [showMode]="'true'"></app-tags>
+        <app-tags
+          [yourTags]="this.yourTags$ | async"
+          [allTags]="this.allTags$ | async"
+          [showMode]="'true'"
+        ></app-tags>
       </div>
       <div class="profile-pictures" *ngIf="this.updateMode">
         <form class="grid">
@@ -240,7 +250,13 @@ function ValidatorSelect(control: FormControl) {
             {{ this.userForm.get("showMe").errors.error }}
           </div>
         </div>
-        <app-tags></app-tags>
+        <app-tags
+          [yourTags]="this.yourTags$ | async"
+          [allTags]="this.allTags$ | async"
+          (addExist)="this.addExistTag($event)"
+          (addNew)="this.addNewTag($event)"
+          (delete)="this.deleteTag($event)"
+        ></app-tags>
         <button
           [disabled]="!this.userForm.valid || this.checkHasPicture()"
           (ngSubmit)="this.onSubmit()"
@@ -270,7 +286,7 @@ function ValidatorSelect(control: FormControl) {
     </div>
   `,
   styleUrls: ["./profile.component.scss"],
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
   public genderOptions: { [key_id: string]: string } = {
@@ -311,11 +327,33 @@ export class ProfileComponent implements OnInit {
   constructor(
     private profilService: profilService,
     private route: Router,
+    private cd: ChangeDetectorRef,
     private imageCompress: NgxImageCompressService,
     private userService: userService
   ) {}
+  private unsubscribe = new Subject<void>();
 
-  ngOnInit() {
+  // public yourTags$: Observable<Tags[]> = interval(500).pipe(
+  //   switchMap(() => this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))))
+  // );
+
+  // public allTags$: Observable<Tags[]> = interval(500).pipe(
+  //   switchMap(() => this.userService.getAllTags())
+  // );
+
+  public yourTags$: Observable<Tags[]> = this.userService
+    .getYourTags(JSON.parse(localStorage.getItem("id")))
+    .pipe(
+      map(tags => tags),
+      takeUntil(this.unsubscribe)
+    );
+
+  public allTags$: Observable<Tags[]> = this.userService.getAllTags().pipe(
+    map(tags => tags),
+    takeUntil(this.unsubscribe)
+  );
+
+  ngOnInit(): void {
     this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(res => {
       this.userForm.patchValue({
         userName: res.userName,
@@ -330,6 +368,15 @@ export class ProfileComponent implements OnInit {
       this.user = res;
       this.saveEmail = res.email;
     });
+    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))).pipe(
+      map(tags => tags),
+      takeUntil(this.unsubscribe)
+    );
+
+    this.allTags$ = this.userService.getAllTags().pipe(
+      map(tags => tags),
+      takeUntil(this.unsubscribe)
+    );
   }
 
   public changeUpdateMode(updateMode: boolean) {
@@ -430,5 +477,54 @@ export class ProfileComponent implements OnInit {
 
   public getAge(birthDate: Date) {
     return differenceInYears(new Date(), new Date(birthDate));
+  }
+
+  addExistTag(tagId: string) {
+    this.userService.addExistTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
+      data => {
+        console.log(data);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    this.cd.markForCheck();
+    this.cd.detectChanges();
+  }
+
+  addNewTag(tag: string) {
+    this.userService.addNonExistTag(tag, JSON.parse(localStorage.getItem("id"))).subscribe(
+      data => {
+        console.log(data);
+        this.cd.detectChanges();
+        this.cd.markForCheck();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    this.cd.detectChanges();
+    this.cd.markForCheck();
+  }
+
+  deleteTag(tagId: string) {
+    this.userService.deleteTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
+      data => {
+        console.log(data);
+        this.cd.detectChanges();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    this.cd.detectChanges();
+    this.cd.markForCheck();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
