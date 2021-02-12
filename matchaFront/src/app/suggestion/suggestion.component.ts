@@ -84,7 +84,7 @@ export class SuggestionComponent implements OnInit {
     score: 0,
     local: 3000,
     tags: 0,
-    sortBy: "",
+    sortBy: "0",
   };
 
   ngOnInit(): void {
@@ -114,17 +114,15 @@ export class SuggestionComponent implements OnInit {
   }
 
   filtreUsersBy() {
-    this.matchService
-      .filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.usersMatch, this.form)
-      .subscribe(
-        data => {
-          console.log(data);
-          this.usersMatch = data.usersSort;
-        },
-        err => {
-          console.log(err);
-        }
-      );
+    this.matchService.filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form).subscribe(
+      data => {
+        console.log(data);
+        this.usersMatch = data.usersSort;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   viewProfil(id) {

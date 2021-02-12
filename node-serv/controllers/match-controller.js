@@ -360,12 +360,13 @@ exports.filtreUsersBy = (req, res) => {
 
   async function checkData() {
     return new Promise(resultat => function () {
+      console.log("lolloollloooooooool");
       if (id !== null) {
         if (minAge !== null && minAge >= 0 && minAge < 150) {
           if (maxAge !== null && maxAge > 0 && maxAge <= 150) {
             if (minScore !== null && minScore >= 0 && minScore <= 99) {
               if (maxLoc !== null && maxLoc > 0) {
-                if (sortBy !== null && minTag !== null && minTag > 0) {
+                if (sortBy !== null && minTag !== null && minTag >=0) {
                   resultat(1);
                 } else {
                   res.json({
@@ -408,6 +409,7 @@ exports.filtreUsersBy = (req, res) => {
           resultat(null);
         }
       } else {
+        console.log("hdhwidhwidwid")
         res.json({
           status: false,
           message: 'error id',
@@ -425,7 +427,7 @@ exports.filtreUsersBy = (req, res) => {
           resultat(null);
         } else {
           if (results && results.length > 0) {
-            resultat(results);
+            resultat(results[0]);
           }
           else {
             resultat(null);
@@ -437,8 +439,8 @@ exports.filtreUsersBy = (req, res) => {
 
   function tagsMatch(user, otherUser) {
     return new Promise(resultat =>
-      connection.query('SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?', [user[0].id, otherUser.id], function (error, results, fields) {
-        r = -1;
+      connection.query('SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?', [user.id, otherUser.id], function (error, results, fields) {
+        r = 0;
         for (var i = 0; i < results.length - 1; i++) {
           for (var j = i + 1; j < results.length; j++) {
             if (results[i].tag_id == results[j].tag_id) {
@@ -494,37 +496,36 @@ exports.filtreUsersBy = (req, res) => {
   };
 
   async function main() {
-    if (checkData() !== null) {
+      console.log("testcheckdata")
       if ((myUser = await getUser(id)) !== null) {
-        var usersSort = await getOtherUser();
+        let usersSort = await getOtherUser();
         //filtre age
         usersSort = await Promise.all(usersSort.map(async function (user) {
-          age = datefns.differenceInYears(new Date(user.birthDate));
-          dist = 0;
+          age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
+          let dist = 0;
           dist = locat(myUser, user);
           tags = 0;
           tags = await tagsMatch(myUser, user);
+          console.log(minAge, maxAge, minTag, maxLoc, minScore);
+          console.log(dist)
 
 
           if (age >= minAge && age <= maxAge &&
             tags >= minTag &&
             dist <= maxLoc && user.score >= minScore
           ) {
-            return user;
+            return {...user};
           } else {
-            return ;
+            return undefined;
           }
         }));
+        usersSort = usersSort.filter(user => user !== undefined);
 
         //filtre l
-        // usersSort = await Promise.all(usersSort.map(async function(user) {
+        //  usersSort = await Promise.all((await getOtherUser()).map(async function(user) {
         //   dist = 0;
         //   dist = locat(myUser, user);
-        //   if (dist <= maxLoc && user.filtre == 1)
-        //     user.filtre = 1;
-        //   else {
-        //     user.filtre = 0;
-        //   }
+        //  console.log(dist);
         //   return user;
         // }));
 
@@ -560,12 +561,6 @@ exports.filtreUsersBy = (req, res) => {
           usersSort: null
         });
       }
-    } else {
-      res.json({
-        status: false,
-        message: 'error get user',
-        usersSort: null
-      });
-    }
+ 
   }
 }

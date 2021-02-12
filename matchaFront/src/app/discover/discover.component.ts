@@ -79,32 +79,33 @@ export class DiscoverComponent implements OnInit {
   }
 
   public getCurrentLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(position => {
-        const lat = position.coords.latitude;
-        const long = position.coords.longitude;
-        this.userService
-          .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
-          .subscribe(
-            el => console.log(el),
-            error => {
-              switch (error.code) {
-                case error.PERMISSION_DENIED:
-                  console.log("User denied the request for Geolocation.");
-                  break;
-                case error.POSITION_UNAVAILABLE:
-                  console.log("Location information is unavailable.");
-                  break;
-                case error.TIMEOUT:
-                  console.log("The request to get user location timed out.");
-                  break;
-                case error.UNKNOWN_ERROR:
-                  console.log("An unknown error occurred.");
-                  break;
-              }
-            }
-          );
-      });
+    if (
+      typeof navigator.geolocation === "object" &&
+      typeof navigator.geolocation.getCurrentPosition === "function"
+    ) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+          this.userService
+            .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
+            .subscribe(el => console.log(el));
+        },
+        error => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              console.log("User denied the request for Geolocation.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              console.log("Location information is unavailable.");
+              break;
+            case error.TIMEOUT:
+              console.log("The request to get user location timed out.");
+              break;
+          }
+        },
+        { timeout: 10000 }
+      );
     }
   }
 }
