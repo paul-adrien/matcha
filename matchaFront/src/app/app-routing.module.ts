@@ -9,10 +9,10 @@ import { ProfileComponent } from "./profile/profile.component";
 import { AuthGuard } from "./_service/auth.guard";
 import { DiscoverComponent } from "./discover/discover.component";
 import { ProfilCardComponent } from "./profil-card/profil-card.component";
-import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
-import { HomeMessagingComponent } from './home-messaging/home-messaging.component';
+import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
+import { ProfileViewComponent } from "./profile-view/profile-view.component";
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },

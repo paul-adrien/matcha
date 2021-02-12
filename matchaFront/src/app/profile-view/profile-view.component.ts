@@ -97,12 +97,12 @@ export class ProfileViewComponent implements OnInit {
     "3": "les deux",
   };
 
-  public yourTags$: Observable<Tags[]> = this.userService
-    .getYourTags(JSON.parse(localStorage.getItem("id")))
-    .pipe(
-      map(tags => tags),
-      takeUntil(this.unsubscribe)
-    );
+  public userId: string = this.route.snapshot.params.id;
+
+  public yourTags$: Observable<Tags[]> = this.userService.getYourTags(this.userId).pipe(
+    map(tags => tags),
+    takeUntil(this.unsubscribe)
+  );
 
   public allTags$: Observable<Tags[]> = this.userService.getAllTags().pipe(
     map(tags => tags),
@@ -110,11 +110,19 @@ export class ProfileViewComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.route.params.subscribe(params =>
-      this.userService.getUser(params.id).subscribe(data => {
-        this.user = data;
-        this.cd.detectChanges();
-      })
+    this.userService.getUser(this.userId).subscribe(data => {
+      this.user = data;
+      this.cd.detectChanges();
+    });
+
+    this.yourTags$ = this.userService.getYourTags(this.userId).pipe(
+      map(tags => tags),
+      takeUntil(this.unsubscribe)
+    );
+
+    this.allTags$ = this.userService.getAllTags().pipe(
+      map(tags => tags),
+      takeUntil(this.unsubscribe)
     );
     //this.userService.getUser(this.route.params.)
     // this.id = this.route.snapshot.params["id"];

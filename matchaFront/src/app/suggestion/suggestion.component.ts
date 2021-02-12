@@ -1,5 +1,5 @@
-import { Filtre } from "./../../../libs/user";
-import { Component, OnInit } from "@angular/core";
+import { Filtre, User } from "./../../../libs/user";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { matchService } from "../_service/match_service";
 import { Router } from "@angular/router";
 
@@ -69,30 +69,22 @@ import { Router } from "@angular/router";
         />
         <button class="primary-button">Filtrer</button>
       </form>
-      <tr *ngFor="let User of usersMatch">
-        <div *ngIf="User.filtre == 1">
-          <p>{{ User.firstName }}</p>
-          <p>{{ User.lastName }}</p>
-          <p>{{ User.email }}</p>
-          <p>{{ User.userName }}</p>
-          <p>{{ User.birthDate }}</p>
-          <a (click)="viewProfil(User.id)"><button>Voir le profil complet</button></a>
-        </div>
-      </tr>
     </div>
   `,
   styleUrls: ["./suggestion.component.scss"],
 })
 export class SuggestionComponent implements OnInit {
+  @Output() public usersSort = new EventEmitter<User[]>();
   constructor(private matchService: matchService, private router: Router) {}
 
   usersMatch = [];
-  form: Partial<Filtre> = {
+  form: Filtre = {
     maxAge: 150,
     minAge: 0,
     score: 0,
     local: 3000,
     tags: 0,
+    sortBy: "",
   };
 
   ngOnInit(): void {

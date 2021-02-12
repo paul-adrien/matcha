@@ -33,6 +33,7 @@ export interface Filtre {
   score: number;
   local: number;
   tags: number;
+  sortBy: string;
 }
 
 export function mapUserBackToUserFront(user: any): User {

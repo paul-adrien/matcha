@@ -9,6 +9,7 @@ import { userService } from "../_service/user_service";
 @Component({
   selector: "discover",
   template: `
+    <app-suggestion></app-suggestion>
     <div
       *ngIf="
         (this.user$ | async)?.profileComplete !== undefined &&

@@ -16,10 +16,10 @@ import { DiscoverComponent } from "./discover/discover.component";
 import { ProfilCardComponent } from "./profil-card/profil-card.component";
 import { ImageCropperModule } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
-import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
-import { HomeMessagingComponent } from './home-messaging/home-messaging.component';
+import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
+import { ProfileViewComponent } from "./profile-view/profile-view.component";
 
 @NgModule({
   declarations: [
