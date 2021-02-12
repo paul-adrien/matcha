@@ -148,6 +148,7 @@ export class ProfileViewComponent implements OnInit {
       } else if (res === 201) {
         this.isLike = false;
       }
+      console.log(res);
       console.log(this.isLike ? "like" : "dislike");
       this.cd.detectChanges();
     });

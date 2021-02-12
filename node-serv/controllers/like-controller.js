@@ -104,12 +104,48 @@ exports.likeOrDislike = (req,res) => {
         )
     };
 
+    function notifLike(mode) {
+        if (mode == 1) {
+            connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "matched", DATE(NOW()))',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    return null;
+                } else {
+                    return(1);
+                }
+            });
+        } else {
+            connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "like", DATE(NOW()))',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+                if (error) {
+                    return null;
+                } else {
+                    return(1);
+                }
+            });
+        }
+    }
+
+    function notifDisLike() {
+        connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "unMatched", DATE(NOW()))',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+            if (error) {
+                return null;
+            } else {
+                return(1);
+            }
+        });
+    }
+
     async function main() {
         mode = await lOrD();
         if (mode === null) {
             if (await addLike()){
-                if (await addMatch()) {
-                    res.json(200);
+                if ((match = await addMatch())) {
+                    if (match == 1) {
+                        notifLike(1);
+                        res.json(200);
+                    } else {
+                        notifLike(2);
+                        res.json(200);
+                    }
                 } else {
                     res.json({
                         status:false,
@@ -124,8 +160,12 @@ exports.likeOrDislike = (req,res) => {
             }
         } else {
             if (await delLike()){
-                if (await delMatch()) {
-                    res.json(201);
+                if ((match = await delMatch())) {
+                    if (match == 1) {
+                        notifDisLike();
+                        res.json(201);
+                    } else
+                        res.json(201);
                 } else {
                     res.json({
                         status:false,

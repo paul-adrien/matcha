@@ -114,6 +114,7 @@ export class SuggestionComponent implements OnInit {
   }
 
   filtreUsersBy() {
+<<<<<<< Updated upstream
     this.matchService.filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form).subscribe(
       data => {
         console.log(data);
@@ -123,6 +124,19 @@ export class SuggestionComponent implements OnInit {
         console.log(err);
       }
     );
+=======
+    this.matchService
+      .filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form)
+      .subscribe(
+        data => {
+          console.log(data);
+          this.usersMatch = data.usersSort;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+>>>>>>> Stashed changes
   }
 
   viewProfil(id) {
