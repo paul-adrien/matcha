@@ -122,6 +122,7 @@ exports.viewedProfil = (req,res) => {
         {
             if ((await addView()))
             {
+                notifView()
                 res.json({
                     status:true,
                     message:'profile view'
