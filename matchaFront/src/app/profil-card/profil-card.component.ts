@@ -6,7 +6,7 @@ import { differenceInYears } from "date-fns";
 @Component({
   selector: "app-profil-card",
   template: `
-    <div class="big-profile-picture">
+    <div class="big-profile-picture" (click)="viewProfil()">
       <img
         class="picture"
         [src]="
@@ -20,7 +20,6 @@ import { differenceInYears } from "date-fns";
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
     </div>
-    <a (click)="viewProfil()"><button>Voir le profil complet</button></a>
   `,
   styleUrls: ["./profil-card.component.scss"],
 })

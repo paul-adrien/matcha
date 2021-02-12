@@ -5,10 +5,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
 } from "@angular/core";
 import { userService } from "../_service/user_service";
 import { Subject, Observable } from "rxjs";
@@ -19,7 +21,7 @@ import { switchMap, takeUntil } from "rxjs/operators";
   template: `
     <span class="info-top">Vos interêts</span>
     <form
-      *ngIf="(this.tags$ | async) && (this.yourTags$ | async) && !this.showMode"
+      *ngIf="this.allTags && this.yourTags && !this.showMode"
       class="form-container"
       name="form"
       #f="ngForm"
@@ -35,9 +37,9 @@ import { switchMap, takeUntil } from "rxjs/operators";
       >
         <option value="default">Choisir un tag</option>
         <option
-          *ngFor="let tag of this.tags$ | async"
+          *ngFor="let tag of this.allTags"
           [value]="tag.id"
-          [disabled]="this.disabledTags(tag, this.yourTags$ | async)"
+          [disabled]="this.disabledTags(tag, this.yourTags)"
         >
           {{ tag.name }}
         </option>
@@ -52,8 +54,8 @@ import { switchMap, takeUntil } from "rxjs/operators";
         (keyup.enter)="this.addNewTag()"
       />
     </form>
-    <div *ngIf="(this.yourTags$ | async)?.length > 0" class="tag-container">
-      <div class="tag" *ngFor="let yTag of this.yourTags$ | async">
+    <div *ngIf="this.yourTags?.length > 0" class="tag-container">
+      <div class="tag" *ngFor="let yTag of this.yourTags">
         <span>{{ yTag.name }}</span>
         <img *ngIf="!this.showMode" src="./assets/x.svg" (click)="this.deleteTag(yTag)" />
       </div>
@@ -64,59 +66,30 @@ import { switchMap, takeUntil } from "rxjs/operators";
 })
 export class TagsComponent implements OnDestroy {
   @Input() public showMode = false;
+  @Input() public allTags: Tags[];
+  @Input() public yourTags: Tags[];
+  @Output() public addExist = new EventEmitter<string>();
+  @Output() public addNew = new EventEmitter<string>();
+  @Output() public delete = new EventEmitter<string>();
 
   private unsubscribe = new Subject<void>();
 
-  public yourTags$: Observable<Tags[]> = new Observable<Tags[]>();
-  public tags$: Observable<Tags[]> = new Observable<Tags[]>();
-  public form: Partial<Tags> = { id: "default" };
-
   constructor(private userService: userService, private cd: ChangeDetectorRef) {}
 
-  ngOnInit() {
-    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem("id")));
-    this.tags$ = this.userService.getAllTags();
-  }
+  public form: Partial<Tags> = { id: "default" };
 
   addExistTag() {
-    this.userService.addExistTag(JSON.parse(localStorage.getItem("id")), this.form.id).subscribe(
-      data => {
-        console.log(data);
-        this.ngOnInit();
-        this.cd.detectChanges();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.addExist.emit(this.form.id);
+    this.cd.detectChanges();
   }
 
   addNewTag() {
-    this.userService
-      .addNonExistTag(this.form.name, JSON.parse(localStorage.getItem("id")))
-      .subscribe(
-        data => {
-          console.log(data);
-          this.ngOnInit();
-          this.cd.detectChanges();
-        },
-        err => {
-          console.log(err);
-        }
-      );
+    this.addNew.emit(this.form.name);
+    this.cd.detectChanges();
   }
 
   deleteTag(tag: Tags) {
-    this.userService.deleteTag(JSON.parse(localStorage.getItem("id")), tag.id).subscribe(
-      data => {
-        console.log(data);
-        this.ngOnInit();
-        this.cd.detectChanges();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.delete.emit(tag.id);
   }
 
   disabledTags(tag: Tags, yourTags: Tags[]) {
