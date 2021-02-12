@@ -46,18 +46,10 @@ export class matchService {
     );
   }
 
-  filtreUsersBy(id, users, filtre: Partial<Filtre>): Observable<any> {
-    return this.http.post(
-      AUTH_API + "filtreUsersBy",
-      {
-        id: id,
-        users: users,
-        minAge: filtre.minAge,
-        maxAge: filtre.maxAge,
-        minScore: filtre.score,
-        maxLoc: filtre.local,
-        minTag: filtre.tags,
-      },
+  filtreUsersBy(id: string, filtre: Partial<Filtre>): Observable<any> {
+    return this.http.get(
+      AUTH_API +
+        `users/${id}/min-age/${filtre.minAge}/max-age/${filtre.maxAge}/score/${filtre.score}/tags/${filtre.tags}/distance/${filtre.local}/sort-by/${filtre.sortBy}`,
       httpOptions
     );
   }

@@ -14,17 +14,17 @@
 
 @font-face {
   font-family: Montserrat;
-  src: url("./fonts/Montserrat/Montserrat-Regular.ttf")
+  src: url("./fonts/Montserrat/Montserrat-Regular.ttf");
 }
 
 @font-face {
   font-family: Montserrat-light;
   src: url("./fonts/Montserrat/Montserrat-Light.ttf");
   font-weight: 300;
-
 }
 
-body, html {
+body,
+html {
   font-family: Montserrat !important;
   width: 100vw;
   height: 100vh;
@@ -39,11 +39,13 @@ body, html {
   --color-reverse: white;
 }
 
-input,button {
+input,
+button {
   font-family: Montserrat;
 }
 
 .primary-button {
+  cursor: pointer;
   width: 100%;
   text-align: center;
   height: 40px;

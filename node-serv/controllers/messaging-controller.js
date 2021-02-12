@@ -29,6 +29,7 @@ exports.possiblyConv = (req,res) => {
                 resultat(null);
             } else {
                 if (results && results.length > 0) {
+                  console.log(results)
                     resultat(results);
                 }
                 else{

@@ -71,20 +71,8 @@ export class userService {
     );
   }
 
-  like(user_id, like_id) {
-    return new Promise(resolve => {
-      this.likehttp(user_id, like_id).subscribe(
-        data => {
-          console.log(data);
-          if (data.status === true) {
-            resolve(data.like);
-          } else {
-            resolve(null);
-          }
-        },
-        err => {}
-      );
-    });
+  like(user_id: string, like_id: string) {
+    return this.likehttp(user_id, like_id);
   }
 
   likehttp(user_id, like_id): Observable<any> {
@@ -99,14 +87,7 @@ export class userService {
   }
 
   likeOrNot(user_id, like_id): Observable<any> {
-    return this.http.post(
-      AUTH_API + "likeOrNot",
-      {
-        user_id: user_id,
-        like_id: like_id,
-      },
-      httpOptions
-    );
+    return this.http.get(AUTH_API + `users/${user_id}/likeOrNot/${like_id}`, httpOptions);
   }
 
   getAllTags(): Observable<Tags[]> {

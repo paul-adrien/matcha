@@ -91,7 +91,7 @@ app.post('/api/uploadPicture', updateProfilController.uploadPicture);
 app.post('/api/takeViewProfil', userController.takeViewProfil);
 app.post('/api/whoLikeMe', likeController.whoLikeMe);
 app.post('/api/getUser', userController.getUser);
-app.post('/api/likeOrNot', likeController.likeOrNot);
+app.get('/api/users/:userId/likeOrNot/:likeId', likeController.likeOrNot);
 app.post('/api/like', likeController.likeOrDislike);
 app.get('/api/getAllTags', tagsController.getAllTags);
 app.get('/api/getYourTags/:id', tagsController.getYourTags);
@@ -100,7 +100,7 @@ app.post('/api/addNonExistTag', tagsController.addNonExistTag);
 app.post('/api/deleteTag', tagsController.deleteTag);
 app.post('/api/getSuggestion', matchController.getSuggestion);
 app.post('/api/sortUsersBy', matchController.sortUsersBy);
-app.post('/api/filtreUsersBy', matchController.filtreUsersBy);
+app.get('/api/users/:id/min-age/:minAge/max-age/:maxAge/score/:score/tags/:tags/distance/:dist/sort-by/:sortBy', matchController.filtreUsersBy);
 app.post('/api/user/:id/update-position', userController.updatePosition);
 app.post('/api/user/:id/viewedProfil', userController.viewedProfil);
 //messaging

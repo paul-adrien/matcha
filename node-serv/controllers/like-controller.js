@@ -109,10 +109,7 @@ exports.likeOrDislike = (req,res) => {
         if (mode === null) {
             if (await addLike()){
                 if (await addMatch()) {
-                    res.json({
-                        status:true,
-                        message:'like user',
-                   });
+                    res.json(200);
                 } else {
                     res.json({
                         status:false,
@@ -128,10 +125,7 @@ exports.likeOrDislike = (req,res) => {
         } else {
             if (await delLike()){
                 if (await delMatch()) {
-                    res.json({
-                        status:true,
-                        message:'unlike user',
-                   });
+                    res.json(201);
                 } else {
                     res.json({
                         status:false,
@@ -230,10 +224,9 @@ exports.whoLikeMe = (req,res) => {
 exports.likeOrNot = (req,res) => {
 
     likeOrNot();
-
     async function getIfLike() {
         return new Promise( resultat => 
-            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.params.likeId, req.params.userId], function (error, results, fields) {
                 if (error) {
                     resultat(null);
                 } else {
@@ -252,11 +245,7 @@ exports.likeOrNot = (req,res) => {
         like = await getIfLike();
         if (like !== null)
         {
-            res.json({
-                status:true,
-                message:'like',
-                like: 1
-            });
+            res.json(200);
         }
         else {
             res.json({

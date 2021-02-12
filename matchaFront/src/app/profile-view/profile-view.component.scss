@@ -20,6 +20,9 @@
     align-items: center;
     justify-content: center;
     margin: 1rem 0.5rem;
+    width: 100%;
+    max-width: 40rem;
+    position: relative;
 
     .chevron {
       margin: 0 1rem;
@@ -70,5 +73,12 @@
     font-family: Montserrat;
     overflow-wrap: break-word;
     background-color: #eaeaea;
+  }
+
+  .primary-button {
+    width: fit-content;
+    position: absolute;
+    height: 1rem;
+    right: 1rem;
   }
 }

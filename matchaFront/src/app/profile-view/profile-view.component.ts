@@ -10,7 +10,7 @@ import { ActivatedRoute, Routes, Router, ActivatedRouteSnapshot } from "@angular
 import { userService } from "../_service/user_service";
 import { differenceInYears } from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
-import { Observable, Subject } from "rxjs";
+import { combineLatest, Observable, Subject } from "rxjs";
 
 @Component({
   selector: "app-profile-view",
@@ -39,6 +39,7 @@ import { Observable, Subject } from "rxjs";
         (click)="this.primaryPictureId = this.primaryPictureId + 1"
         src="./assets/chevron-right.svg"
       />
+      <div (click)="this.like()" class="primary-button">{{ this.isLike ? "Dislike" : "Like" }}</div>
     </div>
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
@@ -97,6 +98,8 @@ export class ProfileViewComponent implements OnInit {
     "3": "les deux",
   };
 
+  public isLike: boolean;
+
   public userId: string = this.route.snapshot.params.id;
 
   public yourTags$: Observable<Tags[]> = this.userService.getYourTags(this.userId).pipe(
@@ -110,8 +113,16 @@ export class ProfileViewComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.userService.getUser(this.userId).subscribe(data => {
-      this.user = data;
+    combineLatest([
+      this.userService.getUser(this.userId),
+      this.userService.likeOrNot(JSON.parse(localStorage.getItem("id")), this.userId),
+    ]).subscribe(([user, like]) => {
+      this.user = user;
+      if (like === 200) {
+        this.isLike = true;
+      } else {
+        this.isLike = false;
+      }
       this.cd.detectChanges();
     });
 
@@ -130,13 +141,17 @@ export class ProfileViewComponent implements OnInit {
     // this.user = this.userService.setUserNull();
   }
 
-  // like() {
-  //   this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).then(res => {
-  //     if (res === null) this.isLike = -1;
-  //     else if (this.isLike == 0) this.isLike = 1;
-  //     else this.isLike = 0;
-  //   });
-  // }
+  like() {
+    this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
+      if (res === 200) {
+        this.isLike = true;
+      } else if (res === 201) {
+        this.isLike = false;
+      }
+      console.log(this.isLike ? "like" : "dislike");
+      this.cd.detectChanges();
+    });
+  }
 
   public getAge(birthDate: Date) {
     return differenceInYears(new Date(), new Date(birthDate));
