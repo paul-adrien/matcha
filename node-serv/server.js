@@ -104,9 +104,9 @@ app.post('/api/filtreUsersBy', matchController.filtreUsersBy);
 app.post('/api/user/:id/update-position', userController.updatePosition);
 app.post('/api/user/:id/viewedProfil', userController.viewedProfil);
 //messaging
-app.post('/api/possiblyConv', messagingController.possiblyConv);
-app.post('/api/activeConv', messagingController.activeConv);
-app.post('/api/getMessage', messagingController.getMessage);
+app.get('/api/possiblyConv/:id', messagingController.possiblyConv);
+app.get('/api/activeConv/:id', messagingController.activeConv);
+app.get('/api/getMessage/:id', messagingController.getMessage);
 app.post('/api/sendMessage', messagingController.sendMessage);
 
 

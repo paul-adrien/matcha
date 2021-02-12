@@ -1,7 +1,7 @@
 var connection = require('./../config/db');
 
 exports.possiblyConv = (req,res) => {
-  id = req.body.id;
+  id = req.params.id;
 
   main();
 
@@ -12,7 +12,7 @@ exports.possiblyConv = (req,res) => {
                 resultat(null);
             } else {
                 if (results && results.length > 0) {
-                    resultat(results);
+                    resultat(results[0]);
                 }
                 else{
                     resultat(null);
@@ -49,11 +49,7 @@ exports.possiblyConv = (req,res) => {
         if (user !== null)
           return user;
       }));
-      res.json({
-        status:true,
-        message:'get possibly conv',
-        users: users
-      });
+      res.json(users);
     } else {
       res.json({
         status:true,
@@ -65,14 +61,14 @@ exports.possiblyConv = (req,res) => {
 }
 
 exports.activeConv = (req,res) => {
-  id = req.body.id;
+  id = req.params.id;
   ids = [];
 
   main();
 
   async function getConv() {
     return new Promise( resultat => 
-        connection.query('SELECT * FROM matched WHERE active = 1 AND (user_id1 = ? OR user_id2 = ?)',[id], function (error, results, fields) {
+        connection.query('SELECT * FROM matched WHERE active = 1 AND (user_id1 = ? OR user_id2 = ?)',[id, id], function (error, results, fields) {
             if (error) {
                 resultat(null);
             } else {
@@ -107,17 +103,13 @@ exports.activeConv = (req,res) => {
   async function main() {
     if ((convs = await getConv()) !== null) {
       convs = await Promise.all(convs.map(async function(conv) {
-        msg = await getLastMsg(user.id)
-        if (user.user_id1 === id)
-          return {...conv, other_id: user.user_id2, msg: msg};
+        msg = await getLastMsg(conv.id)
+        if (conv.user_id1 === id)
+          return {...conv, other_id: conv.user_id2, lastMsg: msg};
         else
-          return {...conv, other_id: user.user_id1, msg: msg};
+          return {...conv, other_id: conv.user_id1, lastMsg: msg};
       }));
-      res.json({
-        status:true,
-        message:'get possibly conv',
-        convs: convs
-      });
+      res.json(convs);
     } else {
       res.json({
         status:true,
@@ -129,7 +121,7 @@ exports.activeConv = (req,res) => {
 }
 
 exports.getMessage = (req,res) => {
-  conv_id = req.body.conv_id;
+  conv_id = req.params.id;
 
   main();
 
@@ -165,16 +157,12 @@ exports.getMessage = (req,res) => {
   async function main() {
     if ((messages = await getMsg()) !== null) {
       if ((await updtSeeMsg()) !== null) {
-        res.json({
-          status:true,
-          message:'get messages',
-          messages: messages
-        });
+        res.json(messages);
       } else {
         res.json({
           status:false,
           message:'error when update mesage see',
-          messages: messages
+          messages: null
         });
       }
       
@@ -191,7 +179,7 @@ exports.getMessage = (req,res) => {
 exports.sendMessage = (req,res) => {
   conv_id = req.body.conv_id;
   msg = req.body.msg;
-  sender_id = req.body.conv_id;
+  sender_id = req.body.sender_id;
 
   main();
 
@@ -225,12 +213,12 @@ exports.sendMessage = (req,res) => {
       {
         res.json({
           status:true,
-          message:'get messages'
+          message:'send messages'
         });
       } else {
         res.json({
           status:false,
-          message:'error update active conv'
+          message:'error send message'
         });
       }
     } else {
