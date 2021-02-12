@@ -19,6 +19,7 @@ import { NgxImageCompressService } from "ngx-image-compress";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
+import { HomeMessagingComponent } from './home-messaging/home-messaging.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SuggestionComponent } from "./suggestion/suggestion.component";
     ProfileViewComponent,
     TagsComponent,
     SuggestionComponent,
+    HomeMessagingComponent,
   ],
   imports: [
     BrowserModule,

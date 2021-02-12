@@ -36,6 +36,7 @@ var tagsController = require('./controllers/tags-controller');
 var userController = require('./controllers/user-controller');
 var likeController = require('./controllers/like-controller');
 var matchController = require('./controllers/match-controller');
+var messagingController = require('./controllers/messaging-controller');
 
 async function calcScore() {
 	users = connection.query('SELECT * FROM users',[], async function (error, results, fields) {
@@ -72,7 +73,7 @@ async function calcScore() {
 	});
 }
 
-setInterval(calcScore, 30000);
+//setInterval(calcScore, 300000 );
 
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to plaurent NodeJS Mysql server." });
@@ -101,6 +102,12 @@ app.post('/api/getSuggestion', matchController.getSuggestion);
 app.post('/api/sortUsersBy', matchController.sortUsersBy);
 app.post('/api/filtreUsersBy', matchController.filtreUsersBy);
 app.post('/api/user/:id/update-position', userController.updatePosition);
+app.post('/api/user/:id/viewedProfil', userController.viewedProfil);
+//messaging
+app.post('/api/possiblyConv', messagingController.possiblyConv);
+app.post('/api/activeConv', messagingController.activeConv);
+app.post('/api/getMessage', messagingController.getMessage);
+app.post('/api/sendMessage', messagingController.sendMessage);
 
 
 const PORT = process.env.PORT || 8080;

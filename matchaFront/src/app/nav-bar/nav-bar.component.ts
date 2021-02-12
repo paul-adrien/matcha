@@ -45,7 +45,7 @@ export class NavigationBarComponent implements OnInit {
         check: "./assets/message-circle.svg",
         default: "./assets/message-circle.svg",
       },
-      route: "profile",
+      route: "messaging",
       selected: false,
     },
   ];

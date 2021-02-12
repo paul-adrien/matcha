@@ -5,6 +5,52 @@ exports.likeOrDislike = (req,res) => {
 
     main();
 
+    async function addMatch() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.user_id, req.body.like_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        connection.query('INSERT INTO matched (user_id1, user_id2, active) VALUES (?, ?, 0)',[req.body.like_id, req.body.user_id], function (error, results, fields) {
+                            if (error) {
+                                resultat(error);
+                            } else {
+                                resultat(1);
+                            }
+                        });
+                    }
+                    else{
+                        resultat(2);
+                    }
+                }
+            })
+        )
+    };
+
+    async function delMatch() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.user_id, req.body.like_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        connection.query('DELETE FROM matched WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)',[req.body.like_id, req.body.user_id, req.body.user_id, req.body.like_id], function (error, results, fields) {
+                            if (error) {
+                                resultat(error);
+                            } else {
+                                resultat(1);
+                            }
+                        });
+                    }
+                    else{
+                        resultat(2);
+                    }
+                }
+            })
+        )
+    };
+
     async function lOrD() {
         return new Promise( resultat => 
             connection.query('SELECT * FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
@@ -26,13 +72,13 @@ exports.likeOrDislike = (req,res) => {
         return new Promise( resultat =>
             connection.query('INSERT INTO users_like (liked_id, like_id) VALUES (?, ?)',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
-                    resultat(error);
+                    resultat(null);
                 } else {
                     connection.query('UPDATE users SET nbLikes = nbLikes+1 WHERE id = ?',[req.body.like_id], function (error, results, fields) {
                         if (error) {
-                            resultat(error);
+                            resultat(null);
                         } else {
-                            resultat(results);
+                            resultat(1);
                         }
                     });
                 }
@@ -40,17 +86,17 @@ exports.likeOrDislike = (req,res) => {
         )
     };
 
-    async function dellLike() {
+    async function delLike() {
         return new Promise( resultat =>
             connection.query('DELETE FROM users_like WHERE liked_id = ? AND like_id = ?',[req.body.like_id, req.body.user_id], function (error, results, fields) {
                 if (error) {
-                    resultat(error);
+                    resultat(null);
                 } else {
                     connection.query('UPDATE users SET nbLikes = nbLikes-1 WHERE id = ?',[req.body.like_id], function (error, results, fields) {
                         if (error) {
                             resultat(error);
                         } else {
-                            resultat(results);
+                            resultat(1);
                         }
                     });
                 }
@@ -61,17 +107,43 @@ exports.likeOrDislike = (req,res) => {
     async function main() {
         mode = await lOrD();
         if (mode === null) {
-            result = await addLike();
-            res.json({
-                status:true,
-                message:'like user',
-           });
+            if (await addLike()){
+                if (await addMatch()) {
+                    res.json({
+                        status:true,
+                        message:'like user',
+                   });
+                } else {
+                    res.json({
+                        status:false,
+                        message:'error add match',
+                   });
+                }
+            } else {
+                res.json({
+                    status:false,
+                    message:'error add like',
+               });
+            }
         } else {
-            result = await dellLike();
-            res.json({
-                status:true,
-                message:'unlike user',
-           });
+            if (await delLike()){
+                if (await delMatch()) {
+                    res.json({
+                        status:true,
+                        message:'unlike user',
+                   });
+                } else {
+                    res.json({
+                        status:false,
+                        message:'error del match',
+                   });
+                }
+            } else {
+                res.json({
+                    status:false,
+                    message:'error del like',
+               });
+            }
         }
     };
 }

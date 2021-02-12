@@ -32,7 +32,7 @@ export class ProfileViewComponent implements OnInit {
   }
 
   like() {
-    this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).then(res => {
+    this.userService.like(JSON.parse(localStorage.getItem("id")), this.id).then(res => {
       if (res === null) this.isLike = -1;
       else if (this.isLike == 0) this.isLike = 1;
       else this.isLike = 0;

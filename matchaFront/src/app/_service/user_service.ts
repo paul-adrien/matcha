@@ -160,4 +160,14 @@ export class userService {
       httpOptions
     );
   }
+
+  viewedProfil(id: string, viewed_id: number): Observable<any> {
+    return this.http.post(
+      AUTH_API + `user/${id}/viewedProfil`,
+      {
+        viewed_id,
+      },
+      httpOptions
+    );
+  }
 }

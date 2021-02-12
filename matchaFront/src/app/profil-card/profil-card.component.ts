@@ -32,7 +32,7 @@ export class ProfilCardComponent implements OnInit {
   ngOnInit(): void {}
 
   viewProfil() {
-    this.router.navigate(["home/profil-view/" + this.user.id]);
+    this.router.navigate(["home/profile-view/" + this.user.id]);
   }
 
   public getAge(birthDate: Date) {

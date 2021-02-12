@@ -53,6 +53,26 @@ CREATE TABLE users_like
     like_id VARCHAR(255) NOT NULL /*celui qui like*/
 );
 
+CREATE TABLE matched
+(
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id1 VARCHAR(255) NOT NULL,
+    user_id2 VARCHAR(255) NOT NULL,
+    active INT DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE message
+(
+    id INT NOT NULL AUTO_INCREMENT,
+    conv_id VARCHAR(255) NOT NULL,
+    msg VARCHAR(512) NOT NULL,
+    sender_id VARCHAR(255) NOT NULL,
+    sendingDate VARCHAR(255) NOT NULL,
+    see INT DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
 DROP TABLE `users`;
 
 INSERT INTO `users` (`lastName`,`firstName`,`email`,`password`,`userName`,`birthDate`,`gender`,`showMe`,`bio`,`nbLikes`,`city`,`latitude`,`longitude`,`emailVerify`,`profileComplete`,`link`,`score`,`nbViews`) VALUES ("Mccray","Jonah","ipsum.dolor@Maurismolestie.edu","MOU18OHV1UY","Bernard","1961-05-10",1,1,"sem eget massa. Suspendisse eleifend. Cras sed",85,"Weesp","-40.4571","0.47643","1","1","0",38,45),("Cooper","Wing","in.lobortis@nonloremvitae.net","TYB11YEQ2XY","Yates","1928-01-19",1,2,"elit erat",10,"Barranca","-27.97694","-42.9908","1","1","0",25,29),("Burke","Hop","sit@Quisquepurussapien.net","TFN41KJW6TL","Boyle","1967-09-30",1,1,"eu odio tristique pharetra. Quisque ac libero nec ligula consectetuer",47,"Ligosullo","53.09277","167.82435","1","1","0",50,12),("Gregory","Dexter","sagittis.Nullam.vitae@hendrerit.edu","KIQ64ITZ3IC","Mcpherson","1926-07-24",1,2,"sollicitudin adipiscing ligula. Aenean gravida nunc sed",48,"Ziarat","19.63238","-22.05814","1","1","0",1,19),("Downs","Keith","Curae.Phasellus@dis.co.uk","TDH70NVT3SD","Bradford","2008-02-14",2,2,"dui augue eu tellus. Phasellus elit",10,"Cowdenbeath","76.59873","33.02407","1","1","0",83,87),("Herrera","Daniel","Maecenas@accumsansedfacilisis.org","WBF07KHM6UR","Gutierrez","2009-07-04",2,3,"Vestibulum ante ipsum primis in faucibus orci luctus et ultrices",51,"Pontevedra","26.97148","-104.19101","1","1","0",20,26),("Villarreal","Rudyard","tellus.Suspendisse@VivamusnisiMauris.co.uk","DZY51ATI7JV","Key","1970-11-09",1,3,"magna",30,"HŽron","-69.28655","103.86072","1","1","0",52,21),("Hanson","Griffin","non.luctus@Donec.com","QCQ04MNL7GD","Navarro","1991-02-21",1,3,"ac turpis egestas. Aliquam fringilla cursus purus. Nullam scelerisque",31,"Nicolosi","-18.31707","-29.83277","1","1","0",93,85),("Becker","Graham","netus.et.malesuada@Sedcongue.edu","GWV09SIE8WN","Hammond","1933-05-08",1,3,"commodo tincidunt nibh. Phasellus nulla. Integer",97,"Washuk","89.32034","-89.91938","1","1","0",98,26),("Mack","Kenneth","aptent@Vivamusnibhdolor.ca","NUA18EZO1ST","Rosa","2000-11-08",1,3,"risus. Donec egestas. Duis",3,"Santander","45.14548","142.41304","1","1","0",86,76);

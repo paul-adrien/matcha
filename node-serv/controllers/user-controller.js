@@ -80,6 +80,63 @@ exports.takeViewProfil = (req,res) => {
     };
 }
 
+exports.viewedProfil = (req,res) => {
+    var user_id = req.params.id;
+    var viewed_id = req.body.viewed_id;
+
+    main();
+
+    async function checkView() {
+        return new Promise( resultat => 
+            connection.query('SELECT * FROM users_views WHERE viewed_id = ? and user_id',[user_id, viewed_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    if (results && results.length > 0) {
+                        resultat(results);
+                    }
+                    else{
+                        resultat(null);
+                    }
+                }
+            })
+        )
+    };
+
+    async function addView() {
+        return new Promise( resultat =>
+            connection.query('INSERT INTO users_views (viewed_id, views_id) VALUES (?, ?)',[viewed_id, user_id], function (error, results, fields) {
+                if (error) {
+                    resultat(null);
+                } else {
+                    resultat(1);
+                }
+            })
+        )
+    };
+
+    
+    async function main() {
+        check = await checkView();
+        if (check === null)
+        {
+            if ((await addView()))
+            {
+                res.json({
+                    status:true,
+                    message:'profile view'
+               });
+            }
+        }
+        else {
+            res.json({
+                status:true,
+                message:'profile already view'
+            });
+        }
+    };
+}
+
 exports.getUser = (req,res) => {
     var id = req.body.id;
 

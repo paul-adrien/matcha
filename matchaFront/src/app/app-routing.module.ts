@@ -12,6 +12,7 @@ import { ProfilCardComponent } from "./profil-card/profil-card.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
+import { HomeMessagingComponent } from './home-messaging/home-messaging.component';
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },
@@ -30,6 +31,7 @@ const routes: Routes = [
       { path: "tags", component: TagsComponent },
       { path: "suggestion", component: SuggestionComponent },
       { path: "profile-view/:id", component: ProfileViewComponent },
+      { path: "messaging", component: HomeMessagingComponent },
     ],
   },
   {
