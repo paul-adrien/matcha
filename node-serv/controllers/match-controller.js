@@ -354,13 +354,12 @@ exports.filtreUsersBy = (req, res) => {
   minScore = req.params.score;
   maxLoc = req.params.dist;
   minTag = req.params.tags;
-  sortby = req.params.sortBy
+  sortBy = req.params.sortBy
 
   main();
 
   async function checkData() {
-    return new Promise(resultat => function () {
-      console.log("lolloollloooooooool");
+    return new Promise(resultat => {
       if (id !== null) {
         if (minAge !== null && minAge >= 0 && minAge < 150) {
           if (maxAge !== null && maxAge > 0 && maxAge <= 150) {
@@ -409,7 +408,6 @@ exports.filtreUsersBy = (req, res) => {
           resultat(null);
         }
       } else {
-        console.log("hdhwidhwidwid")
         res.json({
           status: false,
           message: 'error id',
@@ -496,8 +494,7 @@ exports.filtreUsersBy = (req, res) => {
   };
 
   async function main() {
-      console.log("testcheckdata")
-      if ((myUser = await getUser(id)) !== null) {
+      if (await checkData() === 1 && (myUser = await getUser(id)) !== null) {
         let usersSort = await getOtherUser();
         //filtre age
         usersSort = await Promise.all(usersSort.map(async function (user) {
@@ -514,43 +511,46 @@ exports.filtreUsersBy = (req, res) => {
             tags >= minTag &&
             dist <= maxLoc && user.score >= minScore
           ) {
-            return {...user};
+            return {...user, dist, tags};
           } else {
             return undefined;
           }
         }));
         usersSort = usersSort.filter(user => user !== undefined);
-
-        //filtre l
-        //  usersSort = await Promise.all((await getOtherUser()).map(async function(user) {
-        //   dist = 0;
-        //   dist = locat(myUser, user);
-        //  console.log(dist);
-        //   return user;
-        // }));
-
-        // //filtre score
-        // usersSort = await Promise.all(usersSort.map(async function(user) {
-        //   if (user.score >= minScore && user.filtre == 1)
-        //     filtre = 1;
-        //   else {
-        //     user.filtre = 0;
-        //   }
-        //   return user;
-        // }));
-
-        // //filtre tags
-        // usersSort = await Promise.all(usersSort.map(async function(user) {
-        //   tags = 0;
-        //   tags = await tagsMatch(myUser, user);
-
-        //   if (tags >= minTag && user.filtre == 1)
-        //     user.filtre = 1;
-        //   else {
-        //     user.filtre = 0;
-        //   }
-        //   return user;
-        // }));
+        if (sortBy === "age") {
+          usersSort.sort((a, b) => {
+            if (datefns.isBefore(new Date(a.birthDate), new Date(b.birthDate))) {
+              return 1
+            } else if (datefns.isBefore(new Date(b.birthDate), new Date(a.birthDate))) {
+              return -1;
+            } else 0
+          })
+        } else if (sortBy === "local") {
+          usersSort.sort((a, b) => {
+            if (a.dist < b.dist) {
+              return -1
+            } else if (a.dist > b.dist) {
+              return 1;
+            } else 0
+          })
+        } else if (sortBy === "popu") {
+          usersSort.sort((a, b) => {
+            if (a.score > b.score) {
+              return -1
+            } else if (a.score < b.score) {
+              return 1;
+            } else 0
+          })
+        } else if (sortBy === "tags") {
+          usersSort.sort((a, b) => {
+            if (a.tags > b.tags) {
+              return -1
+            } else if (a.tags < b.tags) {
+              return 1;
+            } else 0
+          })
+        }
+        
 
         res.json( usersSort
         );

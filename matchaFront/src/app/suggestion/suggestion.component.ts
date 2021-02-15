@@ -1,5 +1,12 @@
 import { Filtre, User } from "./../../../libs/user";
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from "@angular/core";
 import { matchService } from "../_service/match_service";
 import { Router } from "@angular/router";
 
@@ -7,10 +14,10 @@ import { Router } from "@angular/router";
   selector: "app-suggestion",
   template: `
     <div class="content">
-      <a (click)="sortUsersBy('age')"><button>Trier par age</button></a>
-      <a (click)="sortUsersBy('local')"><button>Trier par localisation</button></a>
-      <a (click)="sortUsersBy('popu')"><button>Trier par popularité</button></a>
-      <a (click)="sortUsersBy('tags')"><button>Trier par tags</button></a>
+      <a (click)="filtreUsersBy('age')"><button>Trier par age</button></a>
+      <a (click)="filtreUsersBy('local')"><button>Trier par localisation</button></a>
+      <a (click)="filtreUsersBy('popu')"><button>Trier par popularité</button></a>
+      <a (click)="filtreUsersBy('tags')"><button>Trier par tags</button></a>
       <form
         class="form-container"
         name="form"
@@ -72,10 +79,16 @@ import { Router } from "@angular/router";
     </div>
   `,
   styleUrls: ["./suggestion.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SuggestionComponent implements OnInit {
   @Output() public usersSort = new EventEmitter<User[]>();
-  constructor(private matchService: matchService, private router: Router) {}
+
+  constructor(
+    private matchService: matchService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) {}
 
   usersMatch = [];
   form: Filtre = {
@@ -113,30 +126,18 @@ export class SuggestionComponent implements OnInit {
       );
   }
 
-  filtreUsersBy() {
-<<<<<<< Updated upstream
+  filtreUsersBy(sortBy: string) {
+    this.form.sortBy = sortBy || "0";
     this.matchService.filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form).subscribe(
       data => {
         console.log(data);
-        this.usersMatch = data.usersSort;
+        this.usersMatch = data;
+        this.usersSort.emit(data);
       },
       err => {
         console.log(err);
       }
     );
-=======
-    this.matchService
-      .filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form)
-      .subscribe(
-        data => {
-          console.log(data);
-          this.usersMatch = data.usersSort;
-        },
-        err => {
-          console.log(err);
-        }
-      );
->>>>>>> Stashed changes
   }
 
   viewProfil(id) {

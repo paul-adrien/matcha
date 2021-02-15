@@ -6,11 +6,31 @@
   flex-direction: column;
   align-items: center;
 
+  .suggestion-container {
+    display: flex;
+  }
+
   .content-suggestion {
     display: flex;
     flex-direction: row;
     overflow-x: scroll;
     width: 100%;
     max-width: 40rem;
+    overflow: scroll;
+  }
+
+  .content-filter {
+    display: flex;
+    overflow-y: scroll;
+    width: 100%;
+    max-width: 40rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }

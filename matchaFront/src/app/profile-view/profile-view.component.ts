@@ -11,10 +11,12 @@ import { userService } from "../_service/user_service";
 import { differenceInYears } from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
 import { combineLatest, Observable, Subject } from "rxjs";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-profile-view",
   template: `
+    <img class="back" src="./assets/arrow-left.svg" (click)="this.backRoute()" />
     <div class="big-profile-picture">
       <img
         class="chevron"
@@ -79,7 +81,7 @@ export class ProfileViewComponent implements OnInit {
 
   constructor(
     public route: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     private userService: userService,
     private cd: ChangeDetectorRef
   ) {}
@@ -156,5 +158,9 @@ export class ProfileViewComponent implements OnInit {
 
   public getAge(birthDate: Date) {
     return differenceInYears(new Date(), new Date(birthDate));
+  }
+
+  public backRoute() {
+    this.location.back();
   }
 }
