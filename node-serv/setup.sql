@@ -77,10 +77,10 @@ CREATE TABLE notif
 (
     userId VARCHAR(255) NOT NULL,
     otherId VARCHAR(255) NOT NULL,
-    type VARCHAR(255) NOT NULL, /*like= like, view = visite, msg = message, matched = like en retour d'un like, dislike = matché plus like*/
+    type VARCHAR(255) NOT NULL,
     date VARCHAR(255) NOT NULL,
-    see INT DEFAULT 0,
-);
+    see INT DEFAULT 0
+);/*like = like, view = visite, msg = message, matched = like en retour d'un like, unMatched = matché plus like*/
 
 DROP TABLE `users`;
 

@@ -126,8 +126,12 @@ export class SuggestionComponent implements OnInit {
       );
   }
 
+<<<<<<< Updated upstream
   filtreUsersBy(sortBy: string) {
     this.form.sortBy = sortBy || "0";
+=======
+  filtreUsersBy() {
+>>>>>>> Stashed changes
     this.matchService.filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form).subscribe(
       data => {
         console.log(data);

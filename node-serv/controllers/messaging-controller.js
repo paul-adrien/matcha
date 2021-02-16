@@ -181,8 +181,19 @@ exports.sendMessage = (req,res) => {
   conv_id = req.body.conv_id;
   msg = req.body.msg;
   sender_id = req.body.sender_id;
+  user_id = req.body.user_id;
 
   main();
+
+  function notifMsg() {
+    connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "msg", DATE(NOW()))',[user_id, sender_id], function (error, results, fields) {
+        if (error) {
+            return null;
+        } else {
+            return(1);
+        }
+    });
+  }
 
   async function insMsg() {
     return new Promise( resultat => 
@@ -198,7 +209,7 @@ exports.sendMessage = (req,res) => {
 
   async function updtActiveConv() {
     return new Promise( resultat => 
-        connection.query('UPDATE matched SET active = active+1 WHERE conv_id = ? AND active = 0',[conv_id], function (error, results, fields) {
+        connection.query('UPDATE matched SET active = active+1 WHERE id = ? AND active = 0',[conv_id], function (error, results, fields) {
             if (error) {
               resultat(null);
             } else {
@@ -210,8 +221,9 @@ exports.sendMessage = (req,res) => {
 
   async function main() {
     if ((messages = await insMsg()) !== null) {
-      if (updtActiveConv() !== null)
+      if ((await updtActiveConv()) !== null)
       {
+        notifMsg();
         res.json({
           status:true,
           message:'send messages'

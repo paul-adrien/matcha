@@ -142,7 +142,7 @@ export class userService {
     );
   }
 
-  viewedProfil(id: string, viewed_id: number): Observable<any> {
+  viewedProfil(id: string, viewed_id: string): Observable<any> {
     return this.http.post(
       AUTH_API + `user/${id}/viewedProfil`,
       {

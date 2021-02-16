@@ -69,7 +69,7 @@ export class HomeMessagingComponent implements OnInit {
   }
 
   sendMessage() {
-    this.messagingService.sendMessage("2", "test3", "1").subscribe(
+    this.messagingService.sendMessage("2", "test3", "1", "3").subscribe(
       data => {
         console.log(data);
       },

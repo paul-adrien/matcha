@@ -137,6 +137,8 @@ export class ProfileViewComponent implements OnInit {
       map(tags => tags),
       takeUntil(this.unsubscribe)
     );
+
+    this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe();
     //this.userService.getUser(this.route.params.)
     // this.id = this.route.snapshot.params["id"];
     // if (!this.id || this.id == 0) this.router.navigate(["home/discover"]);

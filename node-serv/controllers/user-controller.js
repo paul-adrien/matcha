@@ -88,7 +88,7 @@ exports.viewedProfil = (req,res) => {
 
     async function checkView() {
         return new Promise( resultat => 
-            connection.query('SELECT * FROM users_views WHERE viewed_id = ? and user_id',[user_id, viewed_id], function (error, results, fields) {
+            connection.query('SELECT * FROM users_views WHERE viewed_id = ? and user_id = ?',[user_id, viewed_id], function (error, results, fields) {
                 if (error) {
                     resultat(null);
                 } else {
@@ -115,14 +115,23 @@ exports.viewedProfil = (req,res) => {
         )
     };
 
+    function notifView() {
+        connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "view", DATE(NOW()))',[viewed_id, user_id], function (error, results, fields) {
+            if (error) {
+                return null;
+            } else {
+                return(1);
+            }
+        });
+    }
     
     async function main() {
+        notifView();
         check = await checkView();
         if (check === null)
         {
             if ((await addView()))
             {
-                notifView()
                 res.json({
                     status:true,
                     message:'profile view'
@@ -181,4 +190,20 @@ exports.updatePosition = (req,res) => {
             res.json("Position update !")
         }
     });
+}
+
+exports.getNotifs = (req,res) => {
+
+    connection.query('SELECT * FROM notif WHERE userId',[user_id, viewed_id], function (error, results, fields) {
+        if (error) {
+            resultat(null);
+        } else {
+            if (results && results.length > 0) {
+                resultat(results);
+            }
+            else{
+                resultat(null);
+            }
+        }
+    })
 }

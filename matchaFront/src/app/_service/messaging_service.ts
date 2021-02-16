@@ -37,13 +37,14 @@ export class messagingService {
       );
   }
 
-  sendMessage(id: string, msg: string, sender_id: string): Observable<any> {
+  sendMessage(id: string, msg: string, sender_id: string, receiv_id: string): Observable<any> {
     return this.http.post(
       AUTH_API + "sendMessage",
       {
         conv_id: id,
         msg: msg,
-        sender_id: sender_id
+        sender_id: sender_id,
+        user_id: receiv_id
       },
       httpOptions
     );
