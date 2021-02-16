@@ -20,6 +20,7 @@ import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
 import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ProfileViewComponent } from "./profile-view/profile-view.component";
     TagsComponent,
     SuggestionComponent,
     HomeMessagingComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,

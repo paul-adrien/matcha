@@ -116,11 +116,27 @@ exports.viewedProfil = (req,res) => {
     };
 
     function notifView() {
-        connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "view", DATE(NOW()))',[viewed_id, user_id], function (error, results, fields) {
+        connection.query('SELECT * FROM notif WHERE userId = ? AND type = "view"',[viewed_id], function (error, results, fields) {
             if (error) {
                 return null;
             } else {
-                return(1);
+                if (results && results.length > 0) {
+                    connection.query('UPDATE notif SET date = DATE(NOW()), see = 0 WHERE userId = ? AND type = "view"',[viewed_id], function (error, results, fields) {
+                        if (error) {
+                            return null;
+                        } else {
+                            return(1);
+                        }
+                    });
+                } else {
+                    connection.query('INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "view", DATE(NOW()))',[viewed_id, user_id], function (error, results, fields) {
+                        if (error) {
+                            return null;
+                        } else {
+                            return(1);
+                        }
+                    });
+                }
             }
         });
     }
@@ -193,17 +209,53 @@ exports.updatePosition = (req,res) => {
 }
 
 exports.getNotifs = (req,res) => {
+    id = req.params.id;
 
-    connection.query('SELECT * FROM notif WHERE userId',[user_id, viewed_id], function (error, results, fields) {
+    connection.query('SELECT * FROM notif WHERE userId = ?',[id], function (error, results, fields) {
         if (error) {
-            resultat(null);
+            res.json({
+              status:false,
+              message:'error when select notifs'
+            });
         } else {
             if (results && results.length > 0) {
-                resultat(results);
+                res.json(results);
             }
             else{
-                resultat(null);
+                res.json([]);
             }
         }
     })
 }
+
+exports.seeNotifs = (req,res) => {
+  id = req.params.id;
+
+  connection.query('UPDATE notif SET see = 1 WHERE userId = ?',[id], function (error, results, fields) {
+      if (error) {
+          res.json({
+            status:false,
+            message:'error when update notifs'
+          });
+      } else {
+        res.json(results);
+      }
+  })
+}
+
+exports.delNotifs = (req,res) => {
+    userId = req.params.userId;
+    otherId = req.params.otherId;
+    type = req.params.type;
+  
+    connection.query('DELETE FROM notif WHERE userId = ? AND otherId = ? AND type = ?',[userId, otherId, type], function (error, results, fields) {
+        if (error) {
+            res.json({
+              status:false,
+              message:'error when delete notifs'
+            });
+        } else {
+          res.json(results);
+        }
+    })
+  }

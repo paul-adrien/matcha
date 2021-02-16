@@ -151,4 +151,12 @@ export class userService {
       httpOptions
     );
   }
+
+  getNotifs(id): Observable<any> {
+    return this.http.get(AUTH_API + `users/${id}/getNotifs`, httpOptions);
+  }
+
+  seeNotifs(id): Observable<any> {
+    return this.http.get(AUTH_API + `users/${id}/seeNotifs`, httpOptions);
+  }
 }

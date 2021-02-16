@@ -108,6 +108,8 @@ app.get('/api/possiblyConv/:id', messagingController.possiblyConv);
 app.get('/api/activeConv/:id', messagingController.activeConv);
 app.get('/api/getMessage/:id', messagingController.getMessage);
 app.post('/api/sendMessage', messagingController.sendMessage);
+app.get('/api/users/:id/getNotifs', userController.getNotifs);
+app.get('/api/users/:id/seeNotifs', userController.seeNotifs);
 
 
 const PORT = process.env.PORT || 8080;

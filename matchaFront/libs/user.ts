@@ -36,6 +36,14 @@ export interface Filtre {
   sortBy: string;
 }
 
+export interface Notif {
+  userId: string;
+  otherId: string;
+  type: string;
+  date: string;
+  see: number;
+}
+
 export function mapUserBackToUserFront(user: any): User {
   return {
     userName: user["userName"],

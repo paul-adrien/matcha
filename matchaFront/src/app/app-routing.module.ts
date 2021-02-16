@@ -13,6 +13,7 @@ import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
 import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
+import { NotificationComponent } from './notification/notification.component';
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },
@@ -32,6 +33,7 @@ const routes: Routes = [
       { path: "suggestion", component: SuggestionComponent },
       { path: "profile-view/:id", component: ProfileViewComponent },
       { path: "messaging", component: HomeMessagingComponent },
+      { path: "notif", component: NotificationComponent },
     ],
   },
   {
