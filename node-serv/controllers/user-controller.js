@@ -88,12 +88,12 @@ exports.viewedProfil = (req,res) => {
 
     async function checkView() {
         return new Promise( resultat => 
-            connection.query('SELECT * FROM users_views WHERE viewed_id = ? and user_id = ?',[user_id, viewed_id], function (error, results, fields) {
+            connection.query('SELECT * FROM users_views WHERE viewed_id = ? AND views_id = ?',[viewed_id, user_id], function (error, results, fields) {
                 if (error) {
                     resultat(null);
                 } else {
                     if (results && results.length > 0) {
-                        resultat(results);
+                        resultat(1);
                     }
                     else{
                         resultat(null);
@@ -109,7 +109,13 @@ exports.viewedProfil = (req,res) => {
                 if (error) {
                     resultat(null);
                 } else {
-                    resultat(1);
+                  connection.query('UPDATE users SET nbViews = nbViews+1 WHERE id = ?',[viewed_id], function (error, results, fields) {
+                    if (error) {
+                        resultat(null);
+                    } else {
+                        resultat(1);
+                    }
+                  })
                 }
             })
         )
@@ -143,18 +149,15 @@ exports.viewedProfil = (req,res) => {
     
     async function main() {
         notifView();
-        check = await checkView();
-        if (check === null)
-        {
-            if ((await addView()))
-            {
+        if ((await checkView()) === null) {
+            if ((await addView())) {
+              console.log('test');
                 res.json({
                     status:true,
                     message:'profile view'
                });
             }
-        }
-        else {
+        } else {
             res.json({
                 status:true,
                 message:'profile already view'
@@ -225,6 +228,8 @@ exports.getNotifs = (req,res) => {
                 res.json([]);
             }
         }
+    });
+    connection.query('UPDATE users SET lastConnection = NOW() WHERE id = ?',[id], function (error, results, fields) {
     })
 }
 
@@ -258,4 +263,36 @@ exports.delNotifs = (req,res) => {
           res.json(results);
         }
     })
-  }
+}
+
+exports.reportUser = (req,res) => {
+  userId = req.params.userId;
+  reportId = req.params.reportId;
+
+  connection.query('INSERT INTO report (userId, reportId) VALUES (?, ?)',[userId, reportId], function (error, results, fields) {
+      if (error) {
+          res.json({
+            status:false,
+            message:'error when insert report'
+          });
+      } else {
+        res.json(results);
+      }
+  })
+}
+
+exports.blockUser = (req,res) => {
+  userId = req.params.userId;
+  blockedId = req.params.blockedId;
+
+  connection.query('INSERT INTO blocked (userId, reportId) VALUES (?, ?)',[userId, blockedId], function (error, results, fields) {
+      if (error) {
+          res.json({
+            status:false,
+            message:'error when insert blocked user'
+          });
+      } else {
+        res.json(results);
+      }
+  })
+}

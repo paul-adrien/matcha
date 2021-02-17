@@ -19,6 +19,7 @@ CREATE TABLE users
     emailVerify varchar(255) DEFAULT '0',
     profileComplete varchar(255) DEFAULT '0',
     link VARCHAR(255) DEFAULT '',
+    lastConnection VARCHAR(255) DEFAULT '',
     picture1 TEXT(32000) DEFAULT NULL,
     picture2 TEXT(32000) DEFAULT NULL,
     picture3 TEXT(32000) DEFAULT NULL,
@@ -27,6 +28,9 @@ CREATE TABLE users
     picture6 TEXT(32000) DEFAULT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE users
+ADD lastConnection VARCHAR(255) DEFAULT '';
 
 CREATE TABLE tag
 (
@@ -81,6 +85,18 @@ CREATE TABLE notif
     date VARCHAR(255) NOT NULL,
     see INT DEFAULT 0
 );/*like = like, view = visite, msg = message, matched = like en retour d'un like, unMatched = matché plus like*/
+
+CREATE TABLE blocked
+(
+    userId VARCHAR(255) NOT NULL,
+    blockedId VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE report
+(
+    userId VARCHAR(255) NOT NULL,
+    reportId VARCHAR(255) NOT NULL
+);
 
 DROP TABLE `users`;
 
