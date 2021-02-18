@@ -90,7 +90,7 @@ app.post('/api/updateProfil', updateProfilController.updateProfil);
 app.post('/api/uploadPicture', updateProfilController.uploadPicture);
 app.post('/api/takeViewProfil', userController.takeViewProfil);
 app.post('/api/whoLikeMe', likeController.whoLikeMe);
-app.post('/api/getUser', userController.getUser);
+app.get('/api/users/:id', userController.getUser);
 app.get('/api/users/:userId/likeOrNot/:likeId', likeController.likeOrNot);
 app.post('/api/like', likeController.likeOrDislike);
 app.get('/api/getAllTags', tagsController.getAllTags);

@@ -51,13 +51,7 @@ export class userService {
 
   getUser(id: string): Observable<User> {
     return this.http
-      .post(
-        AUTH_API + "getUser",
-        {
-          id: id,
-        },
-        httpOptions
-      )
+      .get(AUTH_API + `users/${id}`, httpOptions)
       .pipe(map(res => mapUserBackToUserFront(res)));
   }
 

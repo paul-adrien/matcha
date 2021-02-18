@@ -11,6 +11,7 @@ import {
 import { User } from "@matcha/shared";
 import { profilService } from "../_service/profil_service";
 import { userService } from "../_service/user_service";
+import { map, switchMap } from "rxjs/operators";
 
 @Component({
   selector: "discover",
@@ -74,14 +75,16 @@ export class DiscoverComponent implements OnInit {
   }
 
   public getCurrentLocation() {
+    let lat = undefined;
+    let long = undefined;
     if (
       typeof navigator.geolocation === "object" &&
       typeof navigator.geolocation.getCurrentPosition === "function"
     ) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          const lat = position.coords.latitude;
-          const long = position.coords.longitude;
+          lat = position.coords.latitude;
+          long = position.coords.longitude;
           this.userService
             .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
             .subscribe(el => console.log(el));
@@ -98,8 +101,11 @@ export class DiscoverComponent implements OnInit {
               console.log("The request to get user location timed out.");
               break;
           }
+          this.userService
+            .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
+            .subscribe(el => console.log(el));
         },
-        { timeout: 10000 }
+        { timeout: 5000 }
       );
     }
   }
