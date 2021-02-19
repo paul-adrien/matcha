@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
+import { interval } from 'rxjs';
+import { userService } from '../_service/user_service';
 
 @Component({
   selector: "nav-bar",
@@ -13,9 +15,16 @@ import { AuthService } from "../_service/auth_service";
     >
       <img [src]="item.selected ? item.src.check : item.src.default" />
     </a>
+    <div class="case" (click)="showDialog()">
+      <img src="./assets/notification-bell-svgrepo-com.svg" />
+    </div>
     <div (click)="this.logOut()" class="case">
       <img src="./assets/log-out.svg" />
     </div>
+    <app-notification id="modal_1" class="hhidden">
+        Dialog Header
+        <button>Close Dialog</button>
+    </app-notification>
   `,
   styleUrls: ["./nav-bar.component.scss"],
 })
@@ -50,7 +59,19 @@ export class NavigationBarComponent implements OnInit {
     },
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private userService: userService) {
+    interval(10000)
+    .subscribe(x => this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
+    .subscribe(
+      data => {
+        console.log(data);
+        // this.notifs = data;
+      },
+      err => {
+        console.log(err);
+      }
+    ))
+  }
 
   ngOnInit(): void {}
 
@@ -62,9 +83,30 @@ export class NavigationBarComponent implements OnInit {
         item.selected = false;
       }
     });
+
+    this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
+      data => {
+        console.log(data);
+        // this.notifs = data;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   public logOut() {
     this.authService.logOut();
+  }
+
+  showDialog(){
+    let modal_t  = document.getElementById('modal_1')
+    modal_t.classList.remove('hhidden')
+    modal_t.classList.add('sshow');
+  }
+  closeDialog() {
+    let modal_t  = document.getElementById('modal_1')
+    modal_t.classList.remove('sshow')
+    modal_t.classList.add('hhidden');
   }
 }

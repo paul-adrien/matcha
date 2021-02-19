@@ -22,6 +22,7 @@ import { HomeMessagingComponent } from "./home-messaging/home-messaging.componen
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { NotificationComponent } from "./notification/notification.component";
 import { NgxSliderModule } from "@angular-slider/ngx-slider";
+import { DiscussionComponent } from './discussion/discussion.component';
 
 @NgModule({
   declarations: [
