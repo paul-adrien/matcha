@@ -37,10 +37,17 @@ html {
   --secondary-color: #fbcf0a;
   --color-text: black;
   --color-reverse: white;
+
+  @media screen and (max-width: 600px) {
+    font-size: 14px;
+  }
 }
 
 input,
-button {
+button,
+select,
+select::placeholder,
+input::placeholder {
   font-family: Montserrat;
 }
 

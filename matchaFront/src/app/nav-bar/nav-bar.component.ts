@@ -33,8 +33,8 @@ export class NavigationBarComponent implements OnInit {
     {
       id: "home",
       src: {
-        check: "./assets/home-check.svg",
-        default: "./assets/home.svg",
+        check: "./assets/new-home-check.svg",
+        default: "./assets/new-home.svg",
       },
       route: "discover",
       selected: true,

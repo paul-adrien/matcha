@@ -28,8 +28,7 @@ export interface Tags {
 }
 
 export interface Filtre {
-  maxAge: number;
-  minAge: number;
+  age: number[];
   score: number;
   local: number;
   tags: number;

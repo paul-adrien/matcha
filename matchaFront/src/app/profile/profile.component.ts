@@ -133,7 +133,7 @@ function ValidatorSelect(control: FormControl) {
               [disabled]="picture.url"
               [id]="'fileInput' + (index + 1)"
               class="input-file"
-              accept="image/*"
+              accept="image/jpeg, image/png"
               type="file"
               (change)="this.fileChangeEvent($event, index.toString())"
             />
@@ -341,17 +341,11 @@ export class ProfileComponent implements OnInit {
   //   switchMap(() => this.userService.getAllTags())
   // );
 
-  public yourTags$: Observable<Tags[]> = this.userService
-    .getYourTags(JSON.parse(localStorage.getItem("id")))
-    .pipe(
-      map(tags => tags),
-      takeUntil(this.unsubscribe)
-    );
-
-  public allTags$: Observable<Tags[]> = this.userService.getAllTags().pipe(
-    map(tags => tags),
-    takeUntil(this.unsubscribe)
+  public yourTags$: Observable<Tags[]> = this.userService.getYourTags(
+    JSON.parse(localStorage.getItem("id"))
   );
+
+  public allTags$: Observable<Tags[]> = this.userService.getAllTags();
 
   ngOnInit(): void {
     this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(res => {
@@ -368,19 +362,14 @@ export class ProfileComponent implements OnInit {
       this.user = res;
       this.saveEmail = res.email;
     });
-    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))).pipe(
-      map(tags => tags),
-      takeUntil(this.unsubscribe)
-    );
+    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem("id")));
 
-    this.allTags$ = this.userService.getAllTags().pipe(
-      map(tags => tags),
-      takeUntil(this.unsubscribe)
-    );
+    this.allTags$ = this.userService.getAllTags();
   }
 
   public changeUpdateMode(updateMode: boolean) {
     this.updateMode = updateMode;
+    this.primaryPictureId = 0;
   }
 
   public onSubmit() {
@@ -483,8 +472,9 @@ export class ProfileComponent implements OnInit {
     this.userService.addExistTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
       data => {
         console.log(data);
-        this.cd.markForCheck();
-        this.cd.detectChanges();
+        if (data.status == true) {
+          this.ngOnInit();
+        }
       },
       err => {
         console.log(err);
@@ -498,8 +488,9 @@ export class ProfileComponent implements OnInit {
     this.userService.addNonExistTag(tag, JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);
-        this.cd.detectChanges();
-        this.cd.markForCheck();
+        if (data.status == true) {
+          this.ngOnInit();
+        }
       },
       err => {
         console.log(err);
@@ -513,7 +504,9 @@ export class ProfileComponent implements OnInit {
     this.userService.deleteTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
       data => {
         console.log(data);
-        this.cd.detectChanges();
+        if (data.status == true) {
+          this.ngOnInit();
+        }
       },
       err => {
         console.log(err);

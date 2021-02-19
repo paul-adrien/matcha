@@ -9,74 +9,45 @@ import {
 } from "@angular/core";
 import { matchService } from "../_service/match_service";
 import { Router } from "@angular/router";
+import { FormControl, FormGroup } from "@angular/forms";
+import { Options } from "@angular-slider/ngx-slider";
 
 @Component({
   selector: "app-suggestion",
   template: `
-    <div class="content">
-      <a (click)="filtreUsersBy('age')"><button>Trier par age</button></a>
-      <a (click)="filtreUsersBy('local')"><button>Trier par localisation</button></a>
-      <a (click)="filtreUsersBy('popu')"><button>Trier par popularité</button></a>
-      <a (click)="filtreUsersBy('tags')"><button>Trier par tags</button></a>
-      <form
-        class="form-container"
-        name="form"
-        (ngSubmit)="f.form.valid && filtreUsersBy()"
-        #f="ngForm"
-        novalidate
-      >
-        <p>Age maximum</p>
-        <input
-          type="number"
-          class="form-control"
-          name="maxAge"
-          [(ngModel)]="form.maxAge"
-          required
-          #maxAge="ngModel"
-        />
-        <p>Age minimum</p>
-        <input
-          type="number"
-          class="form-control"
-          name="minAge"
-          [(ngModel)]="form.minAge"
-          required
-          #minAge="ngModel"
-          value="150"
-        />
-        <p>Score minimum</p>
-        <input
-          type="number"
-          class="form-control"
-          name="score"
-          [(ngModel)]="form.score"
-          required
-          #score="ngModel"
-          value="0"
-        />
-        <p>distance maximum (km)</p>
-        <input
-          type="number"
-          class="form-control"
-          name="local"
-          [(ngModel)]="form.local"
-          required
-          #local="ngModel"
-          value="100000"
-        />
-        <p>Nombre de tag(s) minimum</p>
-        <input
-          type="number"
-          class="form-control"
-          name="tags"
-          [(ngModel)]="form.tags"
-          required
-          #tags="ngModel"
-          value="0"
-        />
-        <button class="primary-button">Filtrer</button>
-      </form>
-    </div>
+    <form
+      class="form-container"
+      [formGroup]="this.sliderForm"
+      (ngSubmit)="f.form.valid && filtreUsersBy()"
+      #f="ngForm"
+      novalidate
+    >
+      <div class="custom-slider">
+        <span>Trier par:</span>
+        <select class="select" formControlName="sortBy">
+          <option *ngFor="let option of this.sortOptions" [ngValue]="option.id">
+            {{ option.name }}
+          </option>
+        </select>
+      </div>
+      <div class="custom-slider">
+        <span>Age</span>
+        <ngx-slider [options]="ageOptions" formControlName="age"></ngx-slider>
+      </div>
+      <div class="custom-slider">
+        <span>Score minimum</span>
+        <ngx-slider [options]="scoreOptions" formControlName="score"></ngx-slider>
+      </div>
+      <div class="custom-slider">
+        <span>Distance max (km)</span>
+        <ngx-slider [options]="localOptions" formControlName="local"></ngx-slider>
+      </div>
+      <div class="custom-slider">
+        <span>Tags minimum</span>
+        <ngx-slider [options]="tagsOptions" formControlName="tags"></ngx-slider>
+      </div>
+      <button class="primary-button">Filtrer</button>
+    </form>
   `,
   styleUrls: ["./suggestion.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,13 +62,46 @@ export class SuggestionComponent implements OnInit {
   ) {}
 
   usersMatch = [];
-  form: Filtre = {
-    maxAge: 150,
-    minAge: 0,
-    score: 0,
-    local: 3000,
-    tags: 0,
-    sortBy: "0",
+
+  sortOptions = [
+    { name: "Aucun", id: "0" },
+    { name: "Age", id: "age" },
+    { name: "Score de popularité", id: "popu" },
+    { name: "Distance", id: "local" },
+    { name: "Nombre de tags en commun", id: "tags" },
+  ];
+
+  sliderForm: FormGroup = new FormGroup({
+    age: new FormControl([18, 30]),
+    score: new FormControl(50),
+    local: new FormControl(10),
+    tags: new FormControl(3),
+    sortBy: new FormControl("0"),
+  });
+
+  ageOptions: Options = {
+    floor: 18,
+    ceil: 150,
+    minRange: 4,
+    hideLimitLabels: true,
+  };
+
+  scoreOptions: Options = {
+    floor: 0,
+    ceil: 100,
+    showSelectionBar: true,
+  };
+
+  localOptions: Options = {
+    floor: 0,
+    ceil: 4000,
+    showSelectionBar: true,
+  };
+
+  tagsOptions: Options = {
+    floor: 0,
+    ceil: 100,
+    showSelectionBar: true,
   };
 
   ngOnInit(): void {
@@ -126,18 +130,19 @@ export class SuggestionComponent implements OnInit {
       );
   }
 
-  filtreUsersBy(sortBy?: string) {
-    this.form.sortBy = sortBy || "0";
-    this.matchService.filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.form).subscribe(
-      data => {
-        console.log(data);
-        this.usersMatch = data;
-        this.usersSort.emit(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  filtreUsersBy() {
+    this.matchService
+      .filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.sliderForm.getRawValue())
+      .subscribe(
+        data => {
+          console.log(data);
+          this.usersMatch = data;
+          this.usersSort.emit(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
   viewProfil(id) {

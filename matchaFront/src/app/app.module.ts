@@ -20,7 +20,8 @@ import { TagsComponent } from "./tags/tags.component";
 import { SuggestionComponent } from "./suggestion/suggestion.component";
 import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
-import { NotificationComponent } from './notification/notification.component';
+import { NotificationComponent } from "./notification/notification.component";
+import { NgxSliderModule } from "@angular-slider/ngx-slider";
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { NotificationComponent } from './notification/notification.component';
     HttpClientModule,
     ImageCropperModule,
     ReactiveFormsModule,
+    NgxSliderModule,
   ],
   exports: [FormsModule],
   providers: [NgxImageCompressService],

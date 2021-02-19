@@ -1,4 +1,45 @@
-.content {
-  height: 100%;
-  overflow: scroll;
+:host {
+  width: 100%;
+  max-width: 40rem;
+  margin: 1rem 0;
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 1rem;
+  }
+
+  .custom-slider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .select {
+      margin: 1rem 0;
+      width: 13rem;
+    }
+  }
+}
+
+::ng-deep {
+  .custom-slider .ngx-slider .ngx-slider-pointer {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    background-color: var(--secondary-color);
+    z-index: 3;
+    border-radius: 16px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer::after {
+    display: none;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-selection {
+    background: var(--secondary-color) !important;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bar {
+    background: #fbcf0a44;
+  }
 }

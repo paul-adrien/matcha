@@ -47,10 +47,11 @@ export class matchService {
   }
 
   filtreUsersBy(id: string, filtre: Partial<Filtre>): Observable<any> {
+    console.log(filtre);
     return this.http
       .get(
         AUTH_API +
-          `users/${id}/min-age/${filtre.minAge}/max-age/${filtre.maxAge}/score/${filtre.score}/tags/${filtre.tags}/distance/${filtre.local}/sort-by/${filtre.sortBy}`,
+          `users/${id}/min-age/${filtre.age[0]}/max-age/${filtre.age[1]}/score/${filtre.score}/tags/${filtre.tags}/distance/${filtre.local}/sort-by/${filtre.sortBy}`,
         httpOptions
       )
       .pipe(map(res => Array.isArray(res) && res.map(user => mapUserBackToUserFront(user))));

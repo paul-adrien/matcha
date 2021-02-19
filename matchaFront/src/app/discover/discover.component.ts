@@ -26,7 +26,7 @@ import { map, switchMap } from "rxjs/operators";
         else error
       "
     >
-      <div class="content-suggestion">
+      <div class="content-filter">
         <app-profil-card
           [user]="userSuggestion"
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"

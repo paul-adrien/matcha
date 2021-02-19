@@ -8,6 +8,9 @@
 
   .suggestion-container {
     display: flex;
+    width: 100%;
+    max-width: 40rem;
+    justify-content: center;
   }
 
   .content-suggestion {
@@ -15,15 +18,14 @@
     flex-direction: row;
     overflow-x: scroll;
     width: 100%;
-    max-width: 40rem;
     overflow: scroll;
+    margin: 0 0.5rem;
   }
 
   .content-filter {
     display: flex;
     overflow-y: scroll;
     width: 100%;
-    max-width: 40rem;
     flex-wrap: wrap;
     justify-content: center;
   }

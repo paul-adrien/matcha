@@ -1,160 +1,178 @@
-var connection = require('./../config/db');
-var forEach = require('async-foreach').forEach;
+var connection = require("./../config/db");
+var forEach = require("async-foreach").forEach;
 var datefns = require("date-fns");
 
 exports.getSuggestion = (req, res) => {
-
   id = req.body.id;
 
   main();
 
   async function checkData() {
-    return new Promise(resultat => function () {
-      if (id !== null) {
-        resultat(1);
-      } else {
-        res.json({
-          status: false,
-          message: 'error id',
-          userMatch: null
-        });
-        resultat(null);
-      }
-    })
-  };
+    return new Promise(
+      resultat =>
+        function () {
+          if (id !== null) {
+            resultat(1);
+          } else {
+            res.json({
+              status: false,
+              message: "error id",
+              userMatch: null,
+            });
+            resultat(null);
+          }
+        }
+    );
+  }
 
   async function getUser(id) {
     return new Promise(resultat =>
-      connection.query('SELECT * FROM users WHERE id = ?', [id], function (error, results, fields) {
+      connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
         if (error) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
             resultat(results);
-          }
-          else {
+          } else {
             resultat(null);
           }
         }
       })
-    )
-  };
+    );
+  }
 
   async function getOtherUser() {
     return new Promise(resultat =>
-      connection.query('SELECT * FROM users WHERE id != ? AND profileComplete = "1"', [id], function (error, results, fields) {
-        if (error) {
-          resultat(null);
-        } else {
-          if (results && results.length > 0) {
-            resultat(results);
-          }
-          else {
+      connection.query(
+        'SELECT * FROM users WHERE id != ? AND profileComplete = "1"',
+        [id],
+        function (error, results, fields) {
+          if (error) {
             resultat(null);
+          } else {
+            if (results && results.length > 0) {
+              resultat(results);
+            } else {
+              resultat(null);
+            }
           }
         }
-      })
-    )
-  };
+      )
+    );
+  }
 
   function oriSex(user, otherUser) {
-    if (user.gender == 1 && (user.showMe == 1 || user.showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 1 || otherUser.showMe == 3))
+    if (
+      user.gender == 1 &&
+      (user.showMe == 1 || user.showMe == 3) &&
+      otherUser.gender == 1 &&
+      (otherUser.showMe == 1 || otherUser.showMe == 3)
+    )
       return 5;
-    else if (user.gender == 1 && (user.showMe == 2 || user.showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 1 || otherUser.showMe == 3))
+    else if (
+      user.gender == 1 &&
+      (user.showMe == 2 || user.showMe == 3) &&
+      otherUser.gender == 2 &&
+      (otherUser.showMe == 1 || otherUser.showMe == 3)
+    )
       return 5;
-    else if (user.gender == 2 && (user.showMe == 1 || user.showMe == 3) && otherUser.gender == 1 && (otherUser.showMe == 2 || otherUser.showMe == 3))
+    else if (
+      user.gender == 2 &&
+      (user.showMe == 1 || user.showMe == 3) &&
+      otherUser.gender == 1 &&
+      (otherUser.showMe == 2 || otherUser.showMe == 3)
+    )
       return 5;
-    else if (user.gender == 2 && (user.showMe == 2 || user.showMe == 3) && otherUser.gender == 2 && (otherUser.showMe == 2 || otherUser.showMe == 3))
+    else if (
+      user.gender == 2 &&
+      (user.showMe == 2 || user.showMe == 3) &&
+      otherUser.gender == 2 &&
+      (otherUser.showMe == 2 || otherUser.showMe == 3)
+    )
       return 5;
-    else
-      return 0;
-  };
+    else return 0;
+  }
 
   function locat(user, otherUser) {
     lat1 = user.latitude;
     lat2 = otherUser.latitude;
     lon1 = user.longitude;
     lon2 = otherUser.longitude;
-    if ((lat1 == lat2) && (lon1 == lon2)) {
+    if (lat1 == lat2 && lon1 == lon2) {
       dist = 0;
-    }
-    else {
-      var radlat1 = Math.PI * lat1 / 180;
-      var radlat2 = Math.PI * lat2 / 180;
+    } else {
+      var radlat1 = (Math.PI * lat1) / 180;
+      var radlat2 = (Math.PI * lat2) / 180;
       var theta = lon1 - lon2;
-      var radtheta = Math.PI * theta / 180;
-      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      var radtheta = (Math.PI * theta) / 180;
+      var dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
       if (dist > 1) {
         dist = 1;
       }
       dist = Math.acos(dist);
-      dist = dist * 180 / Math.PI;
+      dist = (dist * 180) / Math.PI;
       dist = dist * 60 * 1.1515;
       dist = dist * 1.609344;
     }
-    if (dist < 10)
-      return 4;
-    else if (dist < 50)
-      return (3);
-    else if (dist < 100)
-      return (2);
-    else if (dist < 200)
-      return (1);
-    else
-      return (0);
-  };
+    if (dist < 10) return 4;
+    else if (dist < 50) return 3;
+    else if (dist < 100) return 2;
+    else if (dist < 200) return 1;
+    else return 0;
+  }
 
   function tagsMatch(user, otherUser) {
     return new Promise(resultat =>
-      connection.query('SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?', [user.id, otherUser.id], function (error, results, fields) {
-        r = -1;
-        for (var i = 0; i < results.length - 1; i++) {
-          for (var j = i + 1; j < results.length; j++) {
-            if (results[i].tag_id == results[j].tag_id) {
-              r++;
-            };
-          };
-        };
-        if (r > 5)
-          r = 4;
-        else if (r >= 3)
-          r = 3;
-        else if (r >= 2)
-          r = 2;
-        else if (r >= 1)
-          r = 1;
-        else
-          r = 0;
-        resultat(r);
-      })
-    )
-  };
+      connection.query(
+        "SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?",
+        [user.id, otherUser.id],
+        function (error, results, fields) {
+          r = -1;
+          for (var i = 0; i < results.length - 1; i++) {
+            for (var j = i + 1; j < results.length; j++) {
+              if (results[i].tag_id == results[j].tag_id) {
+                r++;
+              }
+            }
+          }
+          if (r > 5) r = 4;
+          else if (r >= 3) r = 3;
+          else if (r >= 2) r = 2;
+          else if (r >= 1) r = 1;
+          else r = 0;
+          resultat(r);
+        }
+      )
+    );
+  }
 
   function score(user) {
-    if (user.score == 0)
-      return (0);
-    else
-      return (user.score / 20);
-  };
+    if (user.score == 0) return 0;
+    else return user.score / 20;
+  }
 
   async function main() {
     myUser = [];
     length = 0;
-    console.log('test');
+    console.log("test");
     if ((await checkData) !== null) {
       if ((myUser = await getUser(req.body.id)) !== null) {
         if ((users = await getOtherUser()) !== null) {
           length = users.length;
           console.log(length);
-          usersMatch = await Promise.all(users.map(async function (user) {
-            sMatch = 0;
-            sMatch += oriSex(myUser, user); //OK
-            sMatch += locat(myUser, user);//OK
-            sMatch += await tagsMatch(myUser, user); //OK
-            sMatch += Math.round(score(user)); //OK
+          usersMatch = await Promise.all(
+            users.map(async function (user) {
+              sMatch = 0;
+              sMatch += oriSex(myUser, user); //OK
+              sMatch += locat(myUser, user); //OK
+              sMatch += await tagsMatch(myUser, user); //OK
+              sMatch += Math.round(score(user)); //OK
 
-            return { ...user, sMatch: sMatch, filtre: 1 };
-          }));
+              return { ...user, sMatch: sMatch, filtre: 1 };
+            })
+          );
 
           const sortByMapped = (map, compareFn) => (a, b) => compareFn(map(a), map(b));
           const byValue = (a, b) => b - a;
@@ -166,27 +184,26 @@ exports.getSuggestion = (req, res) => {
             usersMatch.splice(indexOfSM, 1); // on supprime tous les sMatch == 0
           }
 
-          res.json(usersMatch
-          );
+          res.json(usersMatch);
         } else {
           res.json({
             status: false,
-            message: 'error get other user',
-            userMatch: null
+            message: "error get other user",
+            userMatch: null,
           });
         }
       } else {
         res.json({
           status: false,
-          message: 'error get user',
-          userMatch: null
+          message: "error get user",
+          userMatch: null,
         });
       }
     } else {
       return;
     }
-  };
-}
+  }
+};
 
 exports.sortUsersBy = (req, res) => {
   usersSort = req.body.users;
@@ -195,76 +212,81 @@ exports.sortUsersBy = (req, res) => {
 
   async function getUser(id) {
     return new Promise(resultat =>
-      connection.query('SELECT * FROM users WHERE id = ?', [id], function (error, results, fields) {
+      connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
         if (error) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
             resultat(results);
-          }
-          else {
+          } else {
             resultat(null);
           }
         }
       })
-    )
-  };
+    );
+  }
 
   function tagsMatch(user, otherUser) {
     return new Promise(resultat =>
-      connection.query('SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?', [user[0].id, otherUser.id], function (error, results, fields) {
-        r = -1;
-        for (var i = 0; i < results.length - 1; i++) {
-          for (var j = i + 1; j < results.length; j++) {
-            if (results[i].tag_id == results[j].tag_id) {
-              r++;
-            };
-          };
-        };
-        resultat(r);
-      })
-    )
-  };
+      connection.query(
+        "SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?",
+        [user[0].id, otherUser.id],
+        function (error, results, fields) {
+          r = -1;
+          for (var i = 0; i < results.length - 1; i++) {
+            for (var j = i + 1; j < results.length; j++) {
+              if (results[i].tag_id == results[j].tag_id) {
+                r++;
+              }
+            }
+          }
+          resultat(r);
+        }
+      )
+    );
+  }
 
   function locat(user, otherUser) {
     lat1 = user[0].latitude;
     lat2 = otherUser.latitude;
     lon1 = user[0].longitude;
     lon2 = otherUser.longitude;
-    if ((lat1 == lat2) && (lon1 == lon2)) {
+    if (lat1 == lat2 && lon1 == lon2) {
       dist = 0;
-    }
-    else {
-      var radlat1 = Math.PI * lat1 / 180;
-      var radlat2 = Math.PI * lat2 / 180;
+    } else {
+      var radlat1 = (Math.PI * lat1) / 180;
+      var radlat2 = (Math.PI * lat2) / 180;
       var theta = lon1 - lon2;
-      var radtheta = Math.PI * theta / 180;
-      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      var radtheta = (Math.PI * theta) / 180;
+      var dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
       if (dist > 1) {
         dist = 1;
       }
       dist = Math.acos(dist);
-      dist = dist * 180 / Math.PI;
+      dist = (dist * 180) / Math.PI;
       dist = dist * 60 * 1.1515;
       dist = dist * 1.609344;
     }
     return dist;
-  };
+  }
 
   async function main() {
     if ((myUser = await getUser(req.body.id)) !== null) {
-      if (req.body.sort && req.body.sort && req.body.sort === "age") {//OK
-        usersSort = await Promise.all(usersSort.map(async function (user) {
-          date = new Date(user.birthDate);
-          diff = Date.now() - date.getTime();
-          age = new Date(diff);
+      if (req.body.sort && req.body.sort && req.body.sort === "age") {
+        //OK
+        usersSort = await Promise.all(
+          usersSort.map(async function (user) {
+            date = new Date(user.birthDate);
+            diff = Date.now() - date.getTime();
+            age = new Date(diff);
 
-          age = Math.abs(age.getUTCFullYear() - 1970);
-          if (user.age && (user.age = age))
-            return user;
-          else
-            return { ...user, age: age };
-        }));
+            age = Math.abs(age.getUTCFullYear() - 1970);
+            if (user.age && (user.age = age)) return user;
+            else return { ...user, age: age };
+          })
+        );
 
         const sortByMapped = (map, compareFn) => (a, b) => compareFn(map(a), map(b));
         const byValue = (a, b) => a - b;
@@ -276,15 +298,18 @@ exports.sortUsersBy = (req, res) => {
 
         res.json({
           status: true,
-          message: 'sort by age',
-          usersSort: usersSort
+          message: "sort by age",
+          usersSort: usersSort,
         });
-      } else if (req.body.sort === "local") {//OK
-        usersSort = await Promise.all(usersSort.map(async function (user) {
-          dist = 0;
-          dist = locat(myUser, user);
-          return { ...user, dist: dist };
-        }));
+      } else if (req.body.sort === "local") {
+        //OK
+        usersSort = await Promise.all(
+          usersSort.map(async function (user) {
+            dist = 0;
+            dist = locat(myUser, user);
+            return { ...user, dist: dist };
+          })
+        );
 
         const sortByMapped = (map, compareFn) => (a, b) => compareFn(map(a), map(b));
         const byValue = (a, b) => a - b;
@@ -295,10 +320,11 @@ exports.sortUsersBy = (req, res) => {
 
         res.json({
           status: true,
-          message: 'sort by localisation',
-          usersSort: usersSort
+          message: "sort by localisation",
+          usersSort: usersSort,
         });
-      } else if (req.body.sort === "popu") {//OK
+      } else if (req.body.sort === "popu") {
+        //OK
         const sortByMapped = (map, compareFn) => (a, b) => compareFn(map(a), map(b));
         const byValue = (a, b) => b - a;
         const toScore = usersSort => usersSort.score;
@@ -308,15 +334,18 @@ exports.sortUsersBy = (req, res) => {
 
         res.json({
           status: true,
-          message: 'sort by popularity',
-          usersSort: usersSort
+          message: "sort by popularity",
+          usersSort: usersSort,
         });
-      } else if (req.body.sort === "tags") {//OK
-        usersSort = await Promise.all(usersSort.map(async function (user) {
-          tags = 0;
-          tags = await tagsMatch(myUser, user);
-          return { ...user, tags: tags };
-        }));
+      } else if (req.body.sort === "tags") {
+        //OK
+        usersSort = await Promise.all(
+          usersSort.map(async function (user) {
+            tags = 0;
+            tags = await tagsMatch(myUser, user);
+            return { ...user, tags: tags };
+          })
+        );
 
         const sortByMapped = (map, compareFn) => (a, b) => compareFn(map(a), map(b));
         const byValue = (a, b) => b - a;
@@ -327,25 +356,25 @@ exports.sortUsersBy = (req, res) => {
 
         res.json({
           status: true,
-          message: 'sort by tags',
-          usersSort: usersSort
+          message: "sort by tags",
+          usersSort: usersSort,
         });
       } else {
         res.json({
           status: false,
-          message: 'error wrong sort',
-          usersSort: null
+          message: "error wrong sort",
+          usersSort: null,
         });
       }
     } else {
       res.json({
         status: false,
-        message: 'error get user',
-        usersSort: null
+        message: "error get user",
+        usersSort: null,
       });
     }
   }
-}
+};
 
 exports.filtreUsersBy = (req, res) => {
   id = req.params.id;
@@ -354,7 +383,7 @@ exports.filtreUsersBy = (req, res) => {
   minScore = req.params.score;
   maxLoc = req.params.dist;
   minTag = req.params.tags;
-  sortBy = req.params.sortBy
+  sortBy = req.params.sortBy;
 
   main();
 
@@ -365,202 +394,210 @@ exports.filtreUsersBy = (req, res) => {
           if (maxAge !== null && maxAge > 0 && maxAge <= 150) {
             if (minScore !== null && minScore >= 0 && minScore <= 99) {
               if (maxLoc !== null && maxLoc > 0) {
-                if (sortBy !== null && minTag !== null && minTag >=0) {
+                if (sortBy !== null && minTag !== null && minTag >= 0) {
                   resultat(1);
                 } else {
                   res.json({
                     status: false,
-                    message: 'error sortby or minTag data',
-                    userMatch: null
+                    message: "error sortby or minTag data",
+                    userMatch: null,
                   });
                   resultat(null);
                 }
               } else {
                 res.json({
                   status: false,
-                  message: 'error localisation score data',
-                  userMatch: null
+                  message: "error localisation score data",
+                  userMatch: null,
                 });
                 resultat(null);
               }
             } else {
               res.json({
                 status: false,
-                message: 'error filtre score data',
-                userMatch: null
+                message: "error filtre score data",
+                userMatch: null,
               });
               resultat(null);
             }
           } else {
             res.json({
               status: false,
-              message: 'error filtre maxAge data',
-              userMatch: null
+              message: "error filtre maxAge data",
+              userMatch: null,
             });
             resultat(null);
           }
         } else {
           res.json({
             status: false,
-            message: 'error filtre minAge data',
-            userMatch: null
+            message: "error filtre minAge data",
+            userMatch: null,
           });
           resultat(null);
         }
       } else {
         res.json({
           status: false,
-          message: 'error id',
-          userMatch: null
+          message: "error id",
+          userMatch: null,
         });
         resultat(null);
       }
-    })
-  };
+    });
+  }
 
   async function getUser(id) {
     return new Promise(resultat =>
-      connection.query('SELECT * FROM users WHERE id = ?', [id], function (error, results, fields) {
+      connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
         if (error) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
             resultat(results[0]);
-          }
-          else {
+          } else {
             resultat(null);
           }
         }
       })
-    )
-  };
+    );
+  }
 
   function tagsMatch(user, otherUser) {
     return new Promise(resultat =>
-      connection.query('SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?', [user.id, otherUser.id], function (error, results, fields) {
-        r = 0;
-        for (var i = 0; i < results.length - 1; i++) {
-          for (var j = i + 1; j < results.length; j++) {
-            if (results[i].tag_id == results[j].tag_id) {
-              r++;
-            };
-          };
-        };
-        resultat(r);
-      })
-    )
-  };
+      connection.query(
+        "SELECT tag_id FROM user_tag WHERE user_id = ? OR user_id = ?",
+        [user.id, otherUser.id],
+        function (error, results, fields) {
+          r = 0;
+          for (var i = 0; i < results.length - 1; i++) {
+            for (var j = i + 1; j < results.length; j++) {
+              if (results[i].tag_id == results[j].tag_id) {
+                r++;
+              }
+            }
+          }
+          resultat(r);
+        }
+      )
+    );
+  }
 
   function locat(user, otherUser) {
     lat1 = user.latitude;
     lat2 = otherUser.latitude;
     lon1 = user.longitude;
     lon2 = otherUser.longitude;
-    if ((lat1 == lat2) && (lon1 == lon2)) {
+    if (lat1 == lat2 && lon1 == lon2) {
       dist = 0;
-    }
-    else {
-      var radlat1 = Math.PI * lat1 / 180;
-      var radlat2 = Math.PI * lat2 / 180;
+    } else {
+      var radlat1 = (Math.PI * lat1) / 180;
+      var radlat2 = (Math.PI * lat2) / 180;
       var theta = lon1 - lon2;
-      var radtheta = Math.PI * theta / 180;
-      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      var radtheta = (Math.PI * theta) / 180;
+      var dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
       if (dist > 1) {
         dist = 1;
       }
       dist = Math.acos(dist);
-      dist = dist * 180 / Math.PI;
+      dist = (dist * 180) / Math.PI;
       dist = dist * 60 * 1.1515;
       dist = dist * 1.609344;
     }
     return dist;
-  };
+  }
 
   async function getOtherUser() {
     return new Promise(resultat =>
-      connection.query('SELECT * FROM users WHERE id != ? AND profileComplete = "1"', [id], function (error, results, fields) {
-        if (error) {
-          resultat(null);
-        } else {
-          if (results && results.length > 0) {
-            resultat(results);
-          }
-          else {
+      connection.query(
+        'SELECT * FROM users WHERE id != ? AND profileComplete = "1"',
+        [id],
+        function (error, results, fields) {
+          if (error) {
             resultat(null);
+          } else {
+            if (results && results.length > 0) {
+              resultat(results);
+            } else {
+              resultat(null);
+            }
           }
         }
-      })
-    )
-  };
+      )
+    );
+  }
 
   async function main() {
-      if (await checkData() === 1 && (myUser = await getUser(id)) !== null) {
-        let usersSort = await getOtherUser();
-        //filtre age
-        usersSort = await Promise.all(usersSort.map(async function (user) {
-          age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
+    if ((await checkData()) === 1 && (myUser = await getUser(id)) !== null) {
+      let usersSort = await getOtherUser();
+      //filtre age
+      usersSort = await Promise.all(
+        usersSort.map(async function (user) {
+          let age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
+          if (user.id === 6) console.log(age);
           let dist = 0;
           dist = locat(myUser, user);
           tags = 0;
           tags = await tagsMatch(myUser, user);
           console.log(minAge, maxAge, minTag, maxLoc, minScore);
-          console.log(dist)
 
-
-          if (age >= minAge && age <= maxAge &&
+          if (
+            age >= minAge &&
+            age <= maxAge &&
             tags >= minTag &&
-            dist <= maxLoc && user.score >= minScore
+            dist <= maxLoc &&
+            user.score >= minScore
           ) {
-            return {...user, dist, tags};
+            return { ...user, dist, tags };
           } else {
             return undefined;
           }
-        }));
-        usersSort = usersSort.filter(user => user !== undefined);
-        if (sortBy === "age") {
-          usersSort.sort((a, b) => {
-            if (datefns.isBefore(new Date(a.birthDate), new Date(b.birthDate))) {
-              return 1
-            } else if (datefns.isBefore(new Date(b.birthDate), new Date(a.birthDate))) {
-              return -1;
-            } else 0
-          })
-        } else if (sortBy === "local") {
-          usersSort.sort((a, b) => {
-            if (a.dist < b.dist) {
-              return -1
-            } else if (a.dist > b.dist) {
-              return 1;
-            } else 0
-          })
-        } else if (sortBy === "popu") {
-          usersSort.sort((a, b) => {
-            if (a.score > b.score) {
-              return -1
-            } else if (a.score < b.score) {
-              return 1;
-            } else 0
-          })
-        } else if (sortBy === "tags") {
-          usersSort.sort((a, b) => {
-            if (a.tags > b.tags) {
-              return -1
-            } else if (a.tags < b.tags) {
-              return 1;
-            } else 0
-          })
-        }
-        
-
-        res.json( usersSort
-        );
-      } else {
-        res.json({
-          status: false,
-          message: 'error wrong sort',
-          usersSort: null
+        })
+      );
+      usersSort = usersSort.filter(user => user !== undefined);
+      if (sortBy === "age") {
+        usersSort.sort((a, b) => {
+          if (datefns.isBefore(new Date(a.birthDate), new Date(b.birthDate))) {
+            return 1;
+          } else if (datefns.isBefore(new Date(b.birthDate), new Date(a.birthDate))) {
+            return -1;
+          } else 0;
+        });
+      } else if (sortBy === "local") {
+        usersSort.sort((a, b) => {
+          if (a.dist < b.dist) {
+            return -1;
+          } else if (a.dist > b.dist) {
+            return 1;
+          } else 0;
+        });
+      } else if (sortBy === "popu") {
+        usersSort.sort((a, b) => {
+          if (a.score > b.score) {
+            return -1;
+          } else if (a.score < b.score) {
+            return 1;
+          } else 0;
+        });
+      } else if (sortBy === "tags") {
+        usersSort.sort((a, b) => {
+          if (a.tags > b.tags) {
+            return -1;
+          } else if (a.tags < b.tags) {
+            return 1;
+          } else 0;
         });
       }
- 
+
+      res.json(usersSort);
+    } else {
+      res.json({
+        status: false,
+        message: "error wrong sort",
+        usersSort: null,
+      });
+    }
   }
-}
+};
