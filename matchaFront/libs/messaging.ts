@@ -39,3 +39,7 @@ export interface Messages {
   sendingDate: string;
   see: number;
 }
+
+export interface MessageSend {
+  msg: string;
+}

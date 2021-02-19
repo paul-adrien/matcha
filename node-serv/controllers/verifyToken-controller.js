@@ -8,7 +8,7 @@ exports.verifyToken = (req,res) => {
 
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
-          res.status({
+          res.json({
                 status:false,
                 message: "Unauthorized!"
           });
@@ -24,6 +24,5 @@ exports.verifyToken = (req,res) => {
                 message:'wrong token'
             })
         }
-      });
-    
+    });
 }

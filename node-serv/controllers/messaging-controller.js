@@ -91,7 +91,7 @@ exports.activeConv = (req,res) => {
                 resultat(null);
             } else {
                 if (results && results.length > 0) {
-                    resultat(results);
+                    resultat(results[0].msg);
                 }
                 else{
                     resultat(null);
@@ -235,11 +235,32 @@ exports.sendMessage = (req,res) => {
       )
   };
 
+  async function checkIfBlocked() {
+      return new Promise(resultat =>
+      connection.query(
+          "SELECT * FROM blocked WHERE userId = ? AND blockedId = ?",
+          [user_id, sender_id],
+          function (error, results, fields) {
+          if (error) {
+              resultat(null);
+          } else {
+              if (results && results.length > 0) {
+              resultat(1);
+              } else {
+              resultat(null);
+              }
+          }
+          }
+      )
+      );
+  }
+
   async function main() {
     if ((messages = await insMsg()) !== null) {
       if ((await updtActiveConv()) !== null)
       {
-        notifMsg();
+        if (checkIfBlocked() === null)
+          notifMsg();
         res.json({
           status:true,
           message:'send messages'

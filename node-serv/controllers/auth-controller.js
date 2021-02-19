@@ -70,12 +70,14 @@ exports.register = (req,res) => {
                           console.log('Email sent: ' + info.response);
                         }
                       });
-                      
-                      res.json({
-                        status:true,
-                        user: results[0],
-                        message:'user registered sucessfully'
-                      })
+
+                      const token = jwt.sign({ id: results[0]['id'] }, config.secret, { expiresIn: '1d' });
+                        res.json({
+                            status: true,
+                            message:'user registered sucessfully',
+                            user: results[0],
+                            token: token
+                        })
                     })
                   }
                 });

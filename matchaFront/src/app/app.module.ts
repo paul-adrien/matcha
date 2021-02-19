@@ -40,6 +40,7 @@ import { NgxSliderModule } from "@angular-slider/ngx-slider";
     SuggestionComponent,
     HomeMessagingComponent,
     NotificationComponent,
+    DiscussionComponent,
   ],
   imports: [
     BrowserModule,

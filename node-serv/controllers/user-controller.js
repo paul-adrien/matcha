@@ -85,6 +85,26 @@ exports.viewedProfil = (req, res) => {
 
   main();
 
+  async function checkIfBlocked() {
+    return new Promise(resultat =>
+      connection.query(
+        "SELECT * FROM blocked WHERE userId = ? AND blockedId = ?",
+        [viewed_id, user_id],
+        function (error, results, fields) {
+          if (error) {
+            resultat(null);
+          } else {
+            if (results && results.length > 0) {
+              resultat(1);
+            } else {
+              resultat(null);
+            }
+          }
+        }
+      )
+    );
+  }
+
   async function checkView() {
     return new Promise(resultat =>
       connection.query(
@@ -170,7 +190,8 @@ exports.viewedProfil = (req, res) => {
   }
 
   async function main() {
-    notifView();
+    if (checkIfBlocked() === null)
+        notifView();
     if ((await checkView()) === null) {
       if (await addView()) {
         console.log("test");

@@ -182,16 +182,38 @@ exports.likeOrDislike = (req,res) => {
         });
     }
 
+    async function checkIfBlocked() {
+        return new Promise(resultat =>
+        connection.query(
+            "SELECT * FROM blocked WHERE userId = ? AND blockedId = ?",
+            [req.body.like_id, req.body.user_id],
+            function (error, results, fields) {
+            if (error) {
+                resultat(null);
+            } else {
+                if (results && results.length > 0) {
+                resultat(1);
+                } else {
+                resultat(null);
+                }
+            }
+            }
+        )
+        );
+    }
+
     async function main() {
         mode = await lOrD();
         if (mode === null) {
             if (await addLike()){
                 if ((match = await addMatch())) {
                     if (match == 1) {
-                        notifLike(1);
+                        if (checkIfBlocked() === null)
+                            notifLike(1);
                         res.json(200);
                     } else {
-                        notifLike(2);
+                        if (checkIfBlocked() === null)
+                            notifLike(2);
                         res.json(200);
                     }
                 } else {
@@ -210,7 +232,8 @@ exports.likeOrDislike = (req,res) => {
             if (await delLike()){
                 if ((match = await delMatch())) {
                     if (match == 1) {
-                        notifDisLike();
+                        if (checkIfBlocked() === null)
+                            notifDisLike();
                         res.json(201);
                     } else
                         res.json(201);
