@@ -11,10 +11,11 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
 } from "@angular/core";
 import { userService } from "../_service/user_service";
-import { Subject, Observable } from "rxjs";
-import { switchMap, takeUntil } from "rxjs/operators";
+import { Subject, Observable, timer, combineLatest } from "rxjs";
+import { map, switchMap, takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-tags",
@@ -54,7 +55,7 @@ import { switchMap, takeUntil } from "rxjs/operators";
         (keyup.enter)="this.addNewTag()"
       />
     </form>
-    <div *ngIf="this.yourTags?.length > 0" class="tag-container">
+    <div *ngIf="this.yourTags" class="tag-container">
       <div class="tag" *ngFor="let yTag of this.yourTags">
         <span>{{ yTag.name }}</span>
         <img *ngIf="!this.showMode" src="./assets/x.svg" (click)="this.deleteTag(yTag)" />
@@ -66,8 +67,6 @@ import { switchMap, takeUntil } from "rxjs/operators";
 })
 export class TagsComponent implements OnDestroy {
   @Input() public showMode = false;
-  @Input() public allTags: Tags[];
-  @Input() public yourTags: Tags[];
   @Output() public addExist = new EventEmitter<string>();
   @Output() public addNew = new EventEmitter<string>();
   @Output() public delete = new EventEmitter<string>();
@@ -78,18 +77,41 @@ export class TagsComponent implements OnDestroy {
 
   public form: Partial<Tags> = { id: "default" };
 
+  public yourTags: Tags[] = [];
+
+  public allTags: Tags[] = [];
+
+  public yourTags$: Tags[] = [];
+
+  public allTags$: Tags[] = [];
+
+  ngOnInit(): void {
+    console.log("wes");
+    combineLatest(
+      this.userService.getAllTags,
+      this.userService.getYourTags(JSON.parse(localStorage.getItem("id")))
+    ).subscribe(([allTags, yourTags]) => {
+      this.allTags = allTags;
+      this.yourTags = yourTags;
+    });
+  }
+
   addExistTag() {
     this.addExist.emit(this.form.id);
     this.cd.detectChanges();
+    this.ngOnInit();
   }
 
   addNewTag() {
     this.addNew.emit(this.form.name);
     this.cd.detectChanges();
+    this.ngOnInit();
   }
 
   deleteTag(tag: Tags) {
     this.delete.emit(tag.id);
+    this.cd.detectChanges();
+    this.ngOnInit();
   }
 
   disabledTags(tag: Tags, yourTags: Tags[]) {

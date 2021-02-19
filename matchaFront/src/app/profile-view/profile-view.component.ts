@@ -64,11 +64,7 @@ import { Location } from "@angular/common";
         <span class="info-top">Bio</span>
         <span class="info-bottom">{{ this.user?.bio }}</span>
       </div>
-      <app-tags
-        [yourTags]="this.yourTags$ | async"
-        [allTags]="this.allTags$ | async"
-        [showMode]="'true'"
-      ></app-tags>
+      <app-tags [showMode]="'true'"></app-tags>
     </div>
   `,
   styleUrls: ["./profile-view.component.scss"],

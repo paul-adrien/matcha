@@ -10,11 +10,11 @@ import { AuthGuard } from "./_service/auth.guard";
 import { DiscoverComponent } from "./discover/discover.component";
 import { ProfilCardComponent } from "./profil-card/profil-card.component";
 import { TagsComponent } from "./tags/tags.component";
-import { SuggestionComponent } from "./suggestion/suggestion.component";
+import { FilterAndSortComponent } from "./filter-and-sort/filter-and-sort.component";
 import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
-import { NotificationComponent } from './notification/notification.component';
-import { DiscussionComponent } from './discussion/discussion.component';
+import { NotificationComponent } from "./notification/notification.component";
+import { DiscussionComponent } from "./discussion/discussion.component";
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },
@@ -31,7 +31,7 @@ const routes: Routes = [
       { path: "discover", component: DiscoverComponent },
       { path: "profil-card", component: ProfilCardComponent },
       { path: "tags", component: TagsComponent },
-      { path: "suggestion", component: SuggestionComponent },
+      { path: "suggestion", component: FilterAndSortComponent },
       { path: "profile-view/:id", component: ProfileViewComponent },
       { path: "messaging", component: HomeMessagingComponent },
       { path: "discussion/:id/:convId", component: DiscussionComponent },

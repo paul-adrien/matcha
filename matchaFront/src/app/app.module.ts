@@ -17,12 +17,13 @@ import { ProfilCardComponent } from "./profil-card/profil-card.component";
 import { ImageCropperModule } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
 import { TagsComponent } from "./tags/tags.component";
-import { SuggestionComponent } from "./suggestion/suggestion.component";
+import { FilterAndSortComponent } from "./filter-and-sort/filter-and-sort.component";
 import { HomeMessagingComponent } from "./home-messaging/home-messaging.component";
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { NotificationComponent } from "./notification/notification.component";
 import { NgxSliderModule } from "@angular-slider/ngx-slider";
-import { DiscussionComponent } from './discussion/discussion.component';
+import { DiscussionComponent } from "./discussion/discussion.component";
+import { CommonModule } from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { DiscussionComponent } from './discussion/discussion.component';
     ProfilCardComponent,
     ProfileViewComponent,
     TagsComponent,
-    SuggestionComponent,
+    FilterAndSortComponent,
     HomeMessagingComponent,
     NotificationComponent,
     DiscussionComponent,
@@ -51,6 +52,7 @@ import { DiscussionComponent } from './discussion/discussion.component';
     ImageCropperModule,
     ReactiveFormsModule,
     NgxSliderModule,
+    CommonModule,
   ],
   exports: [FormsModule],
   providers: [NgxImageCompressService],

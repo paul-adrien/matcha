@@ -1,4 +1,4 @@
-import { Filtre, User } from "./../../../libs/user";
+import { Filtre, User } from "../../../libs/user";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -11,15 +11,17 @@ import { matchService } from "../_service/match_service";
 import { Router } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
 import { Options } from "@angular-slider/ngx-slider";
+import { Observable } from "rxjs";
 
 @Component({
-  selector: "app-suggestion",
+  selector: "app-filter-and-sort",
   template: `
     <form
       class="form-container"
       [formGroup]="this.sliderForm"
       (ngSubmit)="f.form.valid && filtreUsersBy()"
       #f="ngForm"
+      name="form"
       novalidate
     >
       <div class="custom-slider">
@@ -49,11 +51,11 @@ import { Options } from "@angular-slider/ngx-slider";
       <button class="primary-button">Filtrer</button>
     </form>
   `,
-  styleUrls: ["./suggestion.component.scss"],
+  styleUrls: ["./filter-and-sort.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SuggestionComponent implements OnInit {
-  @Output() public usersSort = new EventEmitter<User[]>();
+export class FilterAndSortComponent implements OnInit {
+  @Output() public usersSort = new EventEmitter<Observable<User[]>>();
 
   constructor(
     private matchService: matchService,
@@ -137,12 +139,17 @@ export class SuggestionComponent implements OnInit {
         data => {
           console.log(data);
           this.usersMatch = data;
-          this.usersSort.emit(data);
         },
         err => {
           console.log(err);
         }
       );
+    this.usersSort.emit(
+      this.matchService.filtreUsersBy(
+        JSON.parse(localStorage.getItem("id")),
+        this.sliderForm.getRawValue()
+      )
+    );
   }
 
   viewProfil(id) {

@@ -1,5 +1,5 @@
 :host {
-  width: fit-content;
+  width: min-content;
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -11,6 +11,7 @@
     align-items: center;
     width: 100%;
     font-family: Montserrat-semi-bold;
+    text-align: center;
   }
 
   .big-profile-picture {

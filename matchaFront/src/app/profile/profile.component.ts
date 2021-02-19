@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  NgZone,
   OnInit,
 } from "@angular/core";
 import { Tags, User } from "@matcha/shared";
@@ -58,7 +59,7 @@ function ValidatorSelect(control: FormControl) {
 @Component({
   selector: "profile",
   template: `
-    <div class="content" [class.quick-look]="!this.updateMode">
+    <div class="content" *ngIf="this.user$ | async as user" [class.quick-look]="!this.updateMode">
       <div class="header-bar">
         <span
           class="case separator"
@@ -73,59 +74,52 @@ function ValidatorSelect(control: FormControl) {
       <div *ngIf="!this.updateMode" class="big-profile-picture">
         <img
           class="chevron"
-          [class.hidden]="!this.user?.pictures[0] || this.primaryPictureId === 0"
+          [class.hidden]="!user?.pictures[0] || this.primaryPictureId === 0"
           (click)="this.primaryPictureId = this.primaryPictureId - 1"
           src="./assets/chevron-left.svg"
         />
         <img
           class="picture"
           [src]="
-            this.user?.pictures[this.primaryPictureId] &&
-            this.user?.pictures[this.primaryPictureId].url
-              ? this.user?.pictures[this.primaryPictureId].url
+            user?.pictures[this.primaryPictureId] && user?.pictures[this.primaryPictureId].url
+              ? user?.pictures[this.primaryPictureId].url
               : './assets/user.svg'
           "
         />
         <img
           class="chevron"
-          [class.hidden]="
-            !this.user?.pictures[0] || !this.user?.pictures[this.primaryPictureId + 1].url
-          "
+          [class.hidden]="!user?.pictures[0] || !user?.pictures[this.primaryPictureId + 1].url"
           (click)="this.primaryPictureId = this.primaryPictureId + 1"
           src="./assets/chevron-right.svg"
         />
       </div>
       <div *ngIf="!this.updateMode" class="content-name">
-        <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
-        <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
+        <span>{{ user?.userName }} {{ this.getAge(user?.birthDate) }} ans</span>
+        <span>{{ user?.firstName }} {{ user?.lastName }}</span>
       </div>
       <div *ngIf="!this.updateMode" class="form-container">
         <div class="info-container">
           <span class="info-top">Je suis</span>
           <span class="info-bottom">{{
-            this.user?.gender !== undefined && this.genderOptions[this.user?.gender.toString()]
+            user?.gender !== undefined && this.genderOptions[user?.gender.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Je veux rencontrer</span>
           <span class="info-bottom">{{
-            this.user?.showMe !== undefined && this.showOptions[this.user?.showMe.toString()]
+            user?.showMe !== undefined && this.showOptions[user?.showMe.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Bio</span>
-          <span class="info-bottom">{{ this.user?.bio }}</span>
+          <span class="info-bottom">{{ user?.bio }}</span>
         </div>
-        <app-tags
-          [yourTags]="this.yourTags$ | async"
-          [allTags]="this.allTags$ | async"
-          [showMode]="'true'"
-        ></app-tags>
+        <app-tags [showMode]="'true'"></app-tags>
       </div>
       <div class="profile-pictures" *ngIf="this.updateMode">
         <form class="grid">
           <label
-            *ngFor="let picture of this.user?.pictures; let index = index"
+            *ngFor="let picture of user?.pictures; let index = index"
             class="profile-picture"
             [for]="'fileInput' + (index + 1)"
           >
@@ -251,8 +245,6 @@ function ValidatorSelect(control: FormControl) {
           </div>
         </div>
         <app-tags
-          [yourTags]="this.yourTags$ | async"
-          [allTags]="this.allTags$ | async"
           (addExist)="this.addExistTag($event)"
           (addNew)="this.addNewTag($event)"
           (delete)="this.deleteTag($event)"
@@ -329,7 +321,8 @@ export class ProfileComponent implements OnInit {
     private route: Router,
     private cd: ChangeDetectorRef,
     private imageCompress: NgxImageCompressService,
-    private userService: userService
+    private userService: userService,
+    private zone: NgZone
   ) {}
   private unsubscribe = new Subject<void>();
 
@@ -347,6 +340,8 @@ export class ProfileComponent implements OnInit {
 
   public allTags$: Observable<Tags[]> = this.userService.getAllTags();
 
+  public user$: Observable<User> = this.userService.getUser(JSON.parse(localStorage.getItem("id")));
+
   ngOnInit(): void {
     this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(res => {
       this.userForm.patchValue({
@@ -359,12 +354,10 @@ export class ProfileComponent implements OnInit {
         bio: res.bio,
         email: res.email,
       });
+      console.log("hdhdhdh");
       this.user = res;
       this.saveEmail = res.email;
     });
-    this.yourTags$ = this.userService.getYourTags(JSON.parse(localStorage.getItem("id")));
-
-    this.allTags$ = this.userService.getAllTags();
   }
 
   public changeUpdateMode(updateMode: boolean) {
@@ -473,7 +466,8 @@ export class ProfileComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status == true) {
-          this.ngOnInit();
+          this.yourTags$.subscribe(el => console.log(el));
+          this.cd.detectChanges();
         }
       },
       err => {
@@ -489,7 +483,8 @@ export class ProfileComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status == true) {
-          this.ngOnInit();
+          this.yourTags$.subscribe(el => console.log(el));
+          this.cd.detectChanges();
         }
       },
       err => {
@@ -503,10 +498,13 @@ export class ProfileComponent implements OnInit {
   deleteTag(tagId: string) {
     this.userService.deleteTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
       data => {
-        console.log(data);
-        if (data.status == true) {
-          this.ngOnInit();
-        }
+        this.zone.run(() => {
+          console.log(data);
+          if (data.status == true) {
+            this.yourTags$.subscribe(el => console.log(el));
+            this.cd.markForCheck();
+          }
+        });
       },
       err => {
         console.log(err);

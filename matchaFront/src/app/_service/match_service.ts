@@ -46,7 +46,7 @@ export class matchService {
     );
   }
 
-  filtreUsersBy(id: string, filtre: Partial<Filtre>): Observable<any> {
+  filtreUsersBy(id: string, filtre: Partial<Filtre>): Observable<User[]> {
     console.log(filtre);
     return this.http
       .get(

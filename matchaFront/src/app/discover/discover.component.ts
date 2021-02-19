@@ -16,7 +16,18 @@ import { map, switchMap } from "rxjs/operators";
 @Component({
   selector: "discover",
   template: `
-    <app-suggestion (usersSort)="this.getUsersFilter($event)"></app-suggestion>
+    <div class="header-bar">
+      <span
+        class="case separator"
+        [class.selected]="this.updateMode"
+        (click)="changeSuggestionMode(true)"
+        >Suggestion</span
+      >
+      <span class="case" [class.selected]="!this.updateMode" (click)="changeSuggestionMode(false)"
+        >Recherche</span
+      >
+    </div>
+    <app-filter-and-sort (usersSort)="this.getUsersFilter($event)"></app-filter-and-sort>
     <div
       class="suggestion-container"
       *ngIf="
@@ -28,17 +39,8 @@ import { map, switchMap } from "rxjs/operators";
     >
       <div class="content-filter">
         <app-profil-card
-          [user]="userSuggestion"
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"
-        ></app-profil-card>
-      </div>
-    </div>
-    <div class="filter-container">
-      <span>Résultat du filtre ou sort</span>
-      <div class="content-filter">
-        <app-profil-card
-          [user]="userFilter"
-          *ngFor="let userFilter of this.usersFilter"
+          [user]="userSuggestion"
         ></app-profil-card>
       </div>
     </div>
@@ -53,6 +55,8 @@ export class DiscoverComponent implements OnInit {
   public usersViews = [];
   public userslike = [];
   public usersFilter = [];
+
+  public updateMode = true;
 
   constructor(
     private profilService: profilService,
@@ -72,6 +76,10 @@ export class DiscoverComponent implements OnInit {
 
   viewProfils() {
     this.router.navigate(["home/suggestion"]);
+  }
+
+  public changeSuggestionMode(value: boolean) {
+    this.updateMode = value;
   }
 
   public getCurrentLocation() {
@@ -110,7 +118,7 @@ export class DiscoverComponent implements OnInit {
     }
   }
 
-  public getUsersFilter(res: User[]) {
-    this.usersFilter = res;
+  public getUsersFilter(res: Observable<User[]>) {
+    this.usersSuggestion$ = res;
   }
 }
