@@ -87,12 +87,13 @@ export class TagsComponent implements OnDestroy {
 
   ngOnInit(): void {
     console.log("wes");
-    combineLatest(
-      this.userService.getAllTags,
-      this.userService.getYourTags(JSON.parse(localStorage.getItem("id")))
-    ).subscribe(([allTags, yourTags]) => {
+    combineLatest([
+      this.userService.getAllTags(),
+      this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))),
+    ]).subscribe(([allTags, yourTags]) => {
       this.allTags = allTags;
       this.yourTags = yourTags;
+      this.cd.detectChanges();
     });
   }
 
