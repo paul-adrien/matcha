@@ -66,4 +66,31 @@
     flex-direction: column;
     justify-content: center;
   }
+
+  .filter-button {
+    position: relative;
+    width: 100%;
+    max-width: 40rem;
+
+    text-align: center;
+    display: flex;
+    justify-content: center;
+
+    .filter-pop-up {
+      box-shadow: 0px 0px 11px 0px lightgrey;
+      background: white;
+      margin: 0 1rem;
+      display: flex;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 10;
+      top: 2rem;
+    }
+
+    .cross {
+      position: absolute;
+      margin: 8px;
+      right: 0;
+    }
+  }
 }

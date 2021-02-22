@@ -5,11 +5,14 @@
 
   .form-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     margin: 0 1rem;
+    justify-content: space-around;
   }
 
   .custom-slider {
+    width: 100%;
+    max-width: 18rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,6 +20,14 @@
       margin: 1rem 0;
       width: 13rem;
     }
+
+    &.sort {
+      max-width: 100%;
+    }
+  }
+
+  .primary-button {
+    width: 50%;
   }
 }
 

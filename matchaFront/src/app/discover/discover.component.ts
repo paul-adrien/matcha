@@ -27,7 +27,17 @@ import { map, switchMap } from "rxjs/operators";
         >Recherche</span
       >
     </div>
-    <app-filter-and-sort (usersSort)="this.getUsersFilter($event)"></app-filter-and-sort>
+    <div class="filter-button" *ngIf="this.updateMode">
+      <span class="primary-button" (click)="this.isShowFilter = true"> Filtrer ou trier </span>
+      <div class="filter-pop-up" *ngIf="this.isShowFilter">
+        <img (click)="this.isShowFilter = false" class="cross" src="./assets/x.svg" />
+        <app-filter-and-sort (usersSort)="this.getUsersFilter($event)"></app-filter-and-sort>
+      </div>
+    </div>
+    <app-filter-and-sort
+      *ngIf="!this.updateMode"
+      (usersSort)="this.getUsersFilter($event)"
+    ></app-filter-and-sort>
     <div
       class="suggestion-container"
       *ngIf="
@@ -37,12 +47,18 @@ import { map, switchMap } from "rxjs/operators";
         else error
       "
     >
-      <div class="content-filter">
+      <div
+        class="content-filter"
+        *ngIf="(this.usersSuggestion$ | async)?.length > 0; else noResult"
+      >
         <app-profil-card
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"
           [user]="userSuggestion"
         ></app-profil-card>
       </div>
+      <ng-template #noResult>
+        <span>Aucun résultat</span>
+      </ng-template>
     </div>
     <ng-template #error>Complètes ton profil bg</ng-template>
   `,
@@ -57,6 +73,8 @@ export class DiscoverComponent implements OnInit {
   public usersFilter = [];
 
   public updateMode = true;
+
+  public isShowFilter = false;
 
   constructor(
     private profilService: profilService,
@@ -80,6 +98,7 @@ export class DiscoverComponent implements OnInit {
 
   public changeSuggestionMode(value: boolean) {
     this.updateMode = value;
+    this.isShowFilter = false;
   }
 
   public getCurrentLocation() {
@@ -119,6 +138,7 @@ export class DiscoverComponent implements OnInit {
   }
 
   public getUsersFilter(res: Observable<User[]>) {
+    this.isShowFilter = false;
     this.usersSuggestion$ = res;
   }
 }

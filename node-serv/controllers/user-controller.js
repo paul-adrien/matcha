@@ -190,8 +190,7 @@ exports.viewedProfil = (req, res) => {
   }
 
   async function main() {
-    if (checkIfBlocked() === null)
-        notifView();
+    if (checkIfBlocked() === null) notifView();
     if ((await checkView()) === null) {
       if (await addView()) {
         console.log("test");
@@ -297,16 +296,18 @@ exports.getNotifs = (req, res) => {
 
   async function getNotifs() {
     return new Promise(resultat => {
-      connection.query("SELECT * FROM notif WHERE userId = ?", [id], function (error, results, fields) {
-        if (error) {
+      connection.query(
+        "SELECT * FROM notif WHERE userId = ?",
+        [id],
+        function (error, results, fields) {
+          if (error) {
             resultat(null);
-        } else {
-          if (results && results.length > 0)
-            resultat(results);
-          else
-            resultat(null);
+          } else {
+            if (results && results.length > 0) resultat(results);
+            else resultat(null);
+          }
         }
-      });
+      );
     });
   }
 
@@ -314,13 +315,14 @@ exports.getNotifs = (req, res) => {
     let notifs = await getNotifs();
     let nbUnView = 0;
 
-    notifs = await Promise.all(
-      notifs.map(async function (notif) {
-        if (notif["see"] == 0)
-          nbUnView++;
-        return notif;
-      })
-    );
+    notifs =
+      notifs &&
+      (await Promise.all(
+        notifs.map(async function (notif) {
+          if (notif["see"] == 0) nbUnView++;
+          return notif;
+        })
+      ));
     connection.query(
       "UPDATE users SET lastConnection = NOW() WHERE id = ?",
       [id],
@@ -339,7 +341,7 @@ exports.seeNotifs = (req, res) => {
   connection.query(
     "UPDATE notif SET see = 1 WHERE userId = ?",
     [id],
-    function (error, results, fields) { }
+    function (error, results, fields) {}
   );
 };
 

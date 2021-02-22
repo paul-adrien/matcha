@@ -24,7 +24,7 @@ import { Observable } from "rxjs";
       name="form"
       novalidate
     >
-      <div class="custom-slider">
+      <div class="custom-slider sort">
         <span>Trier par:</span>
         <select class="select" formControlName="sortBy">
           <option *ngFor="let option of this.sortOptions" [ngValue]="option.id">
