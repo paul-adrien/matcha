@@ -293,25 +293,44 @@ exports.updatePosition = async (req, res) => {
 exports.getNotifs = (req, res) => {
   id = req.params.id;
 
-  connection.query("SELECT * FROM notif WHERE userId = ?", [id], function (error, results, fields) {
-    if (error) {
-      res.json({
-        status: false,
-        message: "error when select notifs",
+  main();
+
+  async function getNotifs() {
+    return new Promise(resultat => {
+      connection.query("SELECT * FROM notif WHERE userId = ?", [id], function (error, results, fields) {
+        if (error) {
+            resultat(null);
+        } else {
+          if (results && results.length > 0)
+            resultat(results);
+          else
+            resultat(null);
+        }
       });
-    } else {
-      if (results && results.length > 0) {
-        res.json(results);
-      } else {
-        res.json([]);
-      }
-    }
-  });
-  connection.query(
-    "UPDATE users SET lastConnection = NOW() WHERE id = ?",
-    [id],
-    function (error, results, fields) {}
-  );
+    });
+  }
+
+  async function main() {
+    let notifs = await getNotifs();
+    let nbUnView = 0;
+
+    notifs = await Promise.all(
+      notifs.map(async function (notif) {
+        if (notif["see"] == 0)
+          nbUnView++;
+        return notif;
+      })
+    );
+    connection.query(
+      "UPDATE users SET lastConnection = NOW() WHERE id = ?",
+      [id],
+      function (error, results, fields) {}
+    );
+    res.json({
+      notifs: notifs,
+      nbUnView: nbUnView,
+    });
+  }
 };
 
 exports.seeNotifs = (req, res) => {
@@ -320,16 +339,7 @@ exports.seeNotifs = (req, res) => {
   connection.query(
     "UPDATE notif SET see = 1 WHERE userId = ?",
     [id],
-    function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "error when update notifs",
-        });
-      } else {
-        res.json(results);
-      }
-    }
+    function (error, results, fields) { }
   );
 };
 

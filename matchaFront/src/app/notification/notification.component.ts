@@ -17,8 +17,6 @@ import { interval } from 'rxjs';
 })
 export class NotificationComponent implements OnInit {
 
-  notifs: Notif[];
-
     constructor(private userService: userService, private el: ElementRef) {
     }
 

@@ -4,15 +4,17 @@
   // makes it hover above all elements
   z-index: 1000;
   position: fixed;
-  top: 30px;
+  top: 5%;
   bottom: 0;
-  left: 300px;
-  width: 500px;
+  left: 55%;
+  width: 30%;
+  height: 60%;
+  overflow: scroll;
 }
 .mmodal-body {
   background: pink;
-  margin: 40px;
-  padding: 20px;
+  margin: 10px;
+  padding: 10px;
 }
 // backdrop color
 .mmodal-background {
@@ -26,4 +28,10 @@
   background-color: pink;
   // makes the below elements visible to a degree.
   opacity: 0.35;
+}
+
+.messages {
+  height: 100%;
+  height: 200px;
+  overflow: scroll;
 }
