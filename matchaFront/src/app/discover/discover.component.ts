@@ -31,7 +31,10 @@ import { map, switchMap } from "rxjs/operators";
       <span class="primary-button" (click)="this.isShowFilter = true"> Filtrer ou trier </span>
       <div class="filter-pop-up" *ngIf="this.isShowFilter">
         <img (click)="this.isShowFilter = false" class="cross" src="./assets/x.svg" />
-        <app-filter-and-sort (usersSort)="this.getUsersFilter($event)"></app-filter-and-sort>
+        <app-filter-and-sort
+          [isSuggestion]="true"
+          (usersSort)="this.getUsersFilter($event)"
+        ></app-filter-and-sort>
       </div>
     </div>
     <app-filter-and-sort
@@ -49,13 +52,24 @@ import { map, switchMap } from "rxjs/operators";
     >
       <div
         class="content-filter"
-        *ngIf="(this.usersSuggestion$ | async)?.length > 0; else noResult"
+        *ngIf="(this.usersSuggestion$ | async)?.length > 0 && this.updateMode; else filter"
       >
         <app-profil-card
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"
           [user]="userSuggestion"
         ></app-profil-card>
       </div>
+      <ng-template #filter>
+        <div
+          class="content-filter"
+          *ngIf="(this.usersSuggestion$ | async)?.length > 0 && !this.updateMode; else error"
+        >
+          <app-profil-card
+            *ngFor="let userFilter of this.usersFilter$ | async"
+            [user]="userFilter"
+          ></app-profil-card>
+        </div>
+      </ng-template>
       <ng-template #noResult>
         <span>Aucun résultat</span>
       </ng-template>
@@ -68,6 +82,8 @@ import { map, switchMap } from "rxjs/operators";
 export class DiscoverComponent implements OnInit {
   public user$: Observable<User>;
   public usersSuggestion$: Observable<User[]>;
+  public usersFilter$: Observable<User[]>;
+
   public usersViews = [];
   public userslike = [];
   public usersFilter = [];
@@ -139,6 +155,10 @@ export class DiscoverComponent implements OnInit {
 
   public getUsersFilter(res: Observable<User[]>) {
     this.isShowFilter = false;
-    this.usersSuggestion$ = res;
+    if (this.updateMode) {
+      this.usersSuggestion$ = res;
+    } else if (!this.updateMode) {
+      this.usersFilter$ = res;
+    }
   }
 }

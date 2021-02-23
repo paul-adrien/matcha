@@ -77,7 +77,7 @@
     justify-content: center;
 
     .filter-pop-up {
-      box-shadow: 0px 0px 11px 0px lightgrey;
+      box-shadow: 1px ​4px 22px -11px black;
       background: white;
       margin: 0 1rem;
       display: flex;
@@ -92,5 +92,11 @@
       margin: 8px;
       right: 0;
     }
+  }
+
+  .primary-button {
+    width: max-content;
+    height: min-content;
+    margin-top: 1rem;
   }
 }

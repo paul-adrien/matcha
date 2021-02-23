@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
 } from "@angular/core";
@@ -55,6 +56,7 @@ import { Observable } from "rxjs";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterAndSortComponent implements OnInit {
+  @Input() public isSuggestion = false;
   @Output() public usersSort = new EventEmitter<Observable<User[]>>();
 
   constructor(
@@ -74,10 +76,10 @@ export class FilterAndSortComponent implements OnInit {
   ];
 
   sliderForm: FormGroup = new FormGroup({
-    age: new FormControl([18, 30]),
-    score: new FormControl(50),
-    local: new FormControl(10),
-    tags: new FormControl(3),
+    age: new FormControl([18, 150]),
+    score: new FormControl(0),
+    local: new FormControl(4000),
+    tags: new FormControl(0),
     sortBy: new FormControl("0"),
   });
 
@@ -107,34 +109,30 @@ export class FilterAndSortComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.matchService.getSuggestion(JSON.parse(localStorage.getItem("id"))).subscribe(
-      data => {
-        console.log(data);
-        this.usersMatch = data;
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
-  sortUsersBy(by) {
-    this.matchService
-      .sortUsersBy(this.usersMatch, by, JSON.parse(localStorage.getItem("id")))
-      .subscribe(
+    if (this.isSuggestion) {
+      this.matchService.getSuggestion(JSON.parse(localStorage.getItem("id"))).subscribe(
         data => {
           console.log(data);
-          this.usersMatch = data.usersSort;
+          this.usersMatch = data;
         },
         err => {
           console.log(err);
         }
       );
+    } else {
+      this.sliderForm.patchValue(JSON.parse(localStorage.getItem("filter-params")));
+      this.filtreUsersBy();
+    }
   }
 
   filtreUsersBy() {
+    localStorage.setItem("filter-params", JSON.stringify(this.sliderForm.getRawValue()));
     this.matchService
-      .filtreUsersBy(JSON.parse(localStorage.getItem("id")), this.sliderForm.getRawValue())
+      .filtreUsersBy(
+        JSON.parse(localStorage.getItem("id")),
+        this.sliderForm.getRawValue(),
+        this.isSuggestion
+      )
       .subscribe(
         data => {
           console.log(data);
@@ -147,13 +145,9 @@ export class FilterAndSortComponent implements OnInit {
     this.usersSort.emit(
       this.matchService.filtreUsersBy(
         JSON.parse(localStorage.getItem("id")),
-        this.sliderForm.getRawValue()
+        this.sliderForm.getRawValue(),
+        this.isSuggestion
       )
     );
-  }
-
-  viewProfil(id) {
-    console.log(id);
-    this.router.navigate(["home/profile-view/" + id]);
   }
 }
