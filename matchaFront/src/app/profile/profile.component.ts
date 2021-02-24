@@ -14,7 +14,7 @@ import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
 import { forkJoin, interval, Observable, Subject } from "rxjs";
 import { userService } from "../_service/user_service";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
 import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
 
@@ -42,7 +42,9 @@ function ValidatorEmail(control: FormControl) {
 }
 
 function ValidatorBirthDate(control: FormControl) {
-  if (isBefore(new Date(control.value), new Date("1900-01-01"))) {
+  if (control.value === "") {
+    return { error: "Champs obligatoire" };
+  } else if (isBefore(new Date(control.value), new Date("1900-01-01"))) {
     return { error: "Vous êtes mort" };
   } else if (isAfter(new Date(control.value), new Date())) {
     return { error: "Vous venez du futur" };
@@ -56,10 +58,16 @@ function ValidatorSelect(control: FormControl) {
     return { error: "Veuillez sélectionner une option" };
   }
 }
+
+function validatePictures(arr: FormArray) {
+  let pictures = arr.getRawValue();
+  if (pictures.every(picture => picture.url === "" || picture.url === null))
+    return { error: "Une photo minimum est requise" };
+}
 @Component({
   selector: "profile",
   template: `
-    <div class="content" *ngIf="this.user$ | async as user" [class.quick-look]="!this.updateMode">
+    <div class="content" *ngIf="this.user" [class.quick-look]="!this.updateMode">
       <div class="header-bar">
         <span
           class="case separator"
@@ -74,78 +82,55 @@ function ValidatorSelect(control: FormControl) {
       <div *ngIf="!this.updateMode" class="big-profile-picture">
         <img
           class="chevron"
-          [class.hidden]="!user?.pictures[0] || this.primaryPictureId === 0"
+          [class.hidden]="!this.user?.pictures[0] || this.primaryPictureId === 0"
           (click)="this.primaryPictureId = this.primaryPictureId - 1"
           src="./assets/chevron-left.svg"
         />
         <img
           class="picture"
           [src]="
-            user?.pictures[this.primaryPictureId] && user?.pictures[this.primaryPictureId].url
-              ? user?.pictures[this.primaryPictureId].url
+            this.user?.pictures[this.primaryPictureId] &&
+            this.user?.pictures[this.primaryPictureId].url
+              ? this.user?.pictures[this.primaryPictureId].url
               : './assets/user.svg'
           "
         />
         <img
           class="chevron"
-          [class.hidden]="!user?.pictures[0] || !user?.pictures[this.primaryPictureId + 1].url"
+          [class.hidden]="
+            !this.user?.pictures[0] || !this.user?.pictures[this.primaryPictureId + 1].url
+          "
           (click)="this.primaryPictureId = this.primaryPictureId + 1"
           src="./assets/chevron-right.svg"
         />
       </div>
       <div *ngIf="!this.updateMode" class="content-name">
-        <span>{{ user?.userName }} {{ this.getAge(user?.birthDate) }} ans</span>
-        <span>{{ user?.firstName }} {{ user?.lastName }}</span>
+        <span
+          >{{ this.user?.userName }}
+          {{
+            this.getAge(this.user?.birthDate) ? this.getAge(this.user?.birthDate) + " ans" : ""
+          }}</span
+        >
+        <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
       </div>
       <div *ngIf="!this.updateMode" class="form-container">
         <div class="info-container">
           <span class="info-top">Je suis</span>
           <span class="info-bottom">{{
-            user?.gender !== undefined && this.genderOptions[user?.gender.toString()]
+            this.user?.gender !== undefined && this.genderOptions[this.user?.gender.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Je veux rencontrer</span>
           <span class="info-bottom">{{
-            user?.showMe !== undefined && this.showOptions[user?.showMe.toString()]
+            this.user?.showMe !== undefined && this.showOptions[this.user?.showMe.toString()]
           }}</span>
         </div>
         <div class="info-container">
           <span class="info-top">Bio</span>
-          <span class="info-bottom">{{ user?.bio }}</span>
+          <span class="info-bottom">{{ this.user?.bio }}</span>
         </div>
         <app-tags [showMode]="'true'"></app-tags>
-      </div>
-      <div class="profile-pictures" *ngIf="this.updateMode">
-        <form class="grid">
-          <label
-            *ngFor="let picture of user?.pictures; let index = index"
-            class="profile-picture"
-            [for]="'fileInput' + (index + 1)"
-          >
-            <input
-              [disabled]="picture.url"
-              [id]="'fileInput' + (index + 1)"
-              class="input-file"
-              accept="image/jpeg, image/png"
-              type="file"
-              (change)="this.fileChangeEvent($event, index.toString())"
-            />
-            <img
-              [src]="picture.url && picture.url !== 'delete' ? picture.url : './assets/user.svg'"
-            />
-            <div
-              *ngIf="picture.url && picture.url !== 'delete'"
-              class="delete"
-              (click)="this.delete(index.toString())"
-            >
-              <img src="./assets/x.svg" />
-            </div>
-          </label>
-        </form>
-        <div class="error picture" *ngIf="this.checkHasPicture()">
-          Une photo minimum est requise
-        </div>
       </div>
       <form
         [formGroup]="this.userForm"
@@ -156,6 +141,37 @@ function ValidatorSelect(control: FormControl) {
         #f="ngForm"
         novalidate
       >
+        <div class="profile-pictures" *ngIf="this.updateMode">
+          <form class="grid">
+            <label
+              *ngFor="let picture of this.pictures.value; let index = index"
+              class="profile-picture"
+              [for]="'fileInput' + (index + 1)"
+            >
+              <input
+                [disabled]="picture.url"
+                [id]="'fileInput' + (index + 1)"
+                class="input-file"
+                accept="image/jpeg, image/png"
+                type="file"
+                (change)="this.fileChangeEvent($event, index.toString())"
+              />
+              <img
+                [src]="picture.url && picture.url !== 'delete' ? picture.url : './assets/user.svg'"
+              />
+              <div
+                *ngIf="picture.url && picture.url !== 'delete'"
+                class="delete"
+                (click)="this.delete(index.toString())"
+              >
+                <img src="./assets/x.svg" />
+              </div>
+            </label>
+          </form>
+          <div class="error picture" *ngIf="this.userForm.get('pictures')?.errors?.error">
+            {{ this.userForm.get("pictures").errors.error }}
+          </div>
+        </div>
         <div *ngIf="this.updateMode" class="info-container">
           <span class="info-top">Nom d'utilisateur</span>
           <input
@@ -250,7 +266,7 @@ function ValidatorSelect(control: FormControl) {
           (delete)="this.deleteTag($event)"
         ></app-tags>
         <button
-          [disabled]="!this.userForm.valid || this.checkHasPicture()"
+          [disabled]="!this.userForm.valid"
           (ngSubmit)="this.onSubmit()"
           *ngIf="this.updateMode"
           class="primary-button"
@@ -306,7 +322,38 @@ export class ProfileComponent implements OnInit {
     showMe: new FormControl("", ValidatorSelect),
     bio: new FormControl("", ValidatorBio),
     email: new FormControl("", ValidatorEmail),
+    pictures: new FormArray(
+      [
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+        new FormGroup({
+          id: new FormControl(""),
+          url: new FormControl(""),
+        }),
+      ],
+      validatePictures
+    ),
   });
+
+  public pictures = this.userForm.get("pictures") as FormArray;
   public url = "";
   public updateMode = false;
   public saveEmail = "";
@@ -353,23 +400,27 @@ export class ProfileComponent implements OnInit {
         showMe: res.showMe,
         bio: res.bio,
         email: res.email,
+        pictures: res.pictures,
       });
       console.log("hdhdhdh");
       this.user = res;
       this.saveEmail = res.email;
+      this.cd.detectChanges();
     });
   }
 
   public changeUpdateMode(updateMode: boolean) {
     this.updateMode = updateMode;
     this.primaryPictureId = 0;
+    //this.cd.detectChanges();
   }
 
   public onSubmit() {
+    const form: User = this.userForm.getRawValue();
     forkJoin(
-      this.user.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
+      form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
     ).subscribe(el => console.log(el));
-    this.profilService.update(this.userForm.getRawValue(), this.saveEmail, true).subscribe(
+    this.profilService.update(form, this.saveEmail, true).subscribe(
       data => {
         console.log(data);
         if (data.status == true) {
@@ -380,17 +431,13 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  public checkHasPicture() {
-    if (this.user.pictures.every(picture => picture.url === "" || picture.url === null)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   public delete(id: string) {
-    this.user.pictures[id].url = "delete";
-    this.user.pictures = this.user.pictures.sort((a, b) => {
+    let tmpArray: {
+      id: string;
+      url: string;
+    }[] = this.pictures.getRawValue();
+    tmpArray[id].url = "delete";
+    tmpArray = tmpArray.sort((a, b) => {
       if (a.url === "delete" || a.url === null) {
         return 1;
       } else if (b.url === "delete" || b.url === null) {
@@ -402,13 +449,15 @@ export class ProfileComponent implements OnInit {
         return 0;
       }
     });
-    this.user.pictures = this.user.pictures.map(picture => {
+    tmpArray = tmpArray.map(picture => {
       if (picture.url === "delete") {
         return { ...picture, url: "" };
       } else {
         return picture;
       }
     });
+    this.pictures.patchValue(tmpArray);
+    this.cd.detectChanges();
   }
 
   public fileChangeEvent(event: any, pictureId: string): void {
@@ -420,8 +469,10 @@ export class ProfileComponent implements OnInit {
   }
 
   public imageLoaded() {
-    this.showCropper = true;
     console.log("Image loaded");
+    if (this.updateMode) {
+      this.showCropper = true;
+    }
   }
 
   public cropperReady(sourceImageDimensions: Dimensions) {
@@ -441,8 +492,12 @@ export class ProfileComponent implements OnInit {
 
     this.imageCompress.compressFile(imgResultBeforeCompress, -1, 50, 50).then(result => {
       imgResultAfterCompress = result;
-      this.user.pictures[this.pictureId].url = imgResultAfterCompress;
-      this.user.pictures = this.user.pictures.sort((a, b) => {
+      let tmpArray: {
+        id: string;
+        url: string;
+      }[] = this.pictures.getRawValue();
+      tmpArray[this.pictureId].url = imgResultAfterCompress;
+      tmpArray = tmpArray.sort((a, b) => {
         if (a.url === "" || a.url === null) {
           return 1;
         } else if (b.url === "" || b.url === null) {
@@ -454,6 +509,8 @@ export class ProfileComponent implements OnInit {
           return 0;
         }
       });
+      this.pictures.patchValue(tmpArray);
+      this.cd.detectChanges();
     });
   }
 

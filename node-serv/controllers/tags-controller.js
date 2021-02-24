@@ -96,11 +96,7 @@ exports.getYourTags = (req, res) => {
         res.json(resultat);
       }
     } else {
-      res.json({
-        status: false,
-        message: "pas de tag",
-        tags: null,
-      });
+      res.json([]);
     }
   }
 };

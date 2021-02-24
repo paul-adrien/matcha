@@ -120,7 +120,9 @@ export class FilterAndSortComponent implements OnInit {
         }
       );
     } else {
-      this.sliderForm.patchValue(JSON.parse(localStorage.getItem("filter-params")));
+      if (JSON.parse(localStorage.getItem("filter-params"))) {
+        this.sliderForm.patchValue(JSON.parse(localStorage.getItem("filter-params")));
+      }
       this.filtreUsersBy();
     }
   }
