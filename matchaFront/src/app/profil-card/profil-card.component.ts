@@ -25,13 +25,16 @@ import { differenceInYears } from "date-fns";
 })
 export class ProfilCardComponent implements OnInit {
   @Input() user: User;
+  @Input() messaging = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {}
 
   viewProfil() {
-    this.router.navigate(["home/profile-view/" + this.user.id]);
+    if (!this.messaging) {
+      this.router.navigate(["home/profile-view/" + this.user.id]);
+    }
   }
 
   public getAge(birthDate: Date) {

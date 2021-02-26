@@ -1,25 +1,6 @@
+import { User } from "./user";
 export interface PossConv {
-  id: string;
-  lastName: string;
-  firstName: string;
-  email: string;
-  password: string;
-  userName: string;
-  birthDate: Date;
-  gender: number;
-  showMe: number;
-  bio: string;
-  score: string;
-  city: string;
-  latitude: string;
-  longitude: string;
-  emailVerify: boolean;
-  profileComplete: boolean;
-  link: string;
-  pictures: {
-    id: string;
-    url: string;
-  }[];
+  user: User;
   convId: number;
 }
 
@@ -28,7 +9,7 @@ export interface ActiveConv {
   user_id1: string;
   user_id2: string;
   active: number;
-  other_id: string;
+  otherUser: User;
   lastMsg: string;
 }
 

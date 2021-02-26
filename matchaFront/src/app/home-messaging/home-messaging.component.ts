@@ -1,27 +1,37 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { messagingService } from "../_service/messaging_service";
 import { PossConv, ActiveConv, Messages } from "../../../libs/messaging";
-import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
+import { Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { userService } from "../_service/user_service";
 
 @Component({
   selector: "app-home-messaging",
   template: `
-    <div>
-      <div *ngIf="possiblyConv$ | async" class="possConv">
-        <div  *ngFor="let User of possiblyConv$ | async" (click)="discussion(User.id, User.convId)">
-          <p>{{ User.firstName }}</p>
-          <p>{{ User.lastName }}</p>
-          <p>{{ User.email }}</p>
-          <p>{{ User.userName }}</p>
-          <p>{{ User.birthDate }}</p>
-        </div>
-      </div>
-      <br><br>
-      <div *ngIf="activeConv$ | async" class="activConv">
-        <div  *ngFor="let Conv of activeConv$ | async" (click)="discussion(Conv.other_id, Conv.id)">
-          <p>{{ Conv.other_id }}</p>
-          <p>{{ Conv.lastMsg }}</p>
+    <div *ngIf="(this.possiblyConv$ | async)?.length > 0" class="possConv">
+      <app-profil-card
+        *ngFor="let possConv of this.possiblyConv$ | async"
+        [user]="possConv.user"
+        [messaging]="true"
+      ></app-profil-card>
+    </div>
+    <div *ngIf="(activeConv$ | async)?.length > 0" class="active-conv-container">
+      <div
+        *ngFor="let conv of this.activeConv$ | async"
+        (click)="discussion(conv.otherUser.id, conv.id)"
+        class="active-conv-content"
+      >
+        <img
+          class="picture"
+          [src]="
+            conv.otherUser?.pictures[0]?.url && conv.otherUser?.pictures[0]?.url !== null
+              ? conv.otherUser?.pictures[0].url
+              : './assets/user.svg'
+          "
+        />
+        <div class="text">
+          <span class="username">{{ conv.otherUser.userName }}</span>
+          <span>{{ conv.lastMsg }}</span>
         </div>
       </div>
     </div>
@@ -30,13 +40,20 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeMessagingComponent implements OnInit {
-  possiblyConv$: Observable<PossConv[]> = this.messagingService.possiblyConv(JSON.parse(localStorage.getItem("id")));
-  activeConv$: Observable<ActiveConv[]> = this.messagingService.activeConv(JSON.parse(localStorage.getItem("id")));
+  public possiblyConv$: Observable<PossConv[]>;
+  public activeConv$: Observable<ActiveConv[]>;
 
-  constructor(private messagingService: messagingService, private cd: ChangeDetectorRef, private router: Router) {}
-
-  ngOnInit(): void {
+  constructor(
+    private messagingService: messagingService,
+    private cd: ChangeDetectorRef,
+    private router: Router,
+    private userService: userService
+  ) {
+    this.possiblyConv$ = this.messagingService.possiblyConv(JSON.parse(localStorage.getItem("id")));
+    this.activeConv$ = this.messagingService.activeConv(JSON.parse(localStorage.getItem("id")));
   }
+
+  ngOnInit(): void {}
 
   discussion(id, convId) {
     this.router.navigate(["home/discussion/" + id + "/" + convId]);
