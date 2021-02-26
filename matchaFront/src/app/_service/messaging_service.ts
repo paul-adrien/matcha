@@ -49,4 +49,15 @@ export class messagingService {
       httpOptions
     );
   }
+
+  seeMsgNotif(other_id: string, user_id: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + "seeMsgNotif",
+      {
+        user_id: user_id,
+        other_id: other_id
+      },
+      httpOptions
+    );
+  }
 }

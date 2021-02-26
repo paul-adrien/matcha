@@ -105,6 +105,7 @@ exports.likeOrDislike = (req,res) => {
     };
 
     function notifLike(mode) {
+        console.log("entrer notif like");
         if (mode == 1) {
             connection.query('SELECT * FROM notif WHERE userId = ? AND type = "matched"',[req.body.like_id], function (error, results, fields) {
                 if (error) {
@@ -157,6 +158,7 @@ exports.likeOrDislike = (req,res) => {
     }
 
     function notifDisLike() {
+        console.log("entrer notif like");
         connection.query('SELECT * FROM notif WHERE userId = ? AND type = "unMatched"',[req.body.like_id], function (error, results, fields) {
             if (error) {
                 return null;
@@ -189,12 +191,13 @@ exports.likeOrDislike = (req,res) => {
             [req.body.like_id, req.body.user_id],
             function (error, results, fields) {
             if (error) {
-                resultat(null);
+                resultat(2);
             } else {
+                console.log("check if block");
                 if (results && results.length > 0) {
                 resultat(1);
                 } else {
-                resultat(null);
+                resultat(2);
                 }
             }
             }
@@ -208,13 +211,19 @@ exports.likeOrDislike = (req,res) => {
             if (await addLike()){
                 if ((match = await addMatch())) {
                     if (match == 1) {
-                        if (checkIfBlocked() === null)
+                        if (await checkIfBlocked() == 2) {
                             notifLike(1);
-                        res.json(200);
+                            res.json(200);
+                        } else {
+                            res.json(200);
+                        }
                     } else {
-                        if (checkIfBlocked() === null)
+                        if (await checkIfBlocked() == 2) {
                             notifLike(2);
-                        res.json(200);
+                            res.json(200);
+                        } else {
+                            res.json(200);
+                        }
                     }
                 } else {
                     res.json({
@@ -232,9 +241,12 @@ exports.likeOrDislike = (req,res) => {
             if (await delLike()){
                 if ((match = await delMatch())) {
                     if (match == 1) {
-                        if (checkIfBlocked() === null)
+                        if (await checkIfBlocked() == 2) {
                             notifDisLike();
-                        res.json(201);
+                            res.json(201);
+                        } else {
+                            res.json(201);
+                        }
                     } else
                         res.json(201);
                 } else {

@@ -24,6 +24,7 @@ import { NotificationComponent } from "./notification/notification.component";
 import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import { DiscussionComponent } from "./discussion/discussion.component";
 import { CommonModule } from "@angular/common";
+import { MaintenanceComponent } from './maintenance/maintenance.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { CommonModule } from "@angular/common";
     HomeMessagingComponent,
     NotificationComponent,
     DiscussionComponent,
+    MaintenanceComponent,
   ],
   imports: [
     BrowserModule,

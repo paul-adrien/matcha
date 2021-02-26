@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, throwError } from "rxjs";
+import { retry, catchError } from 'rxjs/operators';
 import { User } from "@matcha/shared";
 import { Router } from "@angular/router";
 
@@ -24,7 +25,7 @@ export class AuthService {
         password: user.password,
       },
       httpOptions
-    );
+    )
   }
 
   logOut() {

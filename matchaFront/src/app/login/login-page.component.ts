@@ -127,7 +127,7 @@ export class LoginPageComponent implements OnInit {
           }
         },
         err => {
-          this.errorMessage = err.error.message;
+          this.route.navigate(["/maintenance"]);
           this.isSignUpFailed = true;
         }
       );
@@ -149,10 +149,11 @@ export class LoginPageComponent implements OnInit {
           }
         },
         err => {
-          this.errorMessage = err.error.message;
+            this.route.navigate(["/maintenance"]);
           this.isLoginFailed = true;
         }
       );
     }
   }
+
 }

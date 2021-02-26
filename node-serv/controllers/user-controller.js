@@ -190,7 +190,7 @@ exports.viewedProfil = (req, res) => {
   }
 
   async function main() {
-    if (checkIfBlocked() === null) notifView();
+    if (await checkIfBlocked() === null) notifView();
     if ((await checkView()) === null) {
       if (await addView()) {
         console.log("test");

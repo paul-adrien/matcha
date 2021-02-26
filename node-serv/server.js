@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 var app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081",
+  origin: "*",
 };
 
 app.use(cors(corsOptions));
@@ -117,6 +117,11 @@ app.get("/api/getMessage/:id", messagingController.getMessage);
 app.post("/api/sendMessage", messagingController.sendMessage);
 app.get("/api/users/:id/getNotifs", userController.getNotifs);
 app.get("/api/users/:id/seeNotifs", userController.seeNotifs);
+app.post("/api/seeMsgNotif", messagingController.seeMsgNotif);
+app.use('*', (req, res, next) => {
+  return res.status(404).send();
+});
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

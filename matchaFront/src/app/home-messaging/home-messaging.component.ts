@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
   selector: "app-home-messaging",
   template: `
     <div>
-      <div *ngIf="possiblyConv$ | async">
-        <div  *ngFor="let User of possiblyConv$ | async">
+      <div *ngIf="possiblyConv$ | async" class="possConv">
+        <div  *ngFor="let User of possiblyConv$ | async" (click)="discussion(User.id, User.convId)">
           <p>{{ User.firstName }}</p>
           <p>{{ User.lastName }}</p>
           <p>{{ User.email }}</p>
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
         </div>
       </div>
       <br><br>
-      <div *ngIf="activeConv$ | async">
+      <div *ngIf="activeConv$ | async" class="activConv">
         <div  *ngFor="let Conv of activeConv$ | async" (click)="discussion(Conv.other_id, Conv.id)">
           <p>{{ Conv.other_id }}</p>
           <p>{{ Conv.lastMsg }}</p>

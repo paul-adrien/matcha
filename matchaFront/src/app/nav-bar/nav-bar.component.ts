@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from "../_service/auth_service";
 import { interval } from 'rxjs';
 import { userService } from '../_service/user_service';
@@ -38,7 +38,7 @@ import { Router } from '@angular/router';
   `,
   styleUrls: ["./nav-bar.component.scss"],
 })
-export class NavigationBarComponent implements OnInit {
+export class NavigationBarComponent implements OnInit, OnDestroy {
   public items = [
     {
       id: "profile",
@@ -71,10 +71,12 @@ export class NavigationBarComponent implements OnInit {
 
   nbUnViewNotif = 0;
   notifs: Notif[];
+  notifInter: any;
 
-  constructor(private authService: AuthService, private userService: userService, private cd: ChangeDetectorRef, private router: Router) {
-    interval(10000)
-    .subscribe(x => this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
+  constructor(private authService: AuthService, private userService: userService, private cd: ChangeDetectorRef, private router: Router) {}
+
+  ngOnInit(): void {
+    this.notifInter = setInterval(x => {this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
     .subscribe(
       data => {
         console.log(data);
@@ -85,10 +87,7 @@ export class NavigationBarComponent implements OnInit {
       err => {
         console.log(err);
       }
-    ))
-  }
-
-  ngOnInit(): void {
+    )}, 10000);
     this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
     .subscribe(
       data => {
@@ -100,6 +99,12 @@ export class NavigationBarComponent implements OnInit {
         console.log(err);
       }
     )
+  }
+
+  ngOnDestroy() {
+    if (this.notifInter) {
+      clearInterval(this.notifInter);
+    }
   }
 
   public selectItem(id: string) {

@@ -20,7 +20,7 @@ exports.possiblyConv = (req,res) => {
             }
         })
     )
-};
+  };
 
   async function getConv() {
     return new Promise( resultat => 
@@ -44,19 +44,15 @@ exports.possiblyConv = (req,res) => {
     if ((matchs = await getConv()) !== null) {
       users = await Promise.all(matchs.map(async function(match) {
         if (match.user_id1 === id)
-          user = getUser(match.user_id2);
+          user = await getUser(match.user_id2);
         else
-          user = getUser(match.user_id1);
+          user = await getUser(match.user_id1);
         if (user !== null)
-          return user;
+          return { ...user, convId: match["id"]};
       }));
       res.json(users);
     } else {
-      res.json({
-        status:true,
-        message:'no possibly conv',
-        users: null
-      });
+      res.json(null);
     }
   };
 }
@@ -112,11 +108,7 @@ exports.activeConv = (req,res) => {
       }));
       res.json(convs);
     } else {
-      res.json({
-        status:true,
-        message:'no possibly conv',
-        convs: null
-      });
+      res.json(null);
     }
   };
 }
@@ -158,7 +150,11 @@ exports.getMessage = (req,res) => {
   async function main() {
     if ((messages = await getMsg()) !== null) {
       if ((await updtSeeMsg()) !== null) {
-        res.json(messages);
+        res.json({
+          status:true,
+          message:'get message',
+          messages: messages
+        });
       } else {
         res.json({
           status:false,
@@ -171,10 +167,29 @@ exports.getMessage = (req,res) => {
       res.json({
         status:true,
         message:'0 msg',
-        convs: null
+        messages: null
       });
     }
   };
+}
+
+exports.seeMsgNotif = (req,res) => {
+  other_id = req.body.other_id;
+  user_id = req.body.user_id;
+
+  connection.query('UPDATE notif SET see = 1 WHERE type = "msg" AND userId = ? AND otherId = ?',[user_id, other_id], function (error, results, fields) {
+      if (error) {
+        res.json({
+          status:false,
+          message:'error update msg'
+        });
+      } else {
+        res.json({
+          status:true,
+          message:'update msg notif'
+        });
+      }
+  })
 }
 
 exports.sendMessage = (req,res) => {
@@ -186,12 +201,13 @@ exports.sendMessage = (req,res) => {
   main();
 
   function notifMsg() {
-    connection.query('SELECT * FROM notif WHERE userId = ? AND type = "msg"',[user_id], function (error, results, fields) {
+    console.log('notif msg');
+    connection.query('SELECT * FROM notif WHERE userId = ? AND otherId = ? AND type = "msg"',[user_id, sender_id], function (error, results, fields) {
         if (error) {
             return null;
         } else {
             if (results && results.length > 0) {
-                connection.query('UPDATE notif SET date = DATE(NOW()), see = 0 WHERE userId = ? AND type = "msg"',[user_id], function (error, results, fields) {
+                connection.query('UPDATE notif SET date = DATE(NOW()), see = 0 WHERE userId = ? AND otherId = ? AND type = "msg"',[user_id, sender_id], function (error, results, fields) {
                     if (error) {
                         return null;
                     } else {
@@ -259,7 +275,7 @@ exports.sendMessage = (req,res) => {
     if ((messages = await insMsg()) !== null) {
       if ((await updtActiveConv()) !== null)
       {
-        if (checkIfBlocked() === null)
+        if (await checkIfBlocked() === null)
           notifMsg();
         res.json({
           status:true,

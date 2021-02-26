@@ -15,6 +15,7 @@ import { HomeMessagingComponent } from "./home-messaging/home-messaging.componen
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { NotificationComponent } from "./notification/notification.component";
 import { DiscussionComponent } from "./discussion/discussion.component";
+import { MaintenanceComponent } from './maintenance/maintenance.component';
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: "forgotPass", component: ForgotPassComponent },
   { path: "verify/:id", component: VerifyComponent },
   { path: "not-found", component: LoginPageComponent },
+  { path: "maintenance", component: MaintenanceComponent },
   {
     path: "home",
     canActivate: [AuthGuard],

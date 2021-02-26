@@ -20,6 +20,7 @@ export interface PossConv {
     id: string;
     url: string;
   }[];
+  convId: number;
 }
 
 export interface ActiveConv {

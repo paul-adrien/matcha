@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { messagingService } from '../_service/messaging_service';
 import { Messages, MessageSend } from '../../../libs/messaging';
 import { Observable, interval } from 'rxjs';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-discussion',
@@ -47,7 +48,7 @@ import { Observable, interval } from 'rxjs';
   `,
   styleUrls: ['./discussion.component.scss']
 })
-export class DiscussionComponent implements OnInit {
+export class DiscussionComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, private router: Router, public messagingService: messagingService,
     private cd: ChangeDetectorRef) {
@@ -59,17 +60,23 @@ export class DiscussionComponent implements OnInit {
     msg: ""
   };
   public messages$: Messages[];
+  public interval: any;
 
   ngOnInit(): void {
     this.getMessage();
-    setInterval(x => {this.getMessage()}, 5000);
+    this.interval = setInterval(x => {this.getMessage(); this.messagingService.seeMsgNotif(this.userId, JSON.parse(localStorage.getItem("id"))).subscribe(data=>{},err=>{})}, 5000);
+  }
+
+  ngOnDestroy() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   getMessage() {
     this.messagingService.getMessage(this.convId).subscribe(
       data => {
-        console.log(data);
-        this.messages$ = data;
+        this.messages$ = data["messages"];
         this.cd.detectChanges();
       },
       err => {
@@ -81,7 +88,6 @@ export class DiscussionComponent implements OnInit {
   sendMessage() {
     this.messagingService.sendMessage(this.convId, this.form.msg, JSON.parse(localStorage.getItem("id")), this.userId).subscribe(
       data => {
-        console.log(data);
         this.getMessage();
       },
       err => {
