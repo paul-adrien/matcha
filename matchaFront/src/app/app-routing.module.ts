@@ -16,6 +16,7 @@ import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { NotificationComponent } from "./notification/notification.component";
 import { DiscussionComponent } from "./discussion/discussion.component";
 import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { InteractiveMapComponent } from './interactive-map/interactive-map.component';
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },
@@ -38,6 +39,7 @@ const routes: Routes = [
       { path: "messaging", component: HomeMessagingComponent },
       { path: "discussion/:id/:convId", component: DiscussionComponent },
       { path: "notif", component: NotificationComponent },
+      { path: "map", component: InteractiveMapComponent },
     ],
   },
   {

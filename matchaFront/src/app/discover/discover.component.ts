@@ -54,6 +54,10 @@ import { map, switchMap } from "rxjs/operators";
         class="content-filter"
         *ngIf="(this.usersSuggestion$ | async)?.length > 0 && this.updateMode; else filter"
       >
+        <app-interactive-map
+            [users]="this.usersSuggestion$ | async"
+            [me]="this.user$ | async"
+          ></app-interactive-map>
         <app-profil-card
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"
           [user]="userSuggestion"
@@ -62,8 +66,12 @@ import { map, switchMap } from "rxjs/operators";
       <ng-template #filter>
         <div
           class="content-filter"
-          *ngIf="(this.usersSuggestion$ | async)?.length > 0 && !this.updateMode; else error"
+          *ngIf="(this.usersFilter$ | async)?.length > 0 && !this.updateMode; else error"
         >
+          <app-interactive-map
+            [users]="this.usersFilter$ | async"
+            [me]="this.user$ | async"
+          ></app-interactive-map>
           <app-profil-card
             *ngFor="let userFilter of this.usersFilter$ | async"
             [user]="userFilter"
@@ -130,7 +138,7 @@ export class DiscoverComponent implements OnInit {
           long = position.coords.longitude;
           this.userService
             .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
-            .subscribe(el => console.log(el));
+            .subscribe(el => console.log());
         },
         error => {
           switch (error.code) {
@@ -146,7 +154,7 @@ export class DiscoverComponent implements OnInit {
           }
           this.userService
             .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
-            .subscribe(el => console.log(el));
+            .subscribe(el => console.log());
         },
         { timeout: 5000 }
       );

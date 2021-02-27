@@ -25,6 +25,7 @@ import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import { DiscussionComponent } from "./discussion/discussion.component";
 import { CommonModule } from "@angular/common";
 import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { InteractiveMapComponent } from './interactive-map/interactive-map.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { MaintenanceComponent } from './maintenance/maintenance.component';
     NotificationComponent,
     DiscussionComponent,
     MaintenanceComponent,
+    InteractiveMapComponent,
   ],
   imports: [
     BrowserModule,
