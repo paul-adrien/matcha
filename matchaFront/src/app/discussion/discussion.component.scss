@@ -4,6 +4,43 @@
   display: flex;
   flex-direction: column;
 
+  .header-container {
+    height: 4rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-top: 1px solid lightgrey;
+
+    .user-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+
+      .picture {
+        height: 3rem;
+        object-fit: contain;
+        border-radius: 10px;
+        margin: 0 1rem;
+      }
+
+      .text {
+        font-family: Montserrat-semi-bold;
+      }
+    }
+
+    .back {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .no-messages {
+    display: flex;
+    height: 80%;
+    flex-grow: 1;
+  }
+
   .messages-container {
     display: flex;
     height: 80%;
@@ -20,6 +57,9 @@
       &.left-message {
         justify-content: flex-start;
       }
+      &:last-child {
+        margin-bottom: 1rem;
+      }
     }
   }
 
@@ -28,25 +68,37 @@
     max-width: 60%;
     height: fit-content;
     padding: 6px 12px;
-    background-color: lightskyblue;
-    border-radius: 24px;
+    background-color: var(--secondary-color);
+    color: white;
+    border-radius: 14px;
 
     &.left-message {
       background-color: white;
+      color: black;
     }
   }
 
   .input-container {
     display: flex;
-    justify-content: flex-end;
-    margin: 0 1rem;
+    padding: 0 1rem;
+    background: white;
+    justify-content: space-between;
+
+    .send {
+      transform: rotate(45deg);
+    }
   }
 
   .input-message {
-    width: 80%;
+    width: 100%;
     padding: 6px 12px;
+    margin: 0.5rem 0;
 
-    border: 1px solid lightgray;
+    border: none;
     border-radius: 24px;
+
+    &:focus {
+      outline: none;
+    }
   }
 }

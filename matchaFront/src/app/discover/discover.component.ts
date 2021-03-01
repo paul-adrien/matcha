@@ -55,9 +55,9 @@ import { map, switchMap } from "rxjs/operators";
         *ngIf="(this.usersSuggestion$ | async)?.length > 0 && this.updateMode; else filter"
       >
         <app-interactive-map
-            [users]="this.usersSuggestion$ | async"
-            [me]="this.user$ | async"
-          ></app-interactive-map>
+          [users]="this.usersSuggestion$ | async"
+          [me]="this.user$ | async"
+        ></app-interactive-map>
         <app-profil-card
           *ngFor="let userSuggestion of this.usersSuggestion$ | async"
           [user]="userSuggestion"
@@ -114,10 +114,6 @@ export class DiscoverComponent implements OnInit {
   ngOnInit() {
     this.getCurrentLocation();
     this.matchService.getSuggestion(localStorage.getItem("id")).subscribe(el => console.log(el));
-  }
-
-  viewProfils() {
-    this.router.navigate(["home/suggestion"]);
   }
 
   public changeSuggestionMode(value: boolean) {

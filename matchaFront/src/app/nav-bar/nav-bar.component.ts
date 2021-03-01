@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
-import { interval } from 'rxjs';
-import { userService } from '../_service/user_service';
-import { Notif } from '../../../libs/user';
-import { Route } from '@angular/compiler/src/core';
-import { Router } from '@angular/router';
+import { interval } from "rxjs";
+import { userService } from "../_service/user_service";
+import { Notif } from "../../../libs/user";
+import { Route } from "@angular/compiler/src/core";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "nav-bar",
@@ -20,18 +20,27 @@ import { Router } from '@angular/router';
     </a>
     <div class="case" (click)="showDialog()">
       <img src="./assets/notification-bell-svgrepo-com.svg" />
-      <p style="color: white; padding: 3px 6px; border-radius: 6px" [ngStyle]="{'background-color': nbUnViewNotif <= 0 ? 'white' : 'red'}">{{nbUnViewNotif}}</p>
+      <p
+        style="color: white; padding: 3px 6px; border-radius: 6px"
+        [ngStyle]="{ 'background-color': nbUnViewNotif <= 0 ? 'white' : 'red' }"
+      >
+        {{ nbUnViewNotif }}
+      </p>
     </div>
     <div (click)="this.logOut()" class="case">
       <img src="./assets/log-out.svg" />
     </div>
     <app-notification id="modal_1" class="hhidden">
-      <div  *ngFor="let Notif of notifs">
+      <div *ngFor="let Notif of notifs">
         <div *ngIf="Notif.type === 'msg'" (click)="viewMsg()">
-          <p [ngStyle]="{'font-weight': Notif.see == 0 ? 'bold' : 'normal'}">{{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}</p>
+          <p [ngStyle]="{ 'font-weight': Notif.see == 0 ? 'bold' : 'normal' }">
+            {{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}
+          </p>
         </div>
         <div *ngIf="Notif.type !== 'msg'" (click)="viewProfil(Notif.otherId)">
-          <p [ngStyle]="{'font-weight': Notif.see == 0 ? 'bold' : 'normal'}">{{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}</p>
+          <p [ngStyle]="{ 'font-weight': Notif.see == 0 ? 'bold' : 'normal' }">
+            {{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}
+          </p>
         </div>
       </div>
     </app-notification>
@@ -61,7 +70,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     {
       id: "message",
       src: {
-        check: "./assets/message-circle.svg",
+        check: "./assets/message-circle-check.svg",
         default: "./assets/message-circle.svg",
       },
       route: "messaging",
@@ -73,32 +82,37 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   notifs: Notif[];
   notifInter: any;
 
-  constructor(private authService: AuthService, private userService: userService, private cd: ChangeDetectorRef, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private userService: userService,
+    private cd: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.notifInter = setInterval(x => {this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
-    .subscribe(
+    this.notifInter = setInterval(x => {
+      this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
+        data => {
+          console.log(data);
+          this.notifs = data.notifs;
+          this.nbUnViewNotif = data.nbUnView;
+          this.cd.detectChanges();
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }, 10000);
+    this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);
-        this.notifs = data.notifs;
         this.nbUnViewNotif = data.nbUnView;
-        this.cd.detectChanges();
+        this.notifs = data.notifs;
       },
       err => {
         console.log(err);
       }
-    )}, 10000);
-    this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
-    .subscribe(
-      data => {
-        console.log(data);
-        this.nbUnViewNotif = data.nbUnView;
-        this.notifs = data.notifs;
-      },
-      err => {
-        console.log(err);
-      }
-    )
+    );
   }
 
   ngOnDestroy() {
@@ -121,14 +135,12 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.authService.logOut();
   }
 
-  showDialog(){
-    let modal_t  = document.getElementById('modal_1')
-    modal_t.classList.remove('hhidden')
-    modal_t.classList.add('sshow');
-    this.userService.seeNotifs(JSON.parse(localStorage.getItem("id")))
-    .subscribe();
-    this.userService.getNotifs(JSON.parse(localStorage.getItem("id")))
-    .subscribe(
+  showDialog() {
+    let modal_t = document.getElementById("modal_1");
+    modal_t.classList.remove("hhidden");
+    modal_t.classList.add("sshow");
+    this.userService.seeNotifs(JSON.parse(localStorage.getItem("id"))).subscribe();
+    this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);
         this.nbUnViewNotif = data.nbUnView;
@@ -142,9 +154,9 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.nbUnViewNotif = 0;
   }
   closeDialog() {
-    let modal_t  = document.getElementById('modal_1');
-    modal_t.classList.remove('sshow');
-    modal_t.classList.add('hhidden');
+    let modal_t = document.getElementById("modal_1");
+    modal_t.classList.remove("sshow");
+    modal_t.classList.add("hhidden");
     this.nbUnViewNotif = 0;
   }
 

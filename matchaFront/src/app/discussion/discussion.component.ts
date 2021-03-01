@@ -1,14 +1,37 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import { userService } from "./../_service/user_service";
+import { User } from "./../../../libs/user";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  AfterContentInit,
+} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { messagingService } from "../_service/messaging_service";
 import { Messages, MessageSend } from "../../../libs/messaging";
 import { Observable, interval } from "rxjs";
 import { element } from "protractor";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-discussion",
   template: `
-    <div *ngIf="this.messages" class="messages-container">
+    <div class="header-container">
+      <img class="back" src="./assets/chevron-left.svg" (click)="this.back()" />
+      <div
+        class="user-container"
+        *ngIf="this.otherUser$ | async as otherUser"
+        (click)="this.viewProfil()"
+      >
+        <img class="picture" [src]="otherUser.pictures[0].url" />
+        <span class="text">{{ otherUser.userName }}</span>
+      </div>
+    </div>
+    <div #scroll *ngIf="this.messages; else noMessages" class="messages-container">
       <div
         *ngFor="let message of this.messages"
         class="messages-content"
@@ -21,6 +44,9 @@ import { element } from "protractor";
         >
       </div>
     </div>
+    <ng-template #noMessages>
+      <div class="no-messages"></div>
+    </ng-template>
     <!-- <div *ngIf="newMsgs">
         <div  *ngFor="let Msg of newMsgs">
           <p>{{ Msg.msg }}</p>
@@ -35,6 +61,7 @@ import { element } from "protractor";
       novalidate
     >
       <input
+        autocomplete="off"
         type="text"
         [(ngModel)]="form.msg"
         name="msg"
@@ -43,20 +70,26 @@ import { element } from "protractor";
         placeholder="message"
         class="input-message"
       />
-      <button class="primary-button">Envoyer</button>
+      <img class="send" src="./assets/send.svg" (click)="f.form.valid && sendMessage()" />
     </form>
   `,
   styleUrls: ["./discussion.component.scss"],
 })
 export class DiscussionComponent implements OnInit, OnDestroy {
+  @ViewChild("scroll", { static: false }) scroll: ElementRef;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public messagingService: messagingService,
+    private userService: userService,
+    private location: Location,
     private cd: ChangeDetectorRef
   ) {}
 
   public userId: string = "";
+  public otherUser$: Observable<User>;
+
   public otherUserId: string = this.route.snapshot.params.id;
   public convId: string = this.route.snapshot.params.convId;
   form: MessageSend = {
@@ -67,6 +100,7 @@ export class DiscussionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userId = JSON.parse(localStorage.getItem("id"));
+    this.otherUser$ = this.userService.getUser(this.otherUserId);
     this.getMessage();
     this.interval = setInterval(x => {
       this.getMessage();
@@ -76,7 +110,11 @@ export class DiscussionComponent implements OnInit, OnDestroy {
           data => {},
           err => {}
         );
-    }, 50000);
+    }, 5000);
+    if (this.scroll) {
+      this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
+      this.cd.detectChanges();
+    }
     this.cd.detectChanges();
   }
 
@@ -89,8 +127,13 @@ export class DiscussionComponent implements OnInit, OnDestroy {
   getMessage() {
     this.messagingService.getMessage(this.convId).subscribe(
       data => {
+        let tmp = this.messages;
         this.messages = data["messages"];
         this.cd.detectChanges();
+        if (JSON.stringify(tmp) !== JSON.stringify(this.messages) && this.scroll) {
+          this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
+          this.cd.detectChanges();
+        }
       },
       err => {
         console.log(err);
@@ -109,5 +152,13 @@ export class DiscussionComponent implements OnInit, OnDestroy {
           console.log(err);
         }
       );
+  }
+
+  viewProfil() {
+    this.router.navigate(["home/profile-view/" + this.otherUserId]);
+  }
+
+  public back() {
+    this.location.back();
   }
 }

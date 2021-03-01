@@ -8,30 +8,37 @@ import { userService } from "../_service/user_service";
 @Component({
   selector: "app-home-messaging",
   template: `
-    <div *ngIf="(this.possiblyConv$ | async)?.length > 0" class="possConv">
-      <app-profil-card
-        *ngFor="let possConv of this.possiblyConv$ | async"
-        [user]="possConv.user"
-        [messaging]="true"
-      ></app-profil-card>
-    </div>
-    <div *ngIf="(activeConv$ | async)?.length > 0" class="active-conv-container">
-      <div
-        *ngFor="let conv of this.activeConv$ | async"
-        (click)="discussion(conv.otherUser.id, conv.id)"
-        class="active-conv-content"
-      >
-        <img
-          class="picture"
-          [src]="
-            conv.otherUser?.pictures[0]?.url && conv.otherUser?.pictures[0]?.url !== null
-              ? conv.otherUser?.pictures[0].url
-              : './assets/user.svg'
-          "
-        />
-        <div class="text">
-          <span class="username">{{ conv.otherUser.userName }}</span>
-          <span>{{ conv.lastMsg }}</span>
+    <div class="container">
+      <span class="title">Match</span>
+      <div class="scroll">
+        <div *ngIf="(this.possiblyConv$ | async)?.length > 0" class="poss-conv-container">
+          <app-profil-card
+            *ngFor="let possConv of this.possiblyConv$ | async"
+            [user]="possConv.user"
+            [messaging]="true"
+            (click)="discussion(possConv.user.id, possConv.convId)"
+          ></app-profil-card>
+        </div>
+      </div>
+      <span class="title">Discussions</span>
+      <div *ngIf="(activeConv$ | async)?.length > 0" class="active-conv-container">
+        <div
+          *ngFor="let conv of this.activeConv$ | async"
+          (click)="discussion(conv.otherUser.id, conv.id)"
+          class="active-conv-content"
+        >
+          <img
+            class="picture"
+            [src]="
+              conv.otherUser?.pictures[0]?.url && conv.otherUser?.pictures[0]?.url !== null
+                ? conv.otherUser?.pictures[0].url
+                : './assets/user.svg'
+            "
+          />
+          <div class="text">
+            <span class="username">{{ conv.otherUser.userName }}</span>
+            <span>{{ conv.lastMsg }}</span>
+          </div>
         </div>
       </div>
     </div>
