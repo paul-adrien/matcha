@@ -2,6 +2,23 @@ var connection = require("./../config/db");
 var forEach = require("async-foreach").forEach;
 const https = require("https");
 var request = require("request");
+var datefns = require("date-fns");
+
+async function getUser(id) {
+  return new Promise(resultat =>
+    connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
+      if (error) {
+        resultat(null);
+      } else {
+        if (results && results.length > 0) {
+          resultat(results[0]);
+        } else {
+          resultat(null);
+        }
+      }
+    })
+  );
+}
 
 exports.takeViewProfil = (req, res) => {
   var resultat = [];
@@ -83,6 +100,8 @@ exports.viewedProfil = (req, res) => {
   var user_id = req.params.id;
   var viewed_id = req.body.viewed_id;
 
+  let date = new Date();
+
   main();
 
   async function checkIfBlocked() {
@@ -161,8 +180,8 @@ exports.viewedProfil = (req, res) => {
         } else {
           if (results && results.length > 0) {
             connection.query(
-              'UPDATE notif SET date = DATE(NOW()), see = 0 WHERE userId = ? AND type = "view"',
-              [viewed_id],
+              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND type = "view"',
+              [date.toString(), viewed_id],
               function (error, results, fields) {
                 if (error) {
                   return null;
@@ -173,8 +192,8 @@ exports.viewedProfil = (req, res) => {
             );
           } else {
             connection.query(
-              'INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "view", DATE(NOW()))',
-              [viewed_id, user_id],
+              'INSERT INTO notif (userId, sender_id, type, date) VALUES (?, ?, "view", ?)',
+              [viewed_id, user_id, date.toString()],
               function (error, results, fields) {
                 if (error) {
                   return null;
@@ -190,7 +209,7 @@ exports.viewedProfil = (req, res) => {
   }
 
   async function main() {
-    if (await checkIfBlocked() === null) notifView();
+    if ((await checkIfBlocked()) === null) notifView();
     if ((await checkView()) === null) {
       if (await addView()) {
         console.log("test");
@@ -319,6 +338,10 @@ exports.getNotifs = (req, res) => {
       notifs &&
       (await Promise.all(
         notifs.map(async function (notif) {
+          let otherUser = await getUser(notif.sender_id);
+          if (otherUser?.userName) {
+            notif.otherUserName = otherUser.userName;
+          }
           if (notif["see"] == 0) nbUnView++;
           return notif;
         })
@@ -328,8 +351,15 @@ exports.getNotifs = (req, res) => {
       [id],
       function (error, results, fields) {}
     );
+
     res.json({
-      notifs: notifs,
+      notifs: notifs?.sort((a, b) => {
+        if (datefns.isBefore(new Date(a.date), new Date(b.date))) {
+          return 1;
+        } else if (datefns.isBefore(new Date(b.date), new Date(a.date))) {
+          return -1;
+        }
+      }),
       nbUnView: nbUnView,
     });
   }
@@ -351,7 +381,7 @@ exports.delNotifs = (req, res) => {
   type = req.params.type;
 
   connection.query(
-    "DELETE FROM notif WHERE userId = ? AND otherId = ? AND type = ?",
+    "DELETE FROM notif WHERE userId = ? AND sender_id = ? AND type = ?",
     [userId, otherId, type],
     function (error, results, fields) {
       if (error) {

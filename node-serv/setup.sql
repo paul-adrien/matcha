@@ -79,8 +79,8 @@ CREATE TABLE message
 
 CREATE TABLE notif
 (
+    sender_id VARCHAR(255) NOT NULL,
     userId VARCHAR(255) NOT NULL,
-    otherId VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
     date VARCHAR(255) NOT NULL,
     see INT DEFAULT 0

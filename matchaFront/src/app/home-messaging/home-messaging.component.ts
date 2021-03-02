@@ -1,3 +1,4 @@
+import { Notif } from "./../../../libs/user";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { messagingService } from "../_service/messaging_service";
 import { PossConv, ActiveConv, Messages } from "../../../libs/messaging";

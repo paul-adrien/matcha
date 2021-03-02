@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
+import { map } from "rxjs/operators";
+import { User } from "./../../../libs/user";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { AuthService } from "../_service/auth_service";
 import { interval } from "rxjs";
 import { userService } from "../_service/user_service";
@@ -12,39 +20,31 @@ import { Router } from "@angular/router";
     <a
       class="case"
       *ngFor="let item of this.items"
-      (click)="this.selectItem(item.id)"
       [routerLink]="item.route"
       routerLinkActive="active"
+      (click)="this.selectItem(item.id)"
     >
       <img [src]="item.selected ? item.src.check : item.src.default" />
     </a>
-    <div class="case" (click)="showDialog()">
-      <img src="./assets/notification-bell-svgrepo-com.svg" />
-      <p
-        style="color: white; padding: 3px 6px; border-radius: 6px"
-        [ngStyle]="{ 'background-color': nbUnViewNotif <= 0 ? 'white' : 'red' }"
-      >
+    <div class="case">
+      <img src="./assets/notification-bell-svgrepo-com.svg" (click)="showDialog()" />
+      <div *ngIf="this.nbUnViewNotif > 0" class="notif-circle">
         {{ nbUnViewNotif }}
-      </p>
-    </div>
-    <div (click)="this.logOut()" class="case">
-      <img src="./assets/log-out.svg" />
-    </div>
-    <app-notification id="modal_1" class="hhidden">
-      <div *ngFor="let Notif of notifs">
-        <div *ngIf="Notif.type === 'msg'" (click)="viewMsg()">
-          <p [ngStyle]="{ 'font-weight': Notif.see == 0 ? 'bold' : 'normal' }">
-            {{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}
-          </p>
-        </div>
-        <div *ngIf="Notif.type !== 'msg'" (click)="viewProfil(Notif.otherId)">
-          <p [ngStyle]="{ 'font-weight': Notif.see == 0 ? 'bold' : 'normal' }">
-            {{ Notif.type }} {{ Notif.otherId }} {{ Notif.date }}
-          </p>
-        </div>
       </div>
-    </app-notification>
+      <app-notification id="modal_1" class="hhidden">
+        <div *ngFor="let notif of notifs" class="notif-text">
+          <span (click)="notif.type === 'msg' ? viewMsg() : viewProfil(notif.sender_id)">{{
+            this.getMessageNotif(notif)
+          }}</span>
+          <span>{{ notif.date | date: "HH:mm" }}</span>
+        </div>
+      </app-notification>
+    </div>
+    <div class="case">
+      <img (click)="this.logOut()" src="./assets/log-out.svg" />
+    </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ["./nav-bar.component.scss"],
 })
 export class NavigationBarComponent implements OnInit, OnDestroy {
@@ -129,6 +129,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
         item.selected = false;
       }
     });
+    this.cd.detectChanges();
   }
 
   public logOut() {
@@ -153,6 +154,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     );
     this.nbUnViewNotif = 0;
   }
+
   closeDialog() {
     let modal_t = document.getElementById("modal_1");
     modal_t.classList.remove("sshow");
@@ -161,10 +163,26 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   }
 
   viewProfil(id) {
+    this.closeDialog();
     this.router.navigate(["home/profile-view/" + id]);
   }
 
   viewMsg() {
+    this.closeDialog();
+    this.selectItem("message");
     this.router.navigate(["home/messaging"]);
+  }
+
+  getMessageNotif(notif: Notif) {
+    switch (notif.type) {
+      case "msg":
+        return notif.otherUserName + " a envoyé un message.";
+      case "view":
+        return notif.otherUserName + " a regardé votre profil.";
+      case "matched":
+        return notif.otherUserName + " et vous avez matché ensemble.";
+      case "unMatched":
+        return notif.otherUserName + " a supprimé son match.";
+    }
   }
 }

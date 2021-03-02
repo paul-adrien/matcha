@@ -196,7 +196,7 @@ exports.seeMsgNotif = (req, res) => {
   user_id = req.body.user_id;
 
   connection.query(
-    'UPDATE notif SET see = 1 WHERE type = "msg" AND userId = ? AND otherId = ?',
+    'UPDATE notif SET see = 1 WHERE type = "msg" AND userId = ? AND sender_id = ?',
     [user_id, other_id],
     function (error, results, fields) {
       if (error) {
@@ -219,22 +219,24 @@ exports.sendMessage = (req, res) => {
   msg = req.body.msg;
   sender_id = req.body.sender_id;
   user_id = req.body.user_id;
+  let date = new Date();
 
   main();
 
   function notifMsg() {
-    console.log("notif msg");
+    console.log("notif msg", user_id, sender_id);
     connection.query(
-      'SELECT * FROM notif WHERE userId = ? AND otherId = ? AND type = "msg"',
+      'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "msg"',
       [user_id, sender_id],
       function (error, results, fields) {
         if (error) {
           return null;
         } else {
           if (results && results.length > 0) {
+            console.log(results[0]);
             connection.query(
-              'UPDATE notif SET date = DATE(NOW()), see = 0 WHERE userId = ? AND otherId = ? AND type = "msg"',
-              [user_id, sender_id],
+              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "msg"',
+              [date.toString(), user_id, sender_id],
               function (error, results, fields) {
                 if (error) {
                   return null;
@@ -245,8 +247,8 @@ exports.sendMessage = (req, res) => {
             );
           } else {
             connection.query(
-              'INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "msg", DATE(NOW()))',
-              [user_id, sender_id],
+              'INSERT INTO notif (userId, sender_id, type, date) VALUES (?, ?, "msg", ?)',
+              [user_id, sender_id, date.toString()],
               function (error, results, fields) {
                 if (error) {
                   return null;

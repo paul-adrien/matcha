@@ -1,20 +1,18 @@
-
 // this holds the CSS display of the modal
 .mmodal {
   // makes it hover above all elements
   z-index: 1000;
-  position: fixed;
-  top: 5%;
-  bottom: 0;
-  left: 55%;
-  width: 30%;
-  height: 60%;
+  position: absolute;
+  top: 3rem;
+  width: 17rem;
+  max-height: 24rem;
   overflow: scroll;
+  right: -2rem;
 }
 .mmodal-body {
-  background: pink;
-  margin: 10px;
-  padding: 10px;
+  background: white;
+  padding: 1rem 0;
+  border-radius: 1rem;
 }
 // backdrop color
 .mmodal-background {
@@ -25,13 +23,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: pink;
+  background-color: lightgrey;
   // makes the below elements visible to a degree.
   opacity: 0.35;
-}
-
-.messages {
-  height: 100%;
-  height: 200px;
-  overflow: scroll;
 }

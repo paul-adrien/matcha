@@ -5,11 +5,27 @@
   background-color: white;
 
   .case {
-    cursor: pointer;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: calc(100% / 5);
+  }
+
+  img {
+    cursor: pointer;
+  }
+
+  .notif-circle {
+    position: absolute;
+    background-color: red;
+    border-radius: 1rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    text-align: center;
+    color: white;
+    top: 7px;
+    margin-left: 20px;
   }
 }
 
@@ -20,4 +36,19 @@
 // this makes the element hidden/invisible
 .hhidden {
   display: none;
+}
+
+.notif-text {
+  display: flex;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: lightyellow;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }

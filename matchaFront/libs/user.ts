@@ -37,10 +37,11 @@ export interface Filtre {
 
 export interface Notif {
   userId: string;
-  otherId: string;
+  sender_id: string;
   type: string;
   date: string;
   see: number;
+  otherUserName: string;
 }
 
 export function mapUserBackToUserFront(user: any): User {

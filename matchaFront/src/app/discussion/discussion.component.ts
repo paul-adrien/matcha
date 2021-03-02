@@ -143,7 +143,7 @@ export class DiscussionComponent implements OnInit, OnDestroy {
 
   sendMessage() {
     this.messagingService
-      .sendMessage(this.convId, this.form.msg, JSON.parse(localStorage.getItem("id")), this.userId)
+      .sendMessage(this.convId, this.form.msg, this.userId, this.otherUserId)
       .subscribe(
         data => {
           this.getMessage();
