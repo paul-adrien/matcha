@@ -17,6 +17,17 @@ import { Location } from "@angular/common";
   selector: "app-profile-view",
   template: `
     <img class="back" src="./assets/arrow-left.svg" (click)="this.backRoute()" />
+    <div class="block">
+      <img src="./assets/alert-circle.svg" (click)="this.isOpenDropdown = !this.isOpenDropdown" />
+      <div
+        (mouseleave)="this.isOpenDropdown = false"
+        *ngIf="this.isOpenDropdown"
+        class="dropdown-container"
+      >
+        <span class="text">Bloquer le compte</span>
+        <span class="text">Signaler comme faux compte</span>
+      </div>
+    </div>
     <div class="big-profile-picture">
       <img
         class="chevron"
@@ -41,7 +52,13 @@ import { Location } from "@angular/common";
         (click)="this.primaryPictureId = this.primaryPictureId + 1"
         src="./assets/chevron-right.svg"
       />
-      <div (click)="this.like()" class="primary-button">{{ this.isLike ? "Dislike" : "Like" }}</div>
+      <div (click)="this.like()" class="primary-button like">
+        {{ this.isLike ? "Dislike" : "Like" }}
+      </div>
+      <div class="primary-button score">
+        {{ this.user?.score }}
+        <img src="./assets/star.svg" />
+      </div>
     </div>
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
@@ -74,6 +91,8 @@ export class ProfileViewComponent implements OnInit {
   public user: User;
 
   public primaryPictureId: number = 0;
+
+  public isOpenDropdown = false;
 
   constructor(
     public route: ActivatedRoute,
@@ -135,10 +154,6 @@ export class ProfileViewComponent implements OnInit {
     );
 
     this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe();
-    //this.userService.getUser(this.route.params.)
-    // this.id = this.route.snapshot.params["id"];
-    // if (!this.id || this.id == 0) this.router.navigate(["home/discover"]);
-    // this.user = this.userService.setUserNull();
   }
 
   like() {

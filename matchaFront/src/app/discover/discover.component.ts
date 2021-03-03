@@ -41,15 +41,7 @@ import { map, switchMap } from "rxjs/operators";
       *ngIf="!this.updateMode"
       (usersSort)="this.getUsersFilter($event)"
     ></app-filter-and-sort>
-    <div
-      class="suggestion-container"
-      *ngIf="
-        (this.user$ | async)?.profileComplete !== undefined &&
-          (this.user$ | async)?.profileComplete &&
-          (this.usersSuggestion$ | async) !== undefined;
-        else error
-      "
-    >
+    <div class="suggestion-container" *ngIf="(this.user$ | async)?.profileComplete; else error">
       <div
         class="content-filter"
         *ngIf="(this.usersSuggestion$ | async)?.length > 0 && this.updateMode; else filter"
@@ -66,7 +58,7 @@ import { map, switchMap } from "rxjs/operators";
       <ng-template #filter>
         <div
           class="content-filter"
-          *ngIf="(this.usersFilter$ | async)?.length > 0 && !this.updateMode; else error"
+          *ngIf="(this.usersFilter$ | async)?.length > 0 && !this.updateMode; else noResult"
         >
           <app-interactive-map
             [users]="this.usersFilter$ | async"
@@ -124,37 +116,41 @@ export class DiscoverComponent implements OnInit {
   public getCurrentLocation() {
     let lat = undefined;
     let long = undefined;
-    if (
-      typeof navigator.geolocation === "object" &&
-      typeof navigator.geolocation.getCurrentPosition === "function"
-    ) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          lat = position.coords.latitude;
-          long = position.coords.longitude;
-          this.userService
-            .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
-            .subscribe(el => console.log());
-        },
-        error => {
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              console.log("User denied the request for Geolocation.");
-              break;
-            case error.POSITION_UNAVAILABLE:
-              console.log("Location information is unavailable.");
-              break;
-            case error.TIMEOUT:
-              console.log("The request to get user location timed out.");
-              break;
-          }
-          this.userService
-            .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long)
-            .subscribe(el => console.log());
-        },
-        { timeout: 5000 }
-      );
-    }
+    this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(userRes => {
+      if (
+        typeof navigator.geolocation === "object" &&
+        typeof navigator.geolocation.getCurrentPosition === "function" &&
+        userRes?.currentPosition
+      ) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
+            this.userService
+              .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
+              .subscribe(el => console.log());
+          },
+          error => {
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                console.log("User denied the request for Geolocation.");
+                break;
+              case error.POSITION_UNAVAILABLE:
+                console.log("Location information is unavailable.");
+                break;
+              case error.TIMEOUT:
+                console.log("The request to get user location timed out.");
+                break;
+            }
+            this.userService
+              .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
+              .subscribe(el => console.log());
+          },
+          { timeout: 5000 }
+        );
+      }
+    });
+    this.cd.detectChanges();
   }
 
   public getUsersFilter(res: Observable<User[]>) {

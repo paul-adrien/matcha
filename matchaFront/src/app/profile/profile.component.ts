@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Input,
   NgZone,
   OnInit,
+  ViewChild,
 } from "@angular/core";
 import { Tags, User } from "@matcha/shared";
 import { profilService } from "../_service/profil_service";
@@ -17,6 +19,8 @@ import { userService } from "../_service/user_service";
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
 import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
+
+declare var google: any;
 
 function ValidatorLength(control: FormControl) {
   if (control.value?.length < 3) {
@@ -67,7 +71,11 @@ function validatePictures(arr: FormArray) {
 @Component({
   selector: "profile",
   template: `
-    <div class="content" *ngIf="this.user" [class.quick-look]="!this.updateMode">
+    <div
+      class="content"
+      *ngIf="this.user && !this.isSettings; else settings"
+      [class.quick-look]="!this.updateMode"
+    >
       <div class="header-bar">
         <span
           class="case separator"
@@ -80,6 +88,7 @@ function validatePictures(arr: FormArray) {
         >
       </div>
       <div *ngIf="!this.updateMode" class="big-profile-picture">
+        <img class="setting" src="./assets/settings.svg" (click)="this.openSettings()" />
         <img
           class="chevron"
           [class.hidden]="!this.user?.pictures[0] || this.primaryPictureId === 0"
@@ -292,11 +301,43 @@ function validatePictures(arr: FormArray) {
         <div class="primary-button" (click)="this.confirmCropped()">OK</div>
       </div>
     </div>
+    <ng-template #settings>
+      <div *ngIf="this.user && this.isSettings" class="content">
+        <div class="header-bar">
+          <span class="case middle"> Paramètres </span>
+          <img class="setting" src="./assets/x.svg" (click)="this.isSettings = false" />
+        </div>
+        <div class="form-container">
+          <div class="info-container">
+            <span class="info-top">Changer sa localisation</span>
+            <select (change)="this.getLocation()" [formControl]="this.localizationCase">
+              <option value="1">Localisation actuelle</option>
+              <option value="0">Choisir sa localisation</option>
+            </select>
+            <input
+              [disabled]="this.localizationCase.value === '1'"
+              class="input-loca"
+              #loca
+              placeholder="Localisation"
+            />
+          </div>
+          <div class="primary-button" (click)="this.saveLocalization()">Enregistrer</div>
+        </div>
+      </div>
+    </ng-template>
   `,
   styleUrls: ["./profile.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild("loca", { static: false }) loca: ElementRef;
+
+  optionsMap = {
+    types: ["(cities)"],
+  };
+
+  public autocomplete: any;
+
   public genderOptions: { [key_id: string]: string } = {
     "1": "un Homme",
     "2": "une Femme",
@@ -353,6 +394,8 @@ export class ProfileComponent implements OnInit {
     ),
   });
 
+  public localizationCase = new FormControl("1");
+
   public pictures = this.userForm.get("pictures") as FormArray;
   public url = "";
   public updateMode = false;
@@ -362,6 +405,8 @@ export class ProfileComponent implements OnInit {
   public croppedImage: any = "";
   public showCropper = false;
   public pictureId = "";
+
+  public isSettings = false;
 
   constructor(
     private profilService: profilService,
@@ -409,10 +454,61 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  public getLocation() {
+    let result;
+    if (this.localizationCase.value === "1") {
+      if (
+        typeof navigator.geolocation === "object" &&
+        typeof navigator.geolocation.getCurrentPosition === "function"
+      ) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            let geocoder = new google.maps.Geocoder();
+
+            let lat = position.coords.latitude;
+            let long = position.coords.longitude;
+            var geolocate = new google.maps.LatLng(
+              position.coords.latitude,
+              position.coords.longitude
+            );
+
+            geocoder.geocode({ latLng: geolocate }, (results, status) => {
+              if (status == google.maps.GeocoderStatus.OK) {
+                if (results.length > 1) {
+                  result = results[1];
+                } else {
+                  result = results[0];
+                }
+                //console.log(result);
+              }
+              this.loca.nativeElement.value =
+                result.address_components[2].long_name +
+                ", " +
+                result.address_components[3].long_name;
+            });
+          },
+          error => {},
+          { timeout: 5000 }
+        );
+      }
+    }
+  }
+
   public changeUpdateMode(updateMode: boolean) {
     this.updateMode = updateMode;
     this.primaryPictureId = 0;
     //this.cd.detectChanges();
+  }
+
+  public openSettings() {
+    this.isSettings = true;
+    this.cd.detectChanges();
+
+    this.autocomplete = new google.maps.places.Autocomplete(
+      this.loca.nativeElement as any,
+      this.optionsMap
+    );
+    this.getLocation();
   }
 
   public onSubmit() {
@@ -569,6 +665,21 @@ export class ProfileComponent implements OnInit {
     );
     this.cd.detectChanges();
     this.cd.markForCheck();
+  }
+
+  public saveLocalization() {
+    const place = this.autocomplete.getPlace();
+
+    const lat = place.geometry.location.lat();
+    const lon = place.geometry.location.lng();
+    this.userService
+      .updateUserPosition(
+        JSON.parse(localStorage.getItem("id")),
+        lat,
+        lon,
+        this.localizationCase.value
+      )
+      .subscribe(el => console.log());
   }
 
   ngOnDestroy() {

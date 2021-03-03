@@ -24,8 +24,10 @@ import { NotificationComponent } from "./notification/notification.component";
 import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import { DiscussionComponent } from "./discussion/discussion.component";
 import { CommonModule } from "@angular/common";
-import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { InteractiveMapComponent } from './interactive-map/interactive-map.component';
+import { MaintenanceComponent } from "./maintenance/maintenance.component";
+import { InteractiveMapComponent } from "./interactive-map/interactive-map.component";
+import { PopUpComponent } from "./pop-up/pop-up.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -47,6 +49,7 @@ import { InteractiveMapComponent } from './interactive-map/interactive-map.compo
     DiscussionComponent,
     MaintenanceComponent,
     InteractiveMapComponent,
+    PopUpComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +60,9 @@ import { InteractiveMapComponent } from './interactive-map/interactive-map.compo
     ReactiveFormsModule,
     NgxSliderModule,
     CommonModule,
+    MatDialogModule,
   ],
+  entryComponents: [PopUpComponent],
   exports: [FormsModule],
   providers: [NgxImageCompressService],
   bootstrap: [AppComponent],

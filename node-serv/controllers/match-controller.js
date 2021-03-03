@@ -145,7 +145,7 @@ exports.getSuggestion = (req, res) => {
             if (results && results.length > 0) {
               resultat(results);
             } else {
-              resultat(null);
+              resultat([]);
             }
           }
         }
@@ -350,7 +350,7 @@ exports.filtreUsersBy = (req, res) => {
             if (results && results.length > 0) {
               resultat(results);
             } else {
-              resultat(null);
+              resultat([]);
             }
           }
         }
@@ -362,9 +362,9 @@ exports.filtreUsersBy = (req, res) => {
     if ((await checkData()) === 1 && (myUser = await getUser(id)) !== null) {
       let usersSort = await getOtherUser();
       //filtre age
-      if (req.params.suggestion) {
+      if (req.params.suggestion && usersSort) {
         usersSort = await Promise.all(
-          usersSort.map(async function (user) {
+          usersSort?.map(async function (user) {
             sMatch = 0;
             sMatch += oriSexPoint(myUser, user); //OK
             sMatch += locatPoint(myUser, user); //OK
@@ -376,29 +376,31 @@ exports.filtreUsersBy = (req, res) => {
         );
       }
 
-      usersSort = await Promise.all(
-        usersSort.map(async function (user) {
-          let age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
-          if (user.id === 6) console.log(age);
-          let dist = 0;
-          dist = locat(myUser, user);
-          tags = 0;
-          tags = await tagsMatch(myUser, user);
-          console.log(minAge, maxAge, minTag, maxLoc, minScore);
+      usersSort =
+        usersSort &&
+        (await Promise.all(
+          usersSort?.map(async function (user) {
+            let age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
+            if (user.id === 6) console.log(age);
+            let dist = 0;
+            dist = locat(myUser, user);
+            tags = 0;
+            tags = await tagsMatch(myUser, user);
+            console.log(minAge, maxAge, minTag, maxLoc, minScore);
 
-          if (
-            age >= minAge &&
-            age <= maxAge &&
-            tags >= minTag &&
-            dist <= maxLoc &&
-            user.score >= minScore
-          ) {
-            return { ...user, dist, tags };
-          } else {
-            return undefined;
-          }
-        })
-      );
+            if (
+              age >= minAge &&
+              age <= maxAge &&
+              tags >= minTag &&
+              dist <= maxLoc &&
+              user.score >= minScore
+            ) {
+              return { ...user, dist, tags };
+            } else {
+              return undefined;
+            }
+          })
+        ));
       usersSort = usersSort.filter(user => user !== undefined);
       if (sortBy === "age") {
         usersSort.sort((a, b) => {

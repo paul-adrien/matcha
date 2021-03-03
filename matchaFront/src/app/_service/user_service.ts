@@ -19,36 +19,6 @@ export class userService {
 
   constructor(private http: HttpClient) {}
 
-  setUserNull() {
-    return (this.user = {
-      userName: "",
-      firstName: "",
-      lastName: "",
-      birthDate: null,
-      password: "",
-      email: "",
-      id: "",
-      gender: undefined,
-      showMe: undefined,
-      bio: "",
-      score: "",
-      city: "",
-      latitude: "",
-      longitude: "",
-      emailVerify: true,
-      profileComplete: true,
-      link: "",
-      pictures: [
-        { id: "picture1", url: "" as string },
-        { id: "picture2", url: "" as string },
-        { id: "picture3", url: "" as string },
-        { id: "picture4", url: "" as string },
-        { id: "picture5", url: "" as string },
-        { id: "picture6", url: "" as string },
-      ],
-    });
-  }
-
   getUser(id: string): Observable<User> {
     return this.http
       .get(AUTH_API + `users/${id}`, httpOptions)
@@ -125,12 +95,18 @@ export class userService {
     );
   }
 
-  updateUserPosition(id: string, latitude: number, longitude: number): Observable<any> {
+  updateUserPosition(
+    id: string,
+    latitude: number,
+    longitude: number,
+    currentPosition: string
+  ): Observable<any> {
     return this.http.post(
       AUTH_API + `user/${id}/update-position`,
       {
         latitude,
         longitude,
+        currentPosition,
       },
       httpOptions
     );

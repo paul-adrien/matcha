@@ -15,6 +15,14 @@
     }
   }
 
+  .setting {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    cursor: pointer;
+    z-index: 11;
+  }
+
   .content-name {
     display: flex;
     flex-direction: column;
@@ -50,6 +58,10 @@
 
       &.selected {
         color: var(--primary-color);
+      }
+
+      &.middle {
+        width: 100%;
       }
     }
   }
@@ -103,6 +115,7 @@
   }
 
   .big-profile-picture {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -148,6 +161,14 @@
       padding: 6px 12px;
       border: none;
       font-family: Montserrat;
+    }
+
+    .input-loca {
+      margin-top: 1rem;
+
+      &:disabled {
+        background-color: white;
+      }
     }
 
     select {

@@ -16,6 +16,34 @@
     z-index: 11;
   }
 
+  .block {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    z-index: 11;
+
+    .dropdown-container {
+      padding: 1rem 0;
+      border-radius: 1rem;
+      width: max-content;
+      position: absolute;
+      right: 0;
+      background: white;
+      box-shadow: 0 0 22px -11px black;
+      display: flex;
+      flex-direction: column;
+
+      .text {
+        padding: 6px 1rem;
+
+        &:hover {
+          background-color: lightyellow;
+        }
+      }
+    }
+  }
+
   .content-name {
     display: flex;
     flex-direction: column;
@@ -86,8 +114,23 @@
 
   .primary-button {
     width: fit-content;
-    position: absolute;
     height: 1rem;
-    right: 1rem;
+    width: auto;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    bottom: 0;
+    align-items: center;
+
+    &.like {
+      right: 1rem;
+    }
+
+    &.score {
+      left: 1rem;
+      width: 3rem;
+      cursor: default;
+    }
   }
 }

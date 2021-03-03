@@ -90,6 +90,17 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
+      data => {
+        console.log(data);
+        this.notifs = data.notifs;
+        this.nbUnViewNotif = data.nbUnView;
+        this.cd.detectChanges();
+      },
+      err => {
+        console.log(err);
+      }
+    );
     this.notifInter = setInterval(x => {
       this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
         data => {
@@ -103,16 +114,6 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
         }
       );
     }, 10000);
-    this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
-      data => {
-        console.log(data);
-        this.nbUnViewNotif = data.nbUnView;
-        this.notifs = data.notifs;
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
 
   ngOnDestroy() {

@@ -19,6 +19,7 @@ CREATE TABLE users
     emailVerify varchar(255) DEFAULT '0',
     profileComplete varchar(255) DEFAULT '0',
     link VARCHAR(255) DEFAULT '',
+    currentPosition varchar(255) DEFAULT "1",
     lastConnection VARCHAR(255) DEFAULT '',
     picture1 TEXT(32000) DEFAULT NULL,
     picture2 TEXT(32000) DEFAULT NULL,

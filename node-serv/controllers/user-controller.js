@@ -255,6 +255,7 @@ exports.updatePosition = async (req, res) => {
   var id = req.params.id;
   let lat = req.body.latitude;
   let long = req.body.longitude;
+  let currentPosition = req.body.currentPosition;
 
   if (lat === undefined || long === undefined) {
     request(
@@ -270,8 +271,8 @@ exports.updatePosition = async (req, res) => {
           console.log(body);
 
           connection.query(
-            "UPDATE users SET latitude = ?, longitude = ? WHERE id = ?",
-            [lat, long, id],
+            "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
+            [lat, long, "0", id],
             function (error, results, fields) {
               if (error) {
                 res.json({
@@ -291,8 +292,8 @@ exports.updatePosition = async (req, res) => {
     console.log(id);
 
     connection.query(
-      "UPDATE users SET latitude = ?, longitude = ? WHERE id = ?",
-      [lat, long, id],
+      "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
+      [lat, long, currentPosition, id],
       function (error, results, fields) {
         if (error) {
           res.json({

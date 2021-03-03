@@ -16,6 +16,7 @@ export interface User {
   emailVerify: boolean;
   profileComplete: boolean;
   link: string;
+  currentPosition: boolean;
   pictures: {
     id: string;
     url: string;
@@ -63,6 +64,7 @@ export function mapUserBackToUserFront(user: any): User {
     emailVerify: user["emailVerify"] === "0" || !user["emailVerify"] ? false : true,
     profileComplete: user["profileComplete"] === "0" || !user["profileComplete"] ? false : true,
     link: user["link"],
+    currentPosition: user["currentPosition"] === "0" ? false : true,
     pictures: [
       { id: "picture1", url: user["picture1"] as string },
       { id: "picture2", url: user["picture2"] as string },
