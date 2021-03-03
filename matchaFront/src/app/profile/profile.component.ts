@@ -323,6 +323,9 @@ function validatePictures(arr: FormArray) {
           </div>
           <div class="primary-button" (click)="this.saveLocalization()">Enregistrer</div>
         </div>
+        <a class="primary-button"  routerLink="/forgotPass" routerLinkActive="active">
+        Changer son Mot de passe
+        </a>
       </div>
     </ng-template>
   `,
