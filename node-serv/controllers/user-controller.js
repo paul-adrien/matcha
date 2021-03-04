@@ -172,16 +172,16 @@ exports.viewedProfil = (req, res) => {
 
   function notifView() {
     connection.query(
-      'SELECT * FROM notif WHERE userId = ? AND type = "view"',
-      [viewed_id],
+      'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "view"',
+      [viewed_id, user_id],
       function (error, results, fields) {
         if (error) {
           return null;
         } else {
           if (results && results.length > 0) {
             connection.query(
-              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND type = "view"',
-              [date.toString(), viewed_id],
+              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "view"',
+              [date.toString(), viewed_id, user_id],
               function (error, results, fields) {
                 if (error) {
                   return null;
