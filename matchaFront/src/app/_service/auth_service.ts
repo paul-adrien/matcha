@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
-import { retry, catchError } from 'rxjs/operators';
+import { retry, catchError } from "rxjs/operators";
 import { User } from "@matcha/shared";
 import { Router } from "@angular/router";
 
@@ -17,7 +17,8 @@ const httpOptions = {
 export class AuthService {
   constructor(private http: HttpClient, private route: Router) {}
 
-  login(user: Partial<User>): Observable<any> {//ok
+  login(user: Partial<User>): Observable<any> {
+    //ok
     return this.http.post(
       AUTH_API + "authenticate",
       {
@@ -25,7 +26,7 @@ export class AuthService {
         password: user.password,
       },
       httpOptions
-    )
+    );
   }
 
   logOut() {
@@ -33,7 +34,8 @@ export class AuthService {
     this.route.navigate(["/login"]);
   }
 
-  register(user: Partial<User>): Observable<any> {//ok
+  register(user: Partial<User>): Observable<any> {
+    //ok
     return this.http.post(
       AUTH_API + "register",
       {
@@ -47,7 +49,8 @@ export class AuthService {
     );
   }
 
-  verify(user, id): Observable<any> {//ok
+  verify(user, id): Observable<any> {
+    //ok
     return this.http.post(
       AUTH_API + "verify",
       {
@@ -58,7 +61,17 @@ export class AuthService {
     );
   }
 
-  forgotPass_s(user): Observable<any> {//ok
+  resendVerify(id: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + "resend-verify",
+      {
+        id: id,
+      },
+      httpOptions
+    );
+  }
+
+  forgotPass_s(user): Observable<any> {
     return this.http.post(
       AUTH_API + "forgotPass_s",
       {
@@ -68,7 +81,8 @@ export class AuthService {
     );
   }
 
-  forgotPass_c(user, id): Observable<any> {//ok
+  forgotPass_c(user, id): Observable<any> {
+    //ok
     return this.http.post(
       AUTH_API + "forgotPass_c",
       {

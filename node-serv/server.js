@@ -88,6 +88,7 @@ app.get("/", (req, res) => {
 app.post("/api/register", authController.register);
 app.post("/api/authenticate", authController.authenticate);
 app.post("/api/verify", authController.verifyEmail);
+app.post("/api/resend-verify", authController.verifyEmail_send);
 app.post("/api/forgotPass_s", authController.forgotPass_send);
 app.post("/api/forgotPass_c", authController.forgotPass_change);
 app.post("/api/verifyToken", verifyTokenController.verifyToken);
@@ -122,10 +123,9 @@ app.post("/api/seeMsgNotif", messagingController.seeMsgNotif);
 app.post("/api/reportUser", userController.reportUser);
 app.post("/api/blockUser", userController.blockUser);
 
-app.use('*', (req, res, next) => {
+app.use("*", (req, res, next) => {
   return res.status(404).send();
 });
-
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

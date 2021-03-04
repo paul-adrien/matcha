@@ -55,7 +55,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
     FormsModule,
     HttpClientModule,
     ImageCropperModule,
@@ -63,6 +62,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     NgxSliderModule,
     CommonModule,
     MatDialogModule,
+    AppRoutingModule,
   ],
   entryComponents: [PopUpComponent, ProfileComponent],
   exports: [FormsModule],

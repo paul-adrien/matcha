@@ -5,6 +5,22 @@ const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 var nodemailer = require("nodemailer");
 
+async function getUser(id) {
+  return new Promise(resultat =>
+    connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
+      if (error) {
+        resultat(null);
+      } else {
+        if (results && results.length > 0) {
+          resultat(results[0]);
+        } else {
+          resultat(null);
+        }
+      }
+    })
+  );
+}
+
 exports.register = (req, res) => {
   if (req.body.userName && req.body.lastName && req.body.email && req.body.password && req.body.firstName) {
     connection.query(
@@ -303,6 +319,62 @@ exports.forgotPass_send = (req, res) => {
       status:false,
       message:'wrong data input'
     });
+  }
+};
+
+exports.verifyEmail_send = async (req, res) => {
+  var id = req.body.id;
+
+  let user = await getUser(id);
+  if (user !== null) {
+    var rand = Math.floor(Math.random() * 100 + 54);
+
+    var link = "http://localhost:8081/verify/" + rand;
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "42.noreplymatcha@gmail.com",
+        pass: "GguyotPlaurent76",
+      },
+    });
+
+    var mailOptions = {
+      from: "42.noreplymatcha@gmail.com",
+      to: "gabin.guyot17@gmail.com",
+      subject: "Please confirm your Email account",
+      html:
+        "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
+        link +
+        ">Click here to verify</a>",
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json({
+          status: true,
+          message: "mail sended sucessfully",
+        });
+      }
+    });
+    connection.query(
+      "UPDATE users SET link = ? WHERE id = ?",
+      [rand, id],
+      function (error, results, fields) {
+        if (error) {
+          res.json({
+            status: false,
+            message: "there are some error with query update",
+          });
+        } else {
+          res.json({
+            status: true,
+            message: "successfully sending email",
+          });
+        }
+      }
+    );
   }
 };
 

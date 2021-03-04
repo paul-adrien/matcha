@@ -3,10 +3,30 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   .page {
     height: 80%;
     flex-grow: 1;
     background-color: #eaeaea;
+  }
+
+  .no-verify-container {
+    background: white;
+    padding: 1rem;
+    margin: 0 1rem;
+    text-align: center;
+    max-width: 40rem;
+    border-radius: 4px;
+
+    .title {
+      font-family: Montserrat-semi-bold;
+      margin-bottom: 1rem;
+    }
+
+    .text {
+      margin: 1rem;
+    }
   }
 }
