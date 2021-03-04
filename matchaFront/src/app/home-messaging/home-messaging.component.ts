@@ -12,7 +12,10 @@ import { userService } from "../_service/user_service";
     <div class="container">
       <span class="title">Match</span>
       <div class="scroll">
-        <div *ngIf="(this.possiblyConv$ | async)?.length > 0" class="poss-conv-container">
+        <div
+          *ngIf="(this.possiblyConv$ | async)?.length > 0; else noMatch"
+          class="poss-conv-container"
+        >
           <app-profil-card
             *ngFor="let possConv of this.possiblyConv$ | async"
             [user]="possConv.user"
@@ -20,9 +23,15 @@ import { userService } from "../_service/user_service";
             (click)="discussion(possConv.user.id, possConv.convId)"
           ></app-profil-card>
         </div>
+        <ng-template #noMatch>
+          <div class="no-data">Vous n'avez aucun match.</div>
+        </ng-template>
       </div>
       <span class="title">Discussions</span>
-      <div *ngIf="(activeConv$ | async)?.length > 0" class="active-conv-container">
+      <div
+        *ngIf="(activeConv$ | async)?.length > 0; else noDiscussion"
+        class="active-conv-container"
+      >
         <div
           *ngFor="let conv of this.activeConv$ | async"
           (click)="discussion(conv.otherUser.id, conv.id)"
@@ -42,6 +51,9 @@ import { userService } from "../_service/user_service";
           </div>
         </div>
       </div>
+      <ng-template #noDiscussion>
+        <div class="no-data">Vous n'avez aucune discussion.</div>
+      </ng-template>
     </div>
   `,
   styleUrls: ["./home-messaging.component.scss"],

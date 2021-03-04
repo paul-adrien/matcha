@@ -31,7 +31,7 @@ import { Router } from "@angular/router";
       <div *ngIf="this.nbUnViewNotif > 0" class="notif-circle">
         {{ nbUnViewNotif }}
       </div>
-      <app-notification id="modal_1" class="hhidden">
+      <app-notification *ngIf="notifs?.length > 0; else noNotif" id="modal_1" class="hhidden">
         <div *ngFor="let notif of notifs" class="notif-text">
           <span (click)="notif.type === 'msg' ? viewMsg() : viewProfil(notif.sender_id)">{{
             this.getMessageNotif(notif)
@@ -39,6 +39,11 @@ import { Router } from "@angular/router";
           <span>{{ notif.date | date: "HH:mm" }}</span>
         </div>
       </app-notification>
+      <ng-template #noNotif>
+        <app-notification id="modal_1" class="hhidden">
+          <div class="notif-text">Aucune notification</div>
+        </app-notification>
+      </ng-template>
     </div>
     <div class="case">
       <img (click)="this.logOut()" src="./assets/log-out.svg" />

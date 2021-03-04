@@ -162,7 +162,7 @@ exports.likeOrDislike = (req, res) => {
               );
             } else {
               connection.query(
-                'INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "matched", ?)',
+                'INSERT INTO notif (userId, sender_id, type, date) VALUES (?, ?, "matched", ?)',
                 [req.body.like_id, req.body.user_id, date.toString()],
                 function (error, results, fields) {
                   if (error) {
@@ -198,7 +198,7 @@ exports.likeOrDislike = (req, res) => {
               );
             } else {
               connection.query(
-                'INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "like", ?)',
+                'INSERT INTO notif (userId, sender_id, type, date) VALUES (?, ?, "like", ?)',
                 [req.body.like_id, req.body.user_id, date.toString()],
                 function (error, results, fields) {
                   if (error) {
@@ -238,7 +238,7 @@ exports.likeOrDislike = (req, res) => {
             );
           } else {
             connection.query(
-              'INSERT INTO notif (userId, otherId, type, date) VALUES (?, ?, "unMatched", ?)',
+              'INSERT INTO notif (userId, sender_id, type, date) VALUES (?, ?, "unMatched", ?)',
               [req.body.like_id, req.body.user_id, date.toString()],
               function (error, results, fields) {
                 if (error) {

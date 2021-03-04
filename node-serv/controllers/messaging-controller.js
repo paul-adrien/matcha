@@ -49,9 +49,10 @@ exports.possiblyConv = (req, res) => {
           if (match.user_id1 === id) user = await getUser(match.user_id2);
           else user = await getUser(match.user_id1);
           if (user !== null) return { user: user, convId: match["id"] };
+          else return { user: null, convId: match["id"] };
         })
       );
-      res.json(users);
+      res.json(users.filter(user => user?.user !== null));
     } else {
       res.json([]);
     }
@@ -76,7 +77,7 @@ exports.activeConv = (req, res) => {
             if (results && results.length > 0) {
               resultat(results);
             } else {
-              resultat(null);
+              resultat([]);
             }
           }
         }
@@ -107,7 +108,7 @@ exports.activeConv = (req, res) => {
   async function main() {
     if ((convs = await getConv()) !== null) {
       convs = await Promise.all(
-        convs.map(async function (conv) {
+        convs?.map(async function (conv) {
           msg = await getLastMsg(conv.id);
           if (conv.user_id1 === id) {
             let otherUser = await getUser(conv.user_id2);
@@ -118,9 +119,9 @@ exports.activeConv = (req, res) => {
           }
         })
       );
-      res.json(convs);
+      res.json(convs.filter(conv => conv.otherUser !== null));
     } else {
-      res.json(null);
+      res.json([]);
     }
   }
 };

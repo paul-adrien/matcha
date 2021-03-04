@@ -13,14 +13,23 @@
     &.quick-look {
       background-color: white;
     }
+
+    &.hidden {
+      display: none;
+    }
   }
 
-  .setting {
+  .setting,
+  .cross {
     position: absolute;
     top: 0;
     right: 1rem;
     cursor: pointer;
     z-index: 11;
+  }
+
+  .cross {
+    top: initial;
   }
 
   .content-name {
@@ -34,12 +43,14 @@
   .header-bar {
     width: 100%;
     height: 3rem;
+    min-height: 3rem;
     background-color: white;
     border-bottom: 1px solid #eaeaea;
     display: flex;
     position: sticky;
     top: -1px;
     z-index: 10;
+    align-items: center;
 
     .case {
       width: 50%;
@@ -187,6 +198,10 @@
 
     .primary-button {
       margin-top: 1.5rem;
+
+      &.no-margin {
+        margin: 0;
+      }
     }
   }
 

@@ -15,8 +15,8 @@ import { HomeMessagingComponent } from "./home-messaging/home-messaging.componen
 import { ProfileViewComponent } from "./profile-view/profile-view.component";
 import { NotificationComponent } from "./notification/notification.component";
 import { DiscussionComponent } from "./discussion/discussion.component";
-import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { InteractiveMapComponent } from './interactive-map/interactive-map.component';
+import { MaintenanceComponent } from "./maintenance/maintenance.component";
+import { InteractiveMapComponent } from "./interactive-map/interactive-map.component";
 
 const routes: Routes = [
   { path: "login", component: LoginPageComponent },

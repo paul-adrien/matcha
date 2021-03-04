@@ -28,6 +28,7 @@ import { MaintenanceComponent } from "./maintenance/maintenance.component";
 import { InteractiveMapComponent } from "./interactive-map/interactive-map.component";
 import { PopUpComponent } from "./pop-up/pop-up.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { MatDialogModule } from "@angular/material/dialog";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
@@ -62,7 +64,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     CommonModule,
     MatDialogModule,
   ],
-  entryComponents: [PopUpComponent],
+  entryComponents: [PopUpComponent, ProfileComponent],
   exports: [FormsModule],
   providers: [NgxImageCompressService],
   bootstrap: [AppComponent],

@@ -19,6 +19,8 @@ import { userService } from "../_service/user_service";
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
 import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { PopUpComponent } from "../pop-up/pop-up.component";
 
 declare var google: any;
 
@@ -73,7 +75,7 @@ function validatePictures(arr: FormArray) {
   template: `
     <div
       class="content"
-      *ngIf="this.user && !this.isSettings; else settings"
+      *ngIf="this.user && !this.isSettings"
       [class.quick-look]="!this.updateMode"
     >
       <div class="header-bar">
@@ -301,33 +303,35 @@ function validatePictures(arr: FormArray) {
         <div class="primary-button" (click)="this.confirmCropped()">OK</div>
       </div>
     </div>
-    <ng-template #settings>
-      <div *ngIf="this.user && this.isSettings" class="content">
-        <div class="header-bar">
-          <span class="case middle"> Paramètres </span>
-          <img class="setting" src="./assets/x.svg" (click)="this.isSettings = false" />
-        </div>
-        <div class="form-container">
-          <div class="info-container">
-            <span class="info-top">Changer sa localisation</span>
-            <select (change)="this.getLocation()" [formControl]="this.localizationCase">
-              <option value="1">Localisation actuelle</option>
-              <option value="0">Choisir sa localisation</option>
-            </select>
-            <input
-              [disabled]="this.localizationCase.value === '1'"
-              class="input-loca"
-              #loca
-              placeholder="Localisation"
-            />
-          </div>
-          <div class="primary-button" (click)="this.saveLocalization()">Enregistrer</div>
-        </div>
-        <a class="primary-button"  routerLink="/forgotPass" routerLinkActive="active">
-        Changer son Mot de passe
-        </a>
+    <div *ngIf="this.user !== undefined" [class.hidden]="!this.isSettings" class="content">
+      <div class="header-bar">
+        <span class="case middle"> Paramètres </span>
+        <img class="cross" src="./assets/x.svg" (click)="this.isSettings = false" />
       </div>
-    </ng-template>
+      <div class="form-container">
+        <div class="info-container">
+          <span class="info-top">Changer sa localisation</span>
+          <select (change)="this.getLocation()" [formControl]="this.localizationCase">
+            <option value="1">Localisation actuelle</option>
+            <option value="0">Choisir sa localisation</option>
+          </select>
+          <input
+            [disabled]="this.localizationCase.value === '1'"
+            class="input-loca"
+            #loca
+            placeholder="Localisation"
+          />
+        </div>
+        <div class="primary-button" (click)="this.saveLocalization()">Enregistrer</div>
+        <div class="info-container">
+          <span class="info-top">Changer son mot de passe</span>
+
+          <a class="primary-button no-margin" routerLink="/forgotPass" routerLinkActive="active">
+            Changer son Mot de passe
+          </a>
+        </div>
+      </div>
+    </div>
   `,
   styleUrls: ["./profile.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -356,7 +360,7 @@ export class ProfileComponent implements OnInit {
   public primaryPictureId = 0;
   public date = new Date();
 
-  public user: User;
+  public user: User = undefined;
   public userForm = new FormGroup({
     userName: new FormControl("", ValidatorLength),
     firstName: new FormControl("", ValidatorLength),
@@ -411,13 +415,17 @@ export class ProfileComponent implements OnInit {
 
   public isSettings = false;
 
+  public lat: number;
+  public long: number;
+
   constructor(
     private profilService: profilService,
     private route: Router,
     private cd: ChangeDetectorRef,
     private imageCompress: NgxImageCompressService,
     private userService: userService,
-    private zone: NgZone
+    private zone: NgZone,
+    private dialog: MatDialog
   ) {}
   private unsubscribe = new Subject<void>();
 
@@ -450,7 +458,6 @@ export class ProfileComponent implements OnInit {
         email: res.email,
         pictures: res.pictures,
       });
-      console.log("hdhdhdh");
       this.user = res;
       this.saveEmail = res.email;
       this.cd.detectChanges();
@@ -468,8 +475,8 @@ export class ProfileComponent implements OnInit {
           position => {
             let geocoder = new google.maps.Geocoder();
 
-            let lat = position.coords.latitude;
-            let long = position.coords.longitude;
+            this.lat = position.coords.latitude;
+            this.long = position.coords.longitude;
             var geolocate = new google.maps.LatLng(
               position.coords.latitude,
               position.coords.longitude
@@ -498,7 +505,40 @@ export class ProfileComponent implements OnInit {
   }
 
   public changeUpdateMode(updateMode: boolean) {
-    this.updateMode = updateMode;
+    const tmpUser = this.userForm.getRawValue();
+    if (
+      this.updateMode &&
+      this.userForm.valid &&
+      (this.user?.email !== tmpUser?.email ||
+        this.user?.userName !== tmpUser?.userName ||
+        this.user?.firstName !== tmpUser?.firstName ||
+        this.user?.lastName !== tmpUser?.lastName ||
+        this.user?.birthDate !== tmpUser?.birthDate ||
+        this.user?.bio !== tmpUser?.bio ||
+        this.user?.gender !== tmpUser?.gender ||
+        this.user?.showMe !== tmpUser?.showMe ||
+        JSON.stringify(this.user?.pictures) !== JSON.stringify(tmpUser?.pictures))
+    ) {
+      let dialogRef = this.dialog.open(PopUpComponent, {
+        data: {
+          title: "Attention",
+          message: "Vous n'avez pas enregisté vos changements. Voulez-vous les enregistrer ?",
+          two: true,
+        },
+      });
+      dialogRef.afterClosed().subscribe(res => {
+        if (res) {
+          this.onSubmit();
+        }
+        this.updateMode = updateMode;
+        this.cd.detectChanges();
+      });
+
+      console.log("diff");
+    } else {
+      this.updateMode = updateMode;
+    }
+    //this.updateMode = updateMode;
     this.primaryPictureId = 0;
     //this.cd.detectChanges();
   }
@@ -508,7 +548,7 @@ export class ProfileComponent implements OnInit {
     this.cd.detectChanges();
 
     this.autocomplete = new google.maps.places.Autocomplete(
-      this.loca.nativeElement as any,
+      this.loca?.nativeElement as any,
       this.optionsMap
     );
     this.getLocation();
@@ -672,9 +712,15 @@ export class ProfileComponent implements OnInit {
 
   public saveLocalization() {
     const place = this.autocomplete.getPlace();
-
-    const lat = place.geometry.location.lat();
-    const lon = place.geometry.location.lng();
+    let lat: number;
+    let lon: number;
+    if (this.localizationCase.value === "1") {
+      lat = this.lat;
+      lon = this.long;
+    } else if (this.localizationCase.value === "0") {
+      lat = place.geometry.location.lat();
+      lon = place.geometry.location.lng();
+    }
     this.userService
       .updateUserPosition(
         JSON.parse(localStorage.getItem("id")),
@@ -682,7 +728,20 @@ export class ProfileComponent implements OnInit {
         lon,
         this.localizationCase.value
       )
-      .subscribe(el => console.log());
+      .subscribe(el => {
+        if (typeof el === "string") {
+          let dialogRef = this.dialog.open(PopUpComponent, {
+            data: {
+              title: "C'est bon !",
+              message:
+                "Votre position a bien été mis à jour. Vous allez être redirigé sur votre profil.",
+            },
+          });
+          dialogRef.afterClosed().subscribe(el => {
+            this.isSettings = false;
+          });
+        }
+      });
   }
 
   ngOnDestroy() {

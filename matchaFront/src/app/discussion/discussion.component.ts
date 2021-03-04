@@ -147,6 +147,7 @@ export class DiscussionComponent implements OnInit, OnDestroy {
       .subscribe(
         data => {
           this.getMessage();
+          this.form.msg = "";
         },
         err => {
           console.log(err);
