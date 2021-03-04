@@ -33,6 +33,9 @@ CREATE TABLE users
 ALTER TABLE users
 ADD lastConnection VARCHAR(255) DEFAULT '';
 
+ALTER TABLE users
+ADD currentPosition varchar(255) DEFAULT "1";
+
 CREATE TABLE tag
 (
     id INT NOT NULL AUTO_INCREMENT,

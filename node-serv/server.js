@@ -81,7 +81,7 @@ async function calcScore() {
 //setInterval(calcScore, 300000 );
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to plaurent NodeJS Mysql server." });
+  res.json({ message: "Welcome to Gguyot and Plaurent NodeJS Mysql server." });
 });
 
 /* route to handle login and registration */
@@ -118,6 +118,10 @@ app.post("/api/sendMessage", messagingController.sendMessage);
 app.get("/api/users/:id/getNotifs", userController.getNotifs);
 app.get("/api/users/:id/seeNotifs", userController.seeNotifs);
 app.post("/api/seeMsgNotif", messagingController.seeMsgNotif);
+
+app.post("/api/reportUser", userController.reportUser);
+app.post("/api/blockUser", userController.blockUser);
+
 app.use('*', (req, res, next) => {
   return res.status(404).send();
 });

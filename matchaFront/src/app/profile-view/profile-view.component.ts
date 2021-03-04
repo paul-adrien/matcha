@@ -24,8 +24,8 @@ import { Location } from "@angular/common";
         *ngIf="this.isOpenDropdown"
         class="dropdown-container"
       >
-        <span class="text">Bloquer le compte</span>
-        <span class="text">Signaler comme faux compte</span>
+        <span (click)="block()" class="text">Bloquer le compte</span>
+        <span (click)="report()" class="text">Signaler comme faux compte</span>
       </div>
     </div>
     <div class="big-profile-picture">
@@ -166,6 +166,18 @@ export class ProfileViewComponent implements OnInit {
       console.log(res);
       console.log(this.isLike ? "like" : "dislike");
       this.cd.detectChanges();
+    });
+  }
+
+  block() {
+    this.userService.blockUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  report() {
+    this.userService.reportUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
+      console.log(res);
     });
   }
 

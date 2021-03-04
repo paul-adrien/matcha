@@ -94,6 +94,67 @@ function scorePoint(user) {
   else return user.score / 20;
 }
 
+async function checkIfMatch(user, otherUser) {
+  return new Promise(resultat =>
+    connection.query(
+      "SELECT * FROM matched WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)",
+      [user, otherUser, otherUser, user],
+      function (error, results, fields) {
+        if (error) {
+          resultat(null);
+        } else {
+          if (results && results.length > 0) {
+            console.log("matched");
+            resultat(1);
+          } else {
+            resultat(null);
+          }
+        }
+      }
+    )
+  );
+}
+
+async function checkIfView(user, otherUser) {
+  return new Promise(resultat =>
+    connection.query(
+      "SELECT * FROM users_views WHERE viewed_id = ? AND views_id = ?",
+      [otherUser, user],
+      function (error, results, fields) {
+        if (error) {
+          resultat(0);
+        } else {
+          if (results && results.length > 0) {
+            resultat(1);
+          } else {
+            resultat(0);
+          }
+        }
+      }
+    )
+  );
+}
+
+async function checkIfBlocked(user, otherUser) {
+  return new Promise(resultat =>
+    connection.query(
+      "SELECT * FROM blocked WHERE userId = ? AND blockedId = ?",
+      [user, otherUser],
+      function (error, results, fields) {
+        if (error) {
+          resultat(null);
+        } else {
+          if (results && results.length > 0) {
+            resultat(1);
+          } else {
+            resultat(null);
+          }
+        }
+      }
+    )
+  );
+}
+
 exports.getSuggestion = (req, res) => {
   id = req.body.id;
 
@@ -156,7 +217,7 @@ exports.getSuggestion = (req, res) => {
   async function main() {
     myUser = [];
     length = 0;
-    console.log("test");
+    
     if ((await checkData) !== null) {
       if ((myUser = await getUser(req.body.id)) !== null) {
         if ((users = await getOtherUser()) !== null) {
@@ -164,13 +225,16 @@ exports.getSuggestion = (req, res) => {
           console.log(length);
           usersMatch = await Promise.all(
             users.map(async function (user) {
-              sMatch = 0;
-              sMatch += oriSexPoint(myUser, user); //OK
-              sMatch += locatPoint(myUser, user); //OK
-              sMatch += await tagsMatchPoint(myUser, user); //OK
-              sMatch += Math.round(scorePoint(user)); //OK
+              let sMatch = 0;
+              if ((await checkIfBlocked(id, user.id)) === null && (await checkIfMatch(id, user.id)) === null) {
+                sMatch += oriSexPoint(myUser, user); //OK
+                sMatch += locatPoint(myUser, user); //OK
+                sMatch += await tagsMatchPoint(myUser, user); //OK
+                sMatch += Math.round(scorePoint(user)); //OK
+              }
+              let view = await checkIfView(id, user.id);
 
-              return { ...user, sMatch: sMatch, filtre: 1 };
+              return { ...user, sMatch: sMatch, filtre: 1, view: view};
             })
           );
 
@@ -371,6 +435,8 @@ exports.filtreUsersBy = (req, res) => {
             sMatch += await tagsMatchPoint(myUser, user); //OK
             sMatch += Math.round(scorePoint(user)); //OK
 
+            let view = await checkIfView(id, user.id);
+
             return { ...user, sMatch: sMatch, filtre: 1 };
           })
         );
@@ -388,14 +454,18 @@ exports.filtreUsersBy = (req, res) => {
             tags = await tagsMatch(myUser, user);
             console.log(minAge, maxAge, minTag, maxLoc, minScore);
 
+            let view = await checkIfView(id, user.id);
+
             if (
               age >= minAge &&
               age <= maxAge &&
               tags >= minTag &&
               dist <= maxLoc &&
-              user.score >= minScore
+              user.score >= minScore &&
+              (await checkIfBlocked(id, user.id)) === null &&
+              (await checkIfMatch(id, user.id)) === null
             ) {
-              return { ...user, dist, tags };
+              return { ...user, dist, tags, view };
             } else {
               return undefined;
             }

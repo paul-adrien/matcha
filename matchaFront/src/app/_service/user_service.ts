@@ -129,4 +129,26 @@ export class userService {
   seeNotifs(id): Observable<any> {
     return this.http.get(AUTH_API + `users/${id}/seeNotifs`, httpOptions);
   }
+
+  reportUser(user_id, reportId): Observable<any> {
+    return this.http.post(
+      AUTH_API + "reportUser",
+      {
+        userId: user_id,
+        reportId: reportId,
+      },
+      httpOptions
+    );
+  }
+
+  blockUser(user_id, blockedId): Observable<any> {
+    return this.http.post(
+      AUTH_API + "blockUser",
+      {
+        userId: user_id,
+        blockedId: blockedId,
+      },
+      httpOptions
+    );
+  }
 }

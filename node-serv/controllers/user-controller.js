@@ -398,40 +398,34 @@ exports.delNotifs = (req, res) => {
 };
 
 exports.reportUser = (req, res) => {
-  userId = req.params.userId;
-  reportId = req.params.reportId;
+  userId = req.body.userId;
+  reportId = req.body.reportId;
 
   connection.query(
     "INSERT INTO report (userId, reportId) VALUES (?, ?)",
     [userId, reportId],
     function (error, results, fields) {
       if (error) {
-        res.json({
-          status: false,
-          message: "error when insert report",
-        });
+        res.json(null);
       } else {
-        res.json(results);
+        res.status(200).send();
       }
     }
   );
 };
 
 exports.blockUser = (req, res) => {
-  userId = req.params.userId;
-  blockedId = req.params.blockedId;
+  userId = req.body.userId;
+  blockedId = req.body.blockedId;
 
   connection.query(
-    "INSERT INTO blocked (userId, reportId) VALUES (?, ?)",
+    "INSERT INTO blocked (userId, blockedId) VALUES (?, ?)",
     [userId, blockedId],
     function (error, results, fields) {
       if (error) {
-        res.json({
-          status: false,
-          message: "error when insert blocked user",
-        });
+        res.json(null);
       } else {
-        res.json(results);
+        res.status(200).send();
       }
     }
   );
