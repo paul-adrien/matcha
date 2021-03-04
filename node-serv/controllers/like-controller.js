@@ -142,16 +142,16 @@ exports.likeOrDislike = (req, res) => {
     console.log("entrer notif like");
     if (mode == 1) {
       connection.query(
-        'SELECT * FROM notif WHERE userId = ? AND type = "matched"',
-        [req.body.like_id],
+        'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "matched"',
+        [req.body.like_id, req.body.user_id],
         function (error, results, fields) {
           if (error) {
             return null;
           } else {
             if (results && results.length > 0) {
               connection.query(
-                'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND type = "matched"',
-                [date.toString(), req.body.like_id],
+                'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "matched"',
+                [date.toString(), req.body.like_id, req.body.user_id],
                 function (error, results, fields) {
                   if (error) {
                     return null;
@@ -178,16 +178,16 @@ exports.likeOrDislike = (req, res) => {
       );
     } else {
       connection.query(
-        'SELECT * FROM notif WHERE userId = ? AND type = "like"',
-        [req.body.like_id],
+        'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "like"',
+        [req.body.like_id, req.body.user_id],
         function (error, results, fields) {
           if (error) {
             return null;
           } else {
             if (results && results.length > 0) {
               connection.query(
-                'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND type = "like"',
-                [date.toString(), req.body.like_id],
+                'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "like"',
+                [date.toString(), req.body.like_id, req.body.user_id],
                 function (error, results, fields) {
                   if (error) {
                     return null;
@@ -218,16 +218,16 @@ exports.likeOrDislike = (req, res) => {
   function notifDisLike() {
     console.log("entrer notif like");
     connection.query(
-      'SELECT * FROM notif WHERE userId = ? AND type = "unMatched"',
-      [req.body.like_id],
+      'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "unMatched"',
+      [req.body.like_id, req.body.user_id],
       function (error, results, fields) {
         if (error) {
           return null;
         } else {
           if (results && results.length > 0) {
             connection.query(
-              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND type = "unMatched"',
-              [date.toString(), req.body.like_id],
+              'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "unMatched"',
+              [date.toString(), req.body.like_id, req.body.user_id],
               function (error, results, fields) {
                 if (error) {
                   return null;
