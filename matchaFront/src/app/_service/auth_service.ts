@@ -17,7 +17,7 @@ const httpOptions = {
 export class AuthService {
   constructor(private http: HttpClient, private route: Router) {}
 
-  login(user: Partial<User>): Observable<any> {
+  login(user: Partial<User>): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "authenticate",
       {
@@ -33,7 +33,7 @@ export class AuthService {
     this.route.navigate(["/login"]);
   }
 
-  register(user: Partial<User>): Observable<any> {
+  register(user: Partial<User>): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "register",
       {
@@ -47,7 +47,7 @@ export class AuthService {
     );
   }
 
-  verify(user, id): Observable<any> {
+  verify(user, id): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "verify",
       {
@@ -58,7 +58,7 @@ export class AuthService {
     );
   }
 
-  forgotPass_s(user): Observable<any> {
+  forgotPass_s(user): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "forgotPass_s",
       {
@@ -68,7 +68,7 @@ export class AuthService {
     );
   }
 
-  forgotPass_c(user, id): Observable<any> {
+  forgotPass_c(user, id): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "forgotPass_c",
       {

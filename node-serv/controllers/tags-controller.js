@@ -24,10 +24,16 @@ exports.getAllTags = (req, res) => {
 };
 
 exports.getYourTags = (req, res) => {
-  console.log("ça tourne");
   resultat = [];
 
-  getAllTags();
+  if (req.params.id)
+    getAllTags();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getTagsId(id) {
     return new Promise(resultat =>
@@ -102,7 +108,15 @@ exports.getYourTags = (req, res) => {
 };
 
 exports.addExistTag = (req, res) => {
-  addTags();
+  
+  if (req.body.user_id && req.body.tag_id)
+    addTags();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function checkIfTag(tag_id, user_tag) {
     return new Promise(resultat =>
@@ -155,7 +169,14 @@ exports.addExistTag = (req, res) => {
 exports.addNonExistTag = (req, res) => {
   resultat = [];
 
-  getAllTags();
+  if (req.body.id && req.body.name)
+    getAllTags();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getTagId() {
     return new Promise(resultat =>
@@ -286,21 +307,28 @@ exports.addNonExistTag = (req, res) => {
 };
 
 exports.deleteTag = (req, res) => {
-  connection.query(
-    "DELETE FROM user_tag WHERE tag_id = ? AND user_id = ?",
-    [req.body.tag_id, req.body.user_id],
-    function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "tag not deleted",
-        });
-      } else {
-        res.json({
-          status: true,
-          message: "tag deleted",
-        });
+  if (req.body.user_id && req.body.tag_id) {
+    connection.query(
+      "DELETE FROM user_tag WHERE tag_id = ? AND user_id = ?",
+      [req.body.tag_id, req.body.user_id],
+      function (error, results, fields) {
+        if (error) {
+          res.json({
+            status: false,
+            message: "tag not deleted",
+          });
+        } else {
+          res.json({
+            status: true,
+            message: "tag deleted",
+          });
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 };

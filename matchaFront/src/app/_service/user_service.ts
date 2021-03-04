@@ -19,7 +19,7 @@ export class userService {
 
   constructor(private http: HttpClient) {}
 
-  getUser(id: string): Observable<User> {
+  getUser(id: string): Observable<User> {//ok
     return this.http
       .get(AUTH_API + `users/${id}`, httpOptions)
       .pipe(map(res => mapUserBackToUserFront(res)));
@@ -35,11 +35,11 @@ export class userService {
     );
   }
 
-  like(user_id: string, like_id: string) {
+  like(user_id: string, like_id: string) {//ok
     return this.likehttp(user_id, like_id);
   }
 
-  likehttp(user_id, like_id): Observable<any> {
+  likehttp(user_id, like_id): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "like",
       {
@@ -95,7 +95,7 @@ export class userService {
     );
   }
 
-  updateUserPosition(
+  updateUserPosition(// ok
     id: string,
     latitude: number,
     longitude: number,
@@ -112,7 +112,7 @@ export class userService {
     );
   }
 
-  viewedProfil(id: string, viewed_id: string): Observable<any> {
+  viewedProfil(id: string, viewed_id: string): Observable<any> { //ok
     return this.http.post(
       AUTH_API + `user/${id}/viewedProfil`,
       {
@@ -122,15 +122,15 @@ export class userService {
     );
   }
 
-  getNotifs(id): Observable<any> {
+  getNotifs(id): Observable<any> {//ok
     return this.http.get(AUTH_API + `users/${id}/getNotifs`, httpOptions);
   }
 
-  seeNotifs(id): Observable<any> {
+  seeNotifs(id): Observable<any> {//ok
     return this.http.get(AUTH_API + `users/${id}/seeNotifs`, httpOptions);
   }
 
-  reportUser(user_id, reportId): Observable<any> {
+  reportUser(user_id, reportId): Observable<any> { // ok
     return this.http.post(
       AUTH_API + "reportUser",
       {
@@ -141,7 +141,7 @@ export class userService {
     );
   }
 
-  blockUser(user_id, blockedId): Observable<any> {
+  blockUser(user_id, blockedId): Observable<any> {//ok
     return this.http.post(
       AUTH_API + "blockUser",
       {

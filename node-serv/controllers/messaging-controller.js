@@ -19,7 +19,14 @@ async function getUser(id) {
 exports.possiblyConv = (req, res) => {
   id = req.params.id;
 
-  main();
+  if (id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getConv() {
     return new Promise(resultat =>
@@ -63,7 +70,14 @@ exports.activeConv = (req, res) => {
   id = req.params.id;
   ids = [];
 
-  main();
+  if (id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getConv() {
     return new Promise(resultat =>
@@ -129,7 +143,14 @@ exports.activeConv = (req, res) => {
 exports.getMessage = (req, res) => {
   conv_id = req.params.id;
 
-  main();
+  if (conv_id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getMsg() {
     return new Promise(resultat =>
@@ -196,23 +217,30 @@ exports.seeMsgNotif = (req, res) => {
   other_id = req.body.other_id;
   user_id = req.body.user_id;
 
-  connection.query(
-    'UPDATE notif SET see = 1 WHERE type = "msg" AND userId = ? AND sender_id = ?',
-    [user_id, other_id],
-    function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "error update msg",
-        });
-      } else {
-        res.json({
-          status: true,
-          message: "update msg notif",
-        });
+  if (other_id && user_id) {
+    connection.query(
+      'UPDATE notif SET see = 1 WHERE type = "msg" AND userId = ? AND sender_id = ?',
+      [user_id, other_id],
+      function (error, results, fields) {
+        if (error) {
+          res.json({
+            status: false,
+            message: "error update msg",
+          });
+        } else {
+          res.json({
+            status: true,
+            message: "update msg notif",
+          });
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 };
 
 exports.sendMessage = (req, res) => {
@@ -222,7 +250,14 @@ exports.sendMessage = (req, res) => {
   user_id = req.body.user_id;
   let date = new Date();
 
-  main();
+  if (conv_id && msg && sender_id && user_id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   function notifMsg() {
     console.log("notif msg", user_id, sender_id);

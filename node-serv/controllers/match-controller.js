@@ -158,7 +158,14 @@ async function checkIfBlocked(user, otherUser) {
 exports.getSuggestion = (req, res) => {
   id = req.body.id;
 
-  main();
+  if (id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function checkData() {
     return new Promise(
@@ -278,7 +285,14 @@ exports.filtreUsersBy = (req, res) => {
   minTag = req.params.tags;
   sortBy = req.params.sortBy;
 
-  main();
+  if (id && minAge && maxAge && minScore && maxLoc && minTag && sortBy)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function checkData() {
     return new Promise(resultat => {

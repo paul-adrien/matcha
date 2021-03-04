@@ -6,23 +6,30 @@ exports.verifyToken = (req,res) => {
     var token = req.body.token;
     var id = req.body.id;
 
-    jwt.verify(token, config.secret, (err, decoded) => {
-        if (err) {
-          res.json({
-                status:false,
-                message: "Unauthorized!"
-          });
-        }
-        if (decoded['id'] === id) {
+    if (token && id) {
+        jwt.verify(token, config.secret, (err, decoded) => {
+            if (err) {
             res.json({
-                status:true,
-                message:'successfully validating token'
-            })
-        } else {
-            res.json({
-                status:false,
-                message:'wrong token'
-            })
-        }
-    });
+                    status:false,
+                    message: "Unauthorized!"
+            });
+            }
+            if (decoded['id'] === id) {
+                res.json({
+                    status:true,
+                    message:'successfully validating token'
+                })
+            } else {
+                res.json({
+                    status:false,
+                    message:'wrong token'
+                })
+            }
+        });
+    } else {
+        res.json({
+            status:false,
+            message:'wrong data input'
+        });
+    }
 }

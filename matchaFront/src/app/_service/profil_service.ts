@@ -34,7 +34,7 @@ export class profilService {
     );
   }
 
-  takeViewProfil(id): Observable<any> {
+  takeViewProfil(id): Observable<any> { //ok
     return this.http.post(
       AUTH_API + "takeViewProfil",
       {

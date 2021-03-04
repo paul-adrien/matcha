@@ -17,7 +17,7 @@ const httpOptions = {
 export class matchService {
   constructor(private http: HttpClient) {}
 
-  getSuggestion(id: string): Observable<User[]> {
+  getSuggestion(id: string): Observable<User[]> {//ok
     return this.http
       .post(
         AUTH_API + "getSuggestion",
@@ -32,18 +32,6 @@ export class matchService {
           return Array.isArray(res) && res.map(user => mapUserBackToUserFront(user));
         })
       );
-  }
-
-  sortUsersBy(users, sort, id): Observable<any> {
-    return this.http.post(
-      AUTH_API + "sortUsersBy",
-      {
-        sort: sort,
-        users: users,
-        id: id,
-      },
-      httpOptions
-    );
   }
 
   filtreUsersBy(id: string, filtre: Partial<Filtre>, suggestion: boolean): Observable<User[]> {
