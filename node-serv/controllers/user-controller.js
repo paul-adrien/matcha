@@ -75,22 +75,29 @@ exports.takeViewProfil = (req, res) => {
   }
 
   async function takeAllUsers(resultat) {
-    users = await getUsersId();
-    if (users !== null) {
-      resultat = await funForEach(users);
+    if (req.body.user_id) {
+      users = await getUsersId();
+      if (users !== null) {
+        resultat = await funForEach(users);
 
-      if (resultat !== null) {
+        if (resultat !== null) {
+          res.json({
+            status: true,
+            message: "views user",
+            users: resultat,
+          });
+        }
+      } else {
         res.json({
-          status: true,
-          message: "views user",
-          users: resultat,
+          status: false,
+          message: "pas de vue2",
+          users: null,
         });
       }
     } else {
       res.json({
-        status: false,
-        message: "pas de vue2",
-        users: null,
+        status: true,
+        message: "error with data received",
       });
     }
   }
@@ -209,19 +216,26 @@ exports.viewedProfil = (req, res) => {
   }
 
   async function main() {
-    if ((await checkIfBlocked()) === null) notifView();
-    if ((await checkView()) === null) {
-      if (await addView()) {
-        console.log("test");
+    if (user_id && viewed_id) {
+      if ((await checkIfBlocked()) === null) notifView();
+      if ((await checkView()) === null) {
+        if (await addView()) {
+          console.log("test");
+          res.json({
+            status: true,
+            message: "profile view",
+          });
+        }
+      } else {
         res.json({
           status: true,
-          message: "profile view",
+          message: "profile already view",
         });
       }
     } else {
       res.json({
         status: true,
-        message: "profile already view",
+        message: "error with data received",
       });
     }
   }
@@ -230,25 +244,32 @@ exports.viewedProfil = (req, res) => {
 exports.getUser = (req, res) => {
   var id = req.params.id;
 
-  connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
-    if (error) {
-      res.json({
-        status: false,
-        message: "there are some error with query select user",
-        user: null,
-      });
-    } else {
-      if (results.length > 0) {
-        res.json(results[0]);
-      } else {
+  if (id) {
+    connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
+      if (error) {
         res.json({
           status: false,
-          message: "User does not exist",
+          message: "there are some error with query select user",
           user: null,
         });
+      } else {
+        if (results.length > 0) {
+          res.json(results[0]);
+        } else {
+          res.json({
+            status: false,
+            message: "User does not exist",
+            user: null,
+          });
+        }
       }
-    }
-  });
+    });
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
+  }
 };
 
 exports.updatePosition = async (req, res) => {
@@ -257,55 +278,62 @@ exports.updatePosition = async (req, res) => {
   let long = req.body.longitude;
   let currentPosition = req.body.currentPosition;
 
-  if (lat === undefined || long === undefined) {
-    request(
-      {
-        url: "https://geolocation-db.com/json",
-        json: true,
-      },
-      function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          lat = body.latitude;
-          long = body.longitude;
+  if (id) {
+    if (lat === undefined || long === undefined) {
+      request(
+        {
+          url: "https://geolocation-db.com/json",
+          json: true,
+        },
+        function (error, response, body) {
+          if (!error && response.statusCode === 200) {
+            lat = body.latitude;
+            long = body.longitude;
 
-          console.log(body);
+            console.log(body);
 
-          connection.query(
-            "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
-            [lat, long, "0", id],
-            function (error, results, fields) {
-              if (error) {
-                res.json({
-                  status: false,
-                  message: "there are some error with query update user position",
-                  user: null,
-                });
-              } else {
-                res.json(`Position update ! ${lat} ${long}`);
+            connection.query(
+              "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
+              [lat, long, "0", id],
+              function (error, results, fields) {
+                if (error) {
+                  res.json({
+                    status: false,
+                    message: "there are some error with query update user position",
+                    user: null,
+                  });
+                } else {
+                  res.json(`Position update ! ${lat} ${long}`);
+                }
               }
-            }
-          );
+            );
+          }
         }
-      }
-    );
-  } else {
-    console.log(id);
+      );
+    } else {
+      console.log(id);
 
-    connection.query(
-      "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
-      [lat, long, currentPosition, id],
-      function (error, results, fields) {
-        if (error) {
-          res.json({
-            status: false,
-            message: "there are some error with query update user position",
-            user: null,
-          });
-        } else {
-          res.json(`Position update ! ${lat} ${long}`);
+      connection.query(
+        "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
+        [lat, long, currentPosition, id],
+        function (error, results, fields) {
+          if (error) {
+            res.json({
+              status: false,
+              message: "there are some error with query update user position",
+              user: null,
+            });
+          } else {
+            res.json(`Position update ! ${lat} ${long}`);
+          }
         }
-      }
-    );
+      );
+    }
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
   }
 };
 
@@ -332,48 +360,62 @@ exports.getNotifs = (req, res) => {
   }
 
   async function main() {
-    let notifs = await getNotifs();
-    let nbUnView = 0;
-
-    notifs =
-      notifs &&
-      (await Promise.all(
-        notifs.map(async function (notif) {
-          let otherUser = await getUser(notif.sender_id);
-          if (otherUser?.userName) {
-            notif.otherUserName = otherUser.userName;
+    if (id) {
+      let notifs = await getNotifs();
+      let nbUnView = 0;
+  
+      notifs =
+        notifs &&
+        (await Promise.all(
+          notifs.map(async function (notif) {
+            let otherUser = await getUser(notif.sender_id);
+            if (otherUser?.userName) {
+              notif.otherUserName = otherUser.userName;
+            }
+            if (notif["see"] == 0) nbUnView++;
+            return notif;
+          })
+        ));
+      connection.query(
+        "UPDATE users SET lastConnection = NOW() WHERE id = ?",
+        [id],
+        function (error, results, fields) {}
+      );
+  
+      res.json({
+        notifs: notifs?.sort((a, b) => {
+          if (datefns.isBefore(new Date(a.date), new Date(b.date))) {
+            return 1;
+          } else if (datefns.isBefore(new Date(b.date), new Date(a.date))) {
+            return -1;
           }
-          if (notif["see"] == 0) nbUnView++;
-          return notif;
-        })
-      ));
-    connection.query(
-      "UPDATE users SET lastConnection = NOW() WHERE id = ?",
-      [id],
-      function (error, results, fields) {}
-    );
-
-    res.json({
-      notifs: notifs?.sort((a, b) => {
-        if (datefns.isBefore(new Date(a.date), new Date(b.date))) {
-          return 1;
-        } else if (datefns.isBefore(new Date(b.date), new Date(a.date))) {
-          return -1;
-        }
-      }),
-      nbUnView: nbUnView,
-    });
+        }),
+        nbUnView: nbUnView,
+      });
+    } else {
+      res.json({
+        status: true,
+        message: "error with data received",
+      });
+    }
   }
 };
 
 exports.seeNotifs = (req, res) => {
   id = req.params.id;
 
-  connection.query(
-    "UPDATE notif SET see = 1 WHERE userId = ?",
-    [id],
-    function (error, results, fields) {}
-  );
+  if (id) {
+    connection.query(
+      "UPDATE notif SET see = 1 WHERE userId = ?",
+      [id],
+      function (error, results, fields) {}
+    );
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
+  }
 };
 
 exports.delNotifs = (req, res) => {
@@ -381,52 +423,73 @@ exports.delNotifs = (req, res) => {
   otherId = req.params.otherId;
   type = req.params.type;
 
-  connection.query(
-    "DELETE FROM notif WHERE userId = ? AND sender_id = ? AND type = ?",
-    [userId, otherId, type],
-    function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "error when delete notifs",
-        });
-      } else {
-        res.json(results);
+  if (userId && otherId && type) {
+    connection.query(
+      "DELETE FROM notif WHERE userId = ? AND sender_id = ? AND type = ?",
+      [userId, otherId, type],
+      function (error, results, fields) {
+        if (error) {
+          res.json({
+            status: false,
+            message: "error when delete notifs",
+          });
+        } else {
+          res.json(results);
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
+  }
 };
 
 exports.reportUser = (req, res) => {
   userId = req.body.userId;
   reportId = req.body.reportId;
 
-  connection.query(
-    "INSERT INTO report (userId, reportId) VALUES (?, ?)",
-    [userId, reportId],
-    function (error, results, fields) {
-      if (error) {
-        res.json(null);
-      } else {
-        res.status(200).send();
+  if (userId && reportId) {
+    connection.query(
+      "INSERT INTO report (userId, reportId) VALUES (?, ?)",
+      [userId, reportId],
+      function (error, results, fields) {
+        if (error) {
+          res.json(null);
+        } else {
+          res.status(200).send();
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
+  }
 };
 
 exports.blockUser = (req, res) => {
   userId = req.body.userId;
   blockedId = req.body.blockedId;
 
-  connection.query(
-    "INSERT INTO blocked (userId, blockedId) VALUES (?, ?)",
-    [userId, blockedId],
-    function (error, results, fields) {
-      if (error) {
-        res.json(null);
-      } else {
-        res.status(200).send();
+  if (userId && blockedId) {
+    connection.query(
+      "INSERT INTO blocked (userId, blockedId) VALUES (?, ?)",
+      [userId, blockedId],
+      function (error, results, fields) {
+        if (error) {
+          res.json(null);
+        } else {
+          res.status(200).send();
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.json({
+      status: true,
+      message: "error with data received",
+    });
+}
 };

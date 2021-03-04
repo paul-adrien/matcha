@@ -4,7 +4,14 @@ var forEach = require("async-foreach").forEach;
 exports.likeOrDislike = (req, res) => {
   let date = Date();
 
-  main();
+  if (req.body.user_id && req.body.like_id)
+    main();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function addMatch() {
     return new Promise(resultat =>
@@ -337,7 +344,14 @@ exports.likeOrDislike = (req, res) => {
 exports.whoLikeMe = (req, res) => {
   var resultat = [];
 
-  takeAllUsers(resultat);
+  if (req.body.user_id)
+    takeAllUsers(resultat);
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
 
   async function getUsersId() {
     return new Promise(resultat =>
@@ -411,7 +425,16 @@ exports.whoLikeMe = (req, res) => {
 };
 
 exports.likeOrNot = (req, res) => {
-  likeOrNot();
+
+  if (req.params.likeId && req.params.userId)
+    likeOrNot();
+  else {
+    res.json({
+      status:false,
+      message:'wrong data input'
+    });
+  }
+  
   async function getIfLike() {
     return new Promise(resultat =>
       connection.query(
