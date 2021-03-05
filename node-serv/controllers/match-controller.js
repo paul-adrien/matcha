@@ -3,6 +3,7 @@ var forEach = require("async-foreach").forEach;
 var datefns = require("date-fns");
 
 function oriSexPoint(user, otherUser) {
+  //console.log(user.gender + user.showMe + otherUser.gender + otherUser.showMe);
   if (
     user.gender == 1 &&
     (user.showMe == 1 || user.showMe == 3) &&
@@ -191,7 +192,7 @@ exports.getSuggestion = (req, res) => {
           resultat(null);
         } else {
           if (results && results.length > 0) {
-            resultat(results);
+            resultat(results[0]);
           } else {
             resultat(null);
           }
@@ -228,7 +229,7 @@ exports.getSuggestion = (req, res) => {
       if ((myUser = await getUser(id)) !== null) {
         if ((users = await getOtherUser()) !== null) {
           length = users.length;
-          console.log(length);
+          //console.log(length);
           usersMatch = await Promise.all(
             users.map(async function (user) {
               let sMatch = 0;
@@ -253,10 +254,9 @@ exports.getSuggestion = (req, res) => {
           const byMatch = sortByMapped(toMatch, byValue);
           usersMatch = [...usersMatch].sort(byMatch); // Trie en fonction de sMatch
 
-          while ((indexOfSM = usersMatch.findIndex(i => i.sMatch == 0)) && indexOfSM > -1) {
-            usersMatch.splice(indexOfSM, 1); // on supprime tous les sMatch == 0
-          }
-
+          // on supprime tous les sMatch == 0
+          usersMatch = usersMatch.filter(user => user.sMatch > 0);
+          
           res.json(usersMatch);
         } else {
           res.json({

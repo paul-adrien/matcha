@@ -43,7 +43,7 @@ exports.updateProfil = (req,res) => {
 }
 
 exports.uploadPicture = (req,res) => {
-    if (req.body.picture && email) {
+    if (req.body.picture && req.body.email) {
         connection.query(`UPDATE users SET ${req.body.picture.id} = ? WHERE email = ?`,[req.body.picture.url, req.body.email], function (error, results, fields) {
             console.log(req.body);
             if (error) {
