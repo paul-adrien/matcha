@@ -20,6 +20,16 @@
     align-items: center;
     justify-content: center;
     margin: 1rem 0.5rem;
+    position: relative;
+
+    .type {
+      background: white;
+      border-radius: 25px;
+      padding: 4px;
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+    }
 
     .chevron {
       margin: 0 1rem;

@@ -45,6 +45,12 @@ export interface Notif {
   otherUserName: string;
 }
 
+export interface History {
+  user: User;
+  date: Date;
+  type: "like" | "view";
+}
+
 export function mapUserBackToUserFront(user: any): User {
   return {
     userName: user["userName"],
@@ -71,7 +77,6 @@ export function mapUserBackToUserFront(user: any): User {
       { id: "picture3", url: user["picture3"] as string },
       { id: "picture4", url: user["picture4"] as string },
       { id: "picture5", url: user["picture5"] as string },
-      { id: "picture6", url: user["picture6"] as string },
     ],
   };
 }

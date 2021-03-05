@@ -11,6 +11,7 @@
     width: 100%;
     max-width: 40rem;
     justify-content: center;
+    padding-bottom: 1rem;
   }
 
   .header-bar {
@@ -98,5 +99,9 @@
     width: max-content;
     height: min-content;
     margin-top: 1rem;
+  }
+
+  .spinner {
+    margin-top: 8rem;
   }
 }

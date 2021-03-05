@@ -94,7 +94,7 @@ app.post("/api/forgotPass_c", authController.forgotPass_change);
 app.post("/api/verifyToken", verifyTokenController.verifyToken);
 app.post("/api/updateProfil", updateProfilController.updateProfil);
 app.post("/api/uploadPicture", updateProfilController.uploadPicture);
-app.post("/api/takeViewProfil", userController.takeViewProfil);
+app.get("/api/users/:id/history", userController.getHistory);
 app.post("/api/whoLikeMe", likeController.whoLikeMe);
 app.get("/api/users/:id", userController.getUser);
 app.get("/api/users/:userId/likeOrNot/:likeId", likeController.likeOrNot);

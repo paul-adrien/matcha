@@ -1,7 +1,8 @@
+import { map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { User } from "@matcha/shared";
+import { History, mapUserBackToUserFront, User } from "@matcha/shared";
 
 const AUTH_API = "http://localhost:8080/api/";
 
@@ -34,13 +35,15 @@ export class profilService {
     );
   }
 
-  takeViewProfil(id): Observable<any> { //ok
-    return this.http.post(
-      AUTH_API + "takeViewProfil",
-      {
-        user_id: id,
-      },
-      httpOptions
+  getHistory(id: string): Observable<History[]> {
+    //ok
+    return this.http.get<History[]>(AUTH_API + `users/${id}/history`, httpOptions).pipe(
+      map(res =>
+        res.map(el => {
+          el.user = mapUserBackToUserFront(el.user);
+          return el;
+        })
+      )
     );
   }
 

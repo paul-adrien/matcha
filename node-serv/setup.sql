@@ -54,11 +54,17 @@ CREATE TABLE users_views
     views_id VARCHAR(255) NOT NULL
 );
 
+ALTER TABLE users_views
+ADD viewDate VARCHAR(255) NOT NULL;
+
 CREATE TABLE users_like
 (
     liked_id VARCHAR(255) NOT NULL, /*celui qui est liker*/
     like_id VARCHAR(255) NOT NULL /*celui qui like*/
 );
+
+ALTER TABLE users_like
+ADD likeDate VARCHAR(255) NOT NULL;
 
 CREATE TABLE matched
 (

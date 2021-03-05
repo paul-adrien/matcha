@@ -1,4 +1,5 @@
-import { Notif } from "./../../../libs/user";
+import { profilService } from "./../_service/profil_service";
+import { History, Notif } from "./../../../libs/user";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { messagingService } from "../_service/messaging_service";
 import { PossConv, ActiveConv, Messages } from "../../../libs/messaging";
@@ -10,6 +11,22 @@ import { userService } from "../_service/user_service";
   selector: "app-home-messaging",
   template: `
     <div class="container">
+      <span class="title">Historique</span>
+      <div class="scroll">
+        <div
+          *ngIf="(this.usersHistory$ | async)?.length > 0; else noMatch"
+          class="poss-conv-container"
+        >
+          <app-profil-card
+            *ngFor="let userHistory of this.usersHistory$ | async"
+            [user]="userHistory.user"
+            [type]="userHistory.type"
+          ></app-profil-card>
+        </div>
+        <ng-template #noMatch>
+          <div class="no-data">Vous n'avez aucun match.</div>
+        </ng-template>
+      </div>
       <span class="title">Match</span>
       <div class="scroll">
         <div
@@ -62,20 +79,26 @@ import { userService } from "../_service/user_service";
 export class HomeMessagingComponent implements OnInit {
   public possiblyConv$: Observable<PossConv[]>;
   public activeConv$: Observable<ActiveConv[]>;
+  public usersHistory$: Observable<History[]>;
 
   constructor(
     private messagingService: messagingService,
     private cd: ChangeDetectorRef,
     private router: Router,
-    private userService: userService
+    private profilService: profilService
   ) {
     this.possiblyConv$ = this.messagingService.possiblyConv(JSON.parse(localStorage.getItem("id")));
     this.activeConv$ = this.messagingService.activeConv(JSON.parse(localStorage.getItem("id")));
+    this.usersHistory$ = this.profilService.getHistory(JSON.parse(localStorage.getItem("id")));
   }
 
   ngOnInit(): void {}
 
   discussion(id, convId) {
     this.router.navigate(["home/discussion/" + id + "/" + convId]);
+  }
+
+  viewProfil(id: string) {
+    this.router.navigate(["home/profile-view/" + id]);
   }
 }

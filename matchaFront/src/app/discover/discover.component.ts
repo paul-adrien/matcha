@@ -42,7 +42,9 @@ import { map, switchMap } from "rxjs/operators";
       (usersSort)="this.getUsersFilter($event)"
     ></app-filter-and-sort>
     <div class="suggestion-container" *ngIf="(this.user$ | async)?.profileComplete; else error">
-      <div *ngIf="this.updateMode && this.usersSuggestion$ | async as usersSuggestions">
+      <div
+        *ngIf="this.updateMode && this.usersSuggestion$ | async as usersSuggestions; else filter"
+      >
         <div class="content-filter" *ngIf="usersSuggestions?.length > 0">
           <app-interactive-map
             [users]="this.usersSuggestions"
@@ -57,23 +59,28 @@ import { map, switchMap } from "rxjs/operators";
           <span>Aucun résultat</span>
         </div>
       </div>
-      <div *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters">
-        <div class="content-filter" *ngIf="usersFilters?.length > 0">
-          <app-interactive-map
-            [users]="this.usersFilters"
-            [me]="this.user$ | async"
-          ></app-interactive-map>
-          <app-profil-card
-            *ngFor="let userFilter of this.usersFilters"
-            [user]="userFilter"
-          ></app-profil-card>
+      <ng-template #filter>
+        <div *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters; else loading">
+          <div class="content-filter" *ngIf="usersFilters?.length > 0">
+            <app-interactive-map
+              [users]="this.usersFilters"
+              [me]="this.user$ | async"
+            ></app-interactive-map>
+            <app-profil-card
+              *ngFor="let userFilter of this.usersFilters"
+              [user]="userFilter"
+            ></app-profil-card>
+          </div>
+          <div *ngIf="usersFilters?.length === 0" #noResult>
+            <span>Aucun résultat</span>
+          </div>
         </div>
-        <div *ngIf="usersFilters?.length === 0" #noResult>
-          <span>Aucun résultat</span>
-        </div>
-      </div>
+      </ng-template>
+      <ng-template #loading>
+        <mat-spinner class="spinner"></mat-spinner>
+      </ng-template>
     </div>
-    <ng-template #error>Complètes ton profil bg</ng-template>
+    <ng-template #error><span> Complètes ton profil bg </span> </ng-template>
   `,
   styleUrls: ["./discover.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -158,5 +165,6 @@ export class DiscoverComponent implements OnInit {
     } else if (!this.updateMode) {
       this.usersFilter$ = res;
     }
+    this.cd.detectChanges();
   }
 }

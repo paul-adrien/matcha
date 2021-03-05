@@ -15,6 +15,11 @@ import { differenceInYears } from "date-fns";
             : './assets/user.svg'
         "
       />
+      <img
+        class="type"
+        *ngIf="this.type"
+        [src]="this.type === 'like' ? './assets/star-no-fill.svg' : './assets/eye.svg'"
+      />
     </div>
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
@@ -25,6 +30,7 @@ import { differenceInYears } from "date-fns";
 })
 export class ProfilCardComponent implements OnInit {
   @Input() user: User;
+  @Input() type = "";
   @Input() messaging = false;
 
   constructor(private router: Router) {}

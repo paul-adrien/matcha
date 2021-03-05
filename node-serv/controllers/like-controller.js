@@ -4,12 +4,11 @@ var forEach = require("async-foreach").forEach;
 exports.likeOrDislike = (req, res) => {
   let date = Date();
 
-  if (req.body.user_id && req.body.like_id)
-    main();
+  if (req.body.user_id && req.body.like_id) main();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -96,8 +95,8 @@ exports.likeOrDislike = (req, res) => {
   async function addLike() {
     return new Promise(resultat =>
       connection.query(
-        "INSERT INTO users_like (liked_id, like_id) VALUES (?, ?)",
-        [req.body.like_id, req.body.user_id],
+        "INSERT INTO users_like (liked_id, like_id, likeDate) VALUES (?, ?, ?)",
+        [req.body.like_id, req.body.user_id, date.toString()],
         function (error, results, fields) {
           if (error) {
             resultat(null);
@@ -344,12 +343,11 @@ exports.likeOrDislike = (req, res) => {
 exports.whoLikeMe = (req, res) => {
   var resultat = [];
 
-  if (req.body.user_id)
-    takeAllUsers(resultat);
+  if (req.body.user_id) takeAllUsers(resultat);
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -425,16 +423,14 @@ exports.whoLikeMe = (req, res) => {
 };
 
 exports.likeOrNot = (req, res) => {
-
-  if (req.params.likeId && req.params.userId)
-    likeOrNot();
+  if (req.params.likeId && req.params.userId) likeOrNot();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
-  
+
   async function getIfLike() {
     return new Promise(resultat =>
       connection.query(

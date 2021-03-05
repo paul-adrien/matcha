@@ -146,6 +146,7 @@ async function checkIfBlocked(user, otherUser) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
+            console.log("blocked");
             resultat(1);
           } else {
             resultat(null);
@@ -256,7 +257,7 @@ exports.getSuggestion = (req, res) => {
 
           // on supprime tous les sMatch == 0
           usersMatch = usersMatch.filter(user => user.sMatch > 0);
-          
+
           res.json(usersMatch);
         } else {
           res.json({
@@ -468,6 +469,7 @@ exports.filtreUsersBy = (req, res) => {
             tags = 0;
             tags = await tagsMatch(myUser, user);
             console.log(minAge, maxAge, minTag, maxLoc, minScore);
+            console.log(age, dist, tags, user.score);
 
             let view = await checkIfView(id, user.id);
 
@@ -486,6 +488,7 @@ exports.filtreUsersBy = (req, res) => {
             }
           })
         ));
+      console.log(usersSort);
       usersSort = usersSort.filter(user => user !== undefined);
       if (sortBy === "age") {
         usersSort.sort((a, b) => {

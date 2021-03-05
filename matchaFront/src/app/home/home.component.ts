@@ -6,7 +6,7 @@ import { User } from "@matcha/shared";
 @Component({
   selector: "home",
   template: `
-    <div class="no-verify-container" *ngIf="!this.user?.emailVerify; else good">
+    <div class="no-verify-container" *ngIf="this.user?.emailVerify === false; else good">
       <div class="title">Une petite vérification avant</div>
       <div class="text">
         Veulliez vérifiez vos mails, un mail de confirmation vous a été envoyé.

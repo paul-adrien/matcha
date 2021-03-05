@@ -20,16 +20,17 @@ async function getUser(id) {
   );
 }
 
-exports.takeViewProfil = (req, res) => {
+exports.getHistory = (req, res) => {
   var resultat = [];
+  var userId = req.params.id;
 
   takeAllUsers(resultat);
 
-  async function getUsersId() {
+  async function getUsersIdView() {
     return new Promise(resultat =>
       connection.query(
-        "SELECT views_id FROM users_views WHERE viewed_id = ?",
-        [req.body.user_id],
+        "SELECT * FROM users_views WHERE viewed_id = ?",
+        [userId],
         function (error, results, fields) {
           if (error) {
             resultat(null);
@@ -45,52 +46,72 @@ exports.takeViewProfil = (req, res) => {
     );
   }
 
-  async function getUserViews(id) {
+  async function getUsersIdLike() {
     return new Promise(resultat =>
-      connection.query("SELECT * FROM users WHERE id = ?", [id], function (error, results, fields) {
-        if (error) {
-          resultat(null);
-        } else {
-          resultat(results);
+      connection.query(
+        "SELECT * FROM users_like WHERE liked_id = ?",
+        [userId],
+        function (error, results, fields) {
+          if (error) {
+            resultat(null);
+          } else {
+            if (results && results.length > 0) {
+              resultat(results);
+            } else {
+              resultat(null);
+            }
+          }
         }
-      })
+      )
     );
   }
 
-  async function funForEach(users) {
-    var i = 0;
-    return new Promise(resolve => {
-      forEach(users, async function (user) {
-        result = await getUserViews(user["views_id"]);
-        if (result && result.length > 0) {
-          if (!resultat || resultat.length === 0) resultat = [result[0]];
-          else resultat.push(result[0]);
-        }
-        i++;
-        if (i === users.length) {
-          resolve(resultat);
-        }
-      });
-    });
-  }
-
   async function takeAllUsers(resultat) {
-    if (req.body.user_id) {
-      users = await getUsersId();
-      if (users !== null) {
-        resultat = await funForEach(users);
+    if (userId) {
+      let usersIdView = await getUsersIdView();
+      let usersView =
+        usersIdView &&
+        (await Promise.all(
+          usersIdView.map(async userView => {
+            let tmp = await getUser(userView.views_id);
+            if (tmp) {
+              return { user: tmp, date: new Date(userView.viewDate), type: "view" };
+            } else {
+              return { user: undefined, date: new Date(userView.viewDate), type: "view" };
+            }
+          })
+        ));
+      let usersIdLike = await getUsersIdLike();
+      let usersLike =
+        usersIdLike &&
+        (await Promise.all(
+          usersIdLike.map(async userLike => {
+            let tmp = await getUser(userLike.like_id);
+            if (tmp) {
+              return { user: tmp, date: new Date(userLike.likeDate), type: "like" };
+            } else {
+              return { user: undefined, date: new Date(userLike.likeDate), type: "like" };
+            }
+          })
+        ));
+      let usersHistory = usersView
+        .concat(usersLike)
+        .filter(userHistory => userHistory?.user !== undefined);
 
-        if (resultat !== null) {
-          res.json({
-            status: true,
-            message: "views user",
-            users: resultat,
-          });
-        }
+      if (usersHistory !== null) {
+        res.json(
+          usersHistory?.sort((a, b) => {
+            if (datefns.isBefore(new Date(a.date), new Date(b.date))) {
+              return 1;
+            } else if (datefns.isBefore(new Date(b.date), new Date(a.date))) {
+              return -1;
+            }
+          })
+        );
       } else {
         res.json({
           status: false,
-          message: "pas de vue2",
+          message: "pas d'historique",
           users: null,
         });
       }
@@ -141,6 +162,17 @@ exports.viewedProfil = (req, res) => {
             resultat(null);
           } else {
             if (results && results.length > 0) {
+              connection.query(
+                "UPDATE users_views SET viewDate = ? WHERE viewed_id = ? AND views_id = ?",
+                [date.toString(), viewed_id, user_id],
+                function (error, results, fields) {
+                  if (error) {
+                    resultat(null);
+                  } else {
+                    resultat(1);
+                  }
+                }
+              );
               resultat(1);
             } else {
               resultat(null);
@@ -154,8 +186,8 @@ exports.viewedProfil = (req, res) => {
   async function addView() {
     return new Promise(resultat =>
       connection.query(
-        "INSERT INTO users_views (viewed_id, views_id) VALUES (?, ?)",
-        [viewed_id, user_id],
+        "INSERT INTO users_views (viewed_id, views_id, viewDate) VALUES (?, ?, ?)",
+        [viewed_id, user_id, date.toString()],
         function (error, results, fields) {
           if (error) {
             resultat(null);
@@ -363,7 +395,7 @@ exports.getNotifs = (req, res) => {
     if (id) {
       let notifs = await getNotifs();
       let nbUnView = 0;
-  
+
       notifs =
         notifs &&
         (await Promise.all(
@@ -381,7 +413,7 @@ exports.getNotifs = (req, res) => {
         [id],
         function (error, results, fields) {}
       );
-  
+
       res.json({
         notifs: notifs?.sort((a, b) => {
           if (datefns.isBefore(new Date(a.date), new Date(b.date))) {
@@ -491,5 +523,5 @@ exports.blockUser = (req, res) => {
       status: true,
       message: "error with data received",
     });
-}
+  }
 };

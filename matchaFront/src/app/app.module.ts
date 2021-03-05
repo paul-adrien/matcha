@@ -29,6 +29,7 @@ import { InteractiveMapComponent } from "./interactive-map/interactive-map.compo
 import { PopUpComponent } from "./pop-up/pop-up.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
     ImageCropperModule,
     ReactiveFormsModule,

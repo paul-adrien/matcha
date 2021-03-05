@@ -392,10 +392,6 @@ export class ProfileComponent implements OnInit {
           id: new FormControl(""),
           url: new FormControl(""),
         }),
-        new FormGroup({
-          id: new FormControl(""),
-          url: new FormControl(""),
-        }),
       ],
       validatePictures
     ),
@@ -446,22 +442,25 @@ export class ProfileComponent implements OnInit {
   public user$: Observable<User> = this.userService.getUser(JSON.parse(localStorage.getItem("id")));
 
   ngOnInit(): void {
-    this.userService.getUser(JSON.parse(localStorage.getItem("id"))).subscribe(res => {
-      this.userForm.patchValue({
-        userName: res.userName,
-        firstName: res.firstName,
-        lastName: res.lastName,
-        birthDate: res.birthDate,
-        gender: res.gender,
-        showMe: res.showMe,
-        bio: res.bio,
-        email: res.email,
-        pictures: res.pictures,
+    this.userService
+      .getUser(JSON.parse(localStorage.getItem("id")))
+      .toPromise()
+      .then(res => {
+        this.userForm.patchValue({
+          userName: res.userName,
+          firstName: res.firstName,
+          lastName: res.lastName,
+          birthDate: res.birthDate,
+          gender: res.gender,
+          showMe: res.showMe,
+          bio: res.bio,
+          email: res.email,
+          pictures: res.pictures,
+        });
+        this.user = res;
+        this.saveEmail = res.email;
+        this.cd.detectChanges();
       });
-      this.user = res;
-      this.saveEmail = res.email;
-      this.cd.detectChanges();
-    });
   }
 
   public getLocation() {
@@ -564,6 +563,8 @@ export class ProfileComponent implements OnInit {
         console.log(data);
         if (data.status == true) {
           this.ngOnInit();
+          this.primaryPictureId = 0;
+          this.updateMode = false;
         }
       },
       err => {}
@@ -739,6 +740,7 @@ export class ProfileComponent implements OnInit {
           });
           dialogRef.afterClosed().subscribe(el => {
             this.isSettings = false;
+            this.cd.detectChanges();
           });
         }
       });
