@@ -42,37 +42,36 @@ import { map, switchMap } from "rxjs/operators";
       (usersSort)="this.getUsersFilter($event)"
     ></app-filter-and-sort>
     <div class="suggestion-container" *ngIf="(this.user$ | async)?.profileComplete; else error">
-      <div
-        class="content-filter"
-        *ngIf="(this.usersSuggestion$ | async)?.length > 0 && this.updateMode; else filter"
-      >
-        <app-interactive-map
-          [users]="this.usersSuggestion$ | async"
-          [me]="this.user$ | async"
-        ></app-interactive-map>
-        <app-profil-card
-          *ngFor="let userSuggestion of this.usersSuggestion$ | async"
-          [user]="userSuggestion"
-        ></app-profil-card>
-      </div>
-      <ng-template #filter>
-        <div
-          class="content-filter"
-          *ngIf="(this.usersFilter$ | async)?.length > 0 && !this.updateMode; else noResult"
-        >
+      <div *ngIf="this.updateMode && this.usersSuggestion$ | async as usersSuggestions">
+        <div class="content-filter" *ngIf="usersSuggestions?.length > 0">
           <app-interactive-map
-            [users]="this.usersFilter$ | async"
+            [users]="this.usersSuggestions"
             [me]="this.user$ | async"
           ></app-interactive-map>
           <app-profil-card
-            *ngFor="let userFilter of this.usersFilter$ | async"
+            *ngFor="let userSuggestion of usersSuggestions"
+            [user]="userSuggestion"
+          ></app-profil-card>
+        </div>
+        <div *ngIf="usersSuggestions?.length === 0" #noResult>
+          <span>Aucun résultat</span>
+        </div>
+      </div>
+      <div *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters">
+        <div class="content-filter" *ngIf="usersFilters?.length > 0">
+          <app-interactive-map
+            [users]="this.usersFilters"
+            [me]="this.user$ | async"
+          ></app-interactive-map>
+          <app-profil-card
+            *ngFor="let userFilter of this.usersFilters"
             [user]="userFilter"
           ></app-profil-card>
         </div>
-      </ng-template>
-      <ng-template #noResult>
-        <span>Aucun résultat</span>
-      </ng-template>
+        <div *ngIf="usersFilters?.length === 0" #noResult>
+          <span>Aucun résultat</span>
+        </div>
+      </div>
     </div>
     <ng-template #error>Complètes ton profil bg</ng-template>
   `,
@@ -105,7 +104,6 @@ export class DiscoverComponent implements OnInit {
 
   ngOnInit() {
     this.getCurrentLocation();
-    this.matchService.getSuggestion(localStorage.getItem("id")).subscribe(el => console.log(el));
   }
 
   public changeSuggestionMode(value: boolean) {

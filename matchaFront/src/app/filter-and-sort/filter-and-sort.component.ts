@@ -109,17 +109,7 @@ export class FilterAndSortComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    if (this.isSuggestion) {
-      this.matchService.getSuggestion(JSON.parse(localStorage.getItem("id"))).subscribe(
-        data => {
-          console.log(data);
-          this.usersMatch = data;
-        },
-        err => {
-          console.log(err);
-        }
-      );
-    } else {
+    if (!this.isSuggestion) {
       if (JSON.parse(localStorage.getItem("filter-params"))) {
         this.sliderForm.patchValue(JSON.parse(localStorage.getItem("filter-params")));
       }
@@ -129,21 +119,6 @@ export class FilterAndSortComponent implements OnInit {
 
   filtreUsersBy() {
     localStorage.setItem("filter-params", JSON.stringify(this.sliderForm.getRawValue()));
-    this.matchService
-      .filtreUsersBy(
-        JSON.parse(localStorage.getItem("id")),
-        this.sliderForm.getRawValue(),
-        this.isSuggestion
-      )
-      .subscribe(
-        data => {
-          console.log(data);
-          this.usersMatch = data;
-        },
-        err => {
-          console.log(err);
-        }
-      );
     this.usersSort.emit(
       this.matchService.filtreUsersBy(
         JSON.parse(localStorage.getItem("id")),

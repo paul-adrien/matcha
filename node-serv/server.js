@@ -104,7 +104,7 @@ app.get("/api/getYourTags/:id", tagsController.getYourTags);
 app.post("/api/addExistTag", tagsController.addExistTag);
 app.post("/api/addNonExistTag", tagsController.addNonExistTag);
 app.post("/api/deleteTag", tagsController.deleteTag);
-app.post("/api/getSuggestion", matchController.getSuggestion);
+app.get("/api/users/:id/getSuggestion", matchController.getSuggestion);
 app.get(
   "/api/users/:id/min-age/:minAge/max-age/:maxAge/score/:score/tags/:tags/distance/:dist/sort-by/:sortBy",
   matchController.filtreUsersBy

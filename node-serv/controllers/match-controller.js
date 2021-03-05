@@ -156,14 +156,13 @@ async function checkIfBlocked(user, otherUser) {
 }
 
 exports.getSuggestion = (req, res) => {
-  id = req.body.id;
+  id = req.params.id;
 
-  if (id)
-    main();
+  if (id) main();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -224,16 +223,19 @@ exports.getSuggestion = (req, res) => {
   async function main() {
     myUser = [];
     length = 0;
-    
+
     if ((await checkData) !== null) {
-      if ((myUser = await getUser(req.body.id)) !== null) {
+      if ((myUser = await getUser(id)) !== null) {
         if ((users = await getOtherUser()) !== null) {
           length = users.length;
           console.log(length);
           usersMatch = await Promise.all(
             users.map(async function (user) {
               let sMatch = 0;
-              if ((await checkIfBlocked(id, user.id)) === null && (await checkIfMatch(id, user.id)) === null) {
+              if (
+                (await checkIfBlocked(id, user.id)) === null &&
+                (await checkIfMatch(id, user.id)) === null
+              ) {
                 sMatch += oriSexPoint(myUser, user); //OK
                 sMatch += locatPoint(myUser, user); //OK
                 sMatch += await tagsMatchPoint(myUser, user); //OK
@@ -241,7 +243,7 @@ exports.getSuggestion = (req, res) => {
               }
               let view = await checkIfView(id, user.id);
 
-              return { ...user, sMatch: sMatch, filtre: 1, view: view};
+              return { ...user, sMatch: sMatch, filtre: 1, view: view };
             })
           );
 
@@ -285,12 +287,11 @@ exports.filtreUsersBy = (req, res) => {
   minTag = req.params.tags;
   sortBy = req.params.sortBy;
 
-  if (id && minAge && maxAge && minScore && maxLoc && minTag && sortBy)
-    main();
+  if (id && minAge && maxAge && minScore && maxLoc && minTag && sortBy) main();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
