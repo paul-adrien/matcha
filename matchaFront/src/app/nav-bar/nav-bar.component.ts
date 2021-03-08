@@ -6,6 +6,7 @@ import {
   OnDestroy,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  Input,
 } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
 import { interval } from "rxjs";
@@ -53,6 +54,8 @@ import { Router } from "@angular/router";
   styleUrls: ["./nav-bar.component.scss"],
 })
 export class NavigationBarComponent implements OnInit, OnDestroy {
+  @Input() public selectedId = "";
+
   public items = [
     {
       id: "profile",
@@ -95,6 +98,9 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (this.selectedId) {
+      this.selectItem(this.selectedId);
+    }
     this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);

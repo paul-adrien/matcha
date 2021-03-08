@@ -16,7 +16,7 @@ import { Router } from "@angular/router";
       <div (click)="this.resendMail()" class="primary-button">Renvoyer le mail</div>
     </div>
     <ng-template #good>
-      <nav-bar></nav-bar>
+      <nav-bar [selectedId]="this.idNavBar"></nav-bar>
       <div class="page">
         <router-outlet></router-outlet>
       </div>
@@ -35,13 +35,19 @@ export class HomeComponent implements OnInit {
 
   public user: User;
   public token: string;
+  public idNavBar = "";
 
   ngOnInit() {
     this.userService.getUser(localStorage.getItem("id")).subscribe(res => {
       this.user = res;
       this.cd.detectChanges();
     });
-    this.route.navigate([""]);
+    if (this.route.url.includes("profile/")) {
+      this.idNavBar = "profile";
+    } else if (this.route.url.includes("messaging")) {
+      this.idNavBar = "message";
+    }
+    console.log(this.route);
   }
 
   public resendMail() {
