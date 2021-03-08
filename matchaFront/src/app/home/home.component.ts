@@ -2,6 +2,7 @@ import { AuthService } from "./../_service/auth_service";
 import { userService } from "./../_service/user_service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { User } from "@matcha/shared";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "home",
@@ -28,7 +29,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private userService: userService,
     private cd: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: Router
   ) {}
 
   public user: User;
@@ -39,6 +41,7 @@ export class HomeComponent implements OnInit {
       this.user = res;
       this.cd.detectChanges();
     });
+    this.route.navigate([""]);
   }
 
   public resendMail() {

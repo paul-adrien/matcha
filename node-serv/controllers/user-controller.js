@@ -94,9 +94,8 @@ exports.getHistory = (req, res) => {
             }
           })
         ));
-      let usersHistory = usersView
-        .concat(usersLike)
-        .filter(userHistory => userHistory?.user !== undefined);
+      let usersHistory =
+        usersView?.concat(usersLike).filter(userHistory => userHistory?.user !== undefined) || [];
 
       if (usersHistory !== null) {
         res.json(

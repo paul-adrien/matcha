@@ -189,6 +189,8 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
         return notif.otherUserName + " et vous avez matché ensemble.";
       case "unMatched":
         return notif.otherUserName + " a supprimé son match.";
+      case "like":
+        return notif.otherUserName + " a aimé votre profil.";
     }
   }
 }
