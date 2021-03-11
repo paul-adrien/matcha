@@ -7,7 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
     <span class="title">{{ this.data?.title }}</span>
     <span class="message">{{ this.data?.message }}</span>
     <div *ngIf="!this.data?.two" (click)="this.closePopup()" class="primary-button">
-      J'ai compris
+      {{ this.data?.button || "J'ai compris" }}
     </div>
     <div *ngIf="this.data?.two" class="buttons">
       <div *ngIf="this.data?.two" (click)="this.closePopup(false)" class="primary-button">Non</div>

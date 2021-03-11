@@ -1,20 +1,34 @@
 :host {
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .switch {
+    position: absolute;
+    top: 10rem;
+    right: 0;
+    width: fit-content;
+    background: red;
+    cursor: pointer;
+  }
 
   .page {
     height: 80%;
     width: 100%;
     flex-grow: 1;
-    background-color: #eaeaea;
+    background: var(--background-color-grey);
   }
 
   .no-verify-container {
-    background: white;
+    background: var(--background-color-primary);
     padding: 1rem;
     margin: 0 1rem;
     text-align: center;

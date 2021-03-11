@@ -7,20 +7,22 @@ import { Router } from "@angular/router";
 @Component({
   selector: "home",
   template: `
-    <div class="no-verify-container" *ngIf="this.user?.emailVerify === false; else good">
-      <div class="title">Une petite vérification avant</div>
-      <div class="text">
-        Veulliez vérifiez vos mails, un mail de confirmation vous a été envoyé.
+    <div class="container">
+      <div class="no-verify-container" *ngIf="this.user?.emailVerify === false; else good">
+        <div class="title">Une petite vérification avant</div>
+        <div class="text">
+          Veulliez vérifiez vos mails, un mail de confirmation vous a été envoyé.
+        </div>
+        <div class="text">Vous n'avez rien reçu ?</div>
+        <div (click)="this.resendMail()" class="primary-button">Renvoyer le mail</div>
       </div>
-      <div class="text">Vous n'avez rien reçu ?</div>
-      <div (click)="this.resendMail()" class="primary-button">Renvoyer le mail</div>
+      <ng-template #good>
+        <nav-bar [selectedId]="this.idNavBar"></nav-bar>
+        <div class="page">
+          <router-outlet></router-outlet>
+        </div>
+      </ng-template>
     </div>
-    <ng-template #good>
-      <nav-bar [selectedId]="this.idNavBar"></nav-bar>
-      <div class="page">
-        <router-outlet></router-outlet>
-      </div>
-    </ng-template>
   `,
   styleUrls: ["./home.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,11 +40,12 @@ export class HomeComponent implements OnInit {
   public idNavBar = "";
 
   ngOnInit() {
+    localStorage.setItem("theme", "light");
     this.userService.getUser(localStorage.getItem("id")).subscribe(res => {
       this.user = res;
       this.cd.detectChanges();
     });
-    if (this.route.url.includes("profile/")) {
+    if (this.route.url.includes("profile") && !this.route.url.includes("profile-")) {
       this.idNavBar = "profile";
     } else if (this.route.url.includes("messaging")) {
       this.idNavBar = "message";

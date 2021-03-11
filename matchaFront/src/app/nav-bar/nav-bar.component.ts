@@ -28,7 +28,7 @@ import { Router } from "@angular/router";
       <img [src]="item.selected ? item.src.check : item.src.default" />
     </a>
     <div class="case">
-      <img src="./assets/notification-bell-svgrepo-com.svg" (click)="showDialog()" />
+      <img src="./assets/bell.svg" (click)="showDialog()" />
       <div *ngIf="this.nbUnViewNotif > 0" class="notif-circle">
         {{ nbUnViewNotif }}
       </div>

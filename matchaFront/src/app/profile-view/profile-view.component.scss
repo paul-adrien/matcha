@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
+  background: var(--background-color-primary);
   overflow: scroll;
   position: relative;
 
@@ -29,7 +29,7 @@
       width: max-content;
       position: absolute;
       right: 0;
-      background: white;
+      background: var(--background-color-primary);
       box-shadow: 0 0 22px -11px black;
       display: flex;
       flex-direction: column;
@@ -70,8 +70,8 @@
     }
 
     .picture {
-      background: white;
-      box-shadow: 0px 0px 11px 0px lightgrey;
+      background: var(--background-color-primary);
+      box-shadow: 0px 0px 11px 0px var(--background-color-grey);
       max-height: 13rem;
       max-width: 13rem;
       min-height: 8rem;
@@ -109,7 +109,7 @@
     border: none;
     font-family: Montserrat;
     overflow-wrap: break-word;
-    background-color: #eaeaea;
+    background: var(--background-color-grey);
   }
 
   .primary-button {

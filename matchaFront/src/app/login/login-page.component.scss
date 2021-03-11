@@ -20,7 +20,7 @@
   }
 
   .container-login {
-    background-color: var(--color-reverse);
+    background-color: var(--background-color-primary);
     max-width: 30rem;
     width: 80%;
     height: 50%;
@@ -35,7 +35,7 @@
     .top-container {
       height: 3rem;
       display: flex;
-      background-color: #eaeaea;
+      background: var(--background-color-grey);
       border-radius: 4px 4px 0 0;
 
       .case {
@@ -48,7 +48,7 @@
 
         &.select {
           border-radius: 4px 4px 0 0;
-          background-color: var(--color-reverse);
+          background-color: var(--background-color-primary);
         }
       }
     }
@@ -78,6 +78,8 @@
         border-radius: 4px;
         box-sizing: border-box;
         margin-bottom: 1rem;
+        background-color: var(--background-color-grey);
+        color: var(--color-text);
 
         &.error-input.ng-invalid {
           margin: 0;

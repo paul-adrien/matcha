@@ -12,7 +12,7 @@
 
   .custom-slider {
     width: 100%;
-    max-width: 18rem;
+    max-width: 17rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -52,5 +52,9 @@
 
   .custom-slider .ngx-slider .ngx-slider-bar {
     background: #fbcf0a44;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit {
+    color: var(--color-text);
   }
 }

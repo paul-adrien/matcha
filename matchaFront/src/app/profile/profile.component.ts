@@ -7,6 +7,7 @@ import {
   Input,
   NgZone,
   OnInit,
+  Output,
   ViewChild,
 } from "@angular/core";
 import { Tags, User } from "@matcha/shared";
@@ -21,6 +22,7 @@ import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from 
 import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpComponent } from "../pop-up/pop-up.component";
+import { EventEmitter } from "events";
 
 declare var google: any;
 
@@ -168,7 +170,7 @@ function validatePictures(arr: FormArray) {
                 (change)="this.fileChangeEvent($event, index.toString())"
               />
               <img
-                [src]="picture.url && picture.url !== 'delete' ? picture.url : './assets/user.svg'"
+                [src]="picture.url && picture.url !== 'delete' ? picture.url : './assets/plus.svg'"
               />
               <div
                 *ngIf="picture.url && picture.url !== 'delete'"
@@ -330,6 +332,11 @@ function validatePictures(arr: FormArray) {
             Changer son Mot de passe
           </a>
         </div>
+        <div class="info-container">
+          <span class="info-top">Changer de mode</span>
+
+          <div class="primary-button" (click)="this.changeTheme()">{{ this.getTheme() }}</div>
+        </div>
       </div>
     </div>
   `,
@@ -337,6 +344,7 @@ function validatePictures(arr: FormArray) {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
+  @Output() public activate = new EventEmitter();
   @ViewChild("loca", { static: false }) loca: ElementRef;
 
   optionsMap = {
@@ -564,7 +572,17 @@ export class ProfileComponent implements OnInit {
         if (data.status == true) {
           this.ngOnInit();
           this.primaryPictureId = 0;
-          this.updateMode = false;
+          let dialogRef = this.dialog.open(PopUpComponent, {
+            data: {
+              title: "C'est bon !",
+              message: "Vos modifications ont bien été enregistré.",
+              button: "Ok !",
+            },
+          });
+          dialogRef.afterClosed().subscribe(el => {
+            this.updateMode = false;
+            this.cd.detectChanges();
+          });
         }
       },
       err => {}
@@ -744,6 +762,27 @@ export class ProfileComponent implements OnInit {
           });
         }
       });
+  }
+
+  public getTheme() {
+    if (localStorage.getItem("theme")) {
+      return localStorage.getItem("theme") + " mode";
+    } else {
+      return "Light mode";
+    }
+  }
+
+  public changeTheme() {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("light");
+      document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("dark");
+      document.body.classList.remove("light");
+
+      localStorage.setItem("theme", "dark");
+    }
   }
 
   ngOnDestroy() {

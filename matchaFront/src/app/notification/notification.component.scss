@@ -10,7 +10,7 @@
   right: -2rem;
 }
 .mmodal-body {
-  background: white;
+  background: var(--background-color-primary);
   padding: 1rem 0;
   border-radius: 1rem;
 }
@@ -23,7 +23,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: lightgrey;
+  background-color: var(--background-color-grey);
   // makes the below elements visible to a degree.
   opacity: 0.35;
 }

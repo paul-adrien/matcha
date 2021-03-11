@@ -38,10 +38,33 @@ html {
   --secondary-color: #fbcf0a;
   --color-text: black;
   --color-reverse: white;
+  --background-color-grey: #eaeaea;
+  --background-color-primary: white;
 
   @media screen and (max-width: 600px) {
     font-size: 14px;
   }
+}
+
+.dark,
+.light {
+  color: var(--color-text);
+}
+
+.light {
+  --primary-color: #a366fb;
+  --secondary-color: #fbcf0a;
+  --color-text: black;
+  --color-reverse: white;
+  --background-color-grey: #eaeaea;
+  --background-color-primary: white;
+}
+
+.dark {
+  --color-text: white;
+  --background-color-grey: #464646;
+  --background-color-primary: black;
+  filter: brightness(0.8) contrast(1.2);
 }
 
 input,
@@ -50,6 +73,8 @@ select,
 select::placeholder,
 input::placeholder {
   font-family: Montserrat;
+  color: var(--color-text);
+  background-color: var(--background-color-primary);
 }
 
 .primary-button {

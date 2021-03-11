@@ -10,8 +10,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    background-color: white;
-    border-top: 1px solid lightgrey;
+    background: var(--background-color-primary);
+    border-top: 1px solid var(--background-color-grey);
 
     .user-container {
       display: flex;
@@ -73,15 +73,15 @@
     border-radius: 14px;
 
     &.left-message {
-      background-color: white;
-      color: black;
+      background: var(--background-color-primary);
+      color: var(--color-text);
     }
   }
 
   .input-container {
     display: flex;
     padding: 0 1rem;
-    background: white;
+    background: var(--background-color-primary);
     justify-content: space-between;
 
     .send {
@@ -90,6 +90,8 @@
   }
 
   .input-message {
+    background: var(--background-color-primary);
+    color: var(--color-text);
     width: 100%;
     padding: 6px 12px;
     margin: 0.5rem 0;

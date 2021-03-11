@@ -11,7 +11,7 @@
     align-items: center;
 
     &.quick-look {
-      background-color: white;
+      background: var(--background-color-primary);
     }
 
     &.hidden {
@@ -44,8 +44,8 @@
     width: 100%;
     height: 3rem;
     min-height: 3rem;
-    background-color: white;
-    border-bottom: 1px solid #eaeaea;
+    background: var(--background-color-primary);
+    border-bottom: 1px solid var(--background-color-grey);
     display: flex;
     position: sticky;
     top: -1px;
@@ -64,7 +64,7 @@
       top: 0;
 
       &.separator {
-        border-right: 1px solid #eaeaea;
+        border-right: 1px solid var(--background-color-grey);
       }
 
       &.selected {
@@ -102,7 +102,7 @@
 
       img {
         background: white;
-        box-shadow: 0px 0px 11px 0px lightgrey;
+        box-shadow: 0px 0px 11px 0px var(--background-color-grey);
         max-height: 13rem;
         max-width: 13rem;
         object-fit: contain;
@@ -142,8 +142,8 @@
     }
 
     .picture {
-      background: white;
-      box-shadow: 0px 0px 11px 0px lightgrey;
+      background: var(--background-color-primary);
+      box-shadow: 0px 0px 11px 0px var(--background-color-grey);
       max-height: 13rem;
       max-width: 13rem;
       min-height: 8rem;
@@ -172,19 +172,20 @@
       padding: 6px 12px;
       border: none;
       font-family: Montserrat;
+      background: var(--background-color-primary);
+      color: var(--color-text);
     }
 
     .input-loca {
       margin-top: 1rem;
 
       &:disabled {
-        background-color: white;
+        background: var(--background-color-primary);
       }
     }
 
     select {
       height: 2rem;
-      background-color: white;
     }
 
     textarea {
@@ -194,6 +195,8 @@
       border: none;
       resize: none;
       font-family: Montserrat;
+      background: var(--background-color-primary);
+      color: var(--color-text);
     }
 
     .primary-button {
@@ -223,7 +226,7 @@
     border: none;
     font-family: Montserrat;
     overflow-wrap: break-word;
-    background-color: #eaeaea;
+    background: var(--background-color-grey);
   }
 
   .cropper-container {
@@ -241,7 +244,7 @@
     .cropper {
       margin: 1rem 15%;
       margin-top: 3rem;
-      max-width: 40rem;
+      max-width: 26rem;
       flex-wrap: wrap;
     }
 

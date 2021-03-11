@@ -47,7 +47,7 @@
       display: flex;
       padding: 1rem 0;
       margin: 0 1rem;
-      border-bottom: 1px lightgrey solid;
+      border-bottom: 1px var(--background-color-grey) solid;
 
       .text {
         display: flex;
@@ -63,8 +63,8 @@
   }
 
   .picture {
-    background: white;
-    box-shadow: 0px 0px 11px 0px lightgrey;
+    background: var(--background-color-primary);
+    box-shadow: 0px 0px 11px 0px var(--background-color-grey);
     max-height: 8rem;
     max-width: 8rem;
     min-height: 6rem;
