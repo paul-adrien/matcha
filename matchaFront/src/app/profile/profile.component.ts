@@ -570,7 +570,6 @@ export class ProfileComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status == true) {
-          this.changeUpdateMode(false);
           this.ngOnInit();
           this.primaryPictureId = 0;
           let dialogRef = this.dialog.open(PopUpComponent, {
