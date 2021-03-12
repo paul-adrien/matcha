@@ -8,7 +8,7 @@ import {
 import { Tags, User } from "@matcha/shared";
 import { ActivatedRoute, Routes, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { userService } from "../_service/user_service";
-import { differenceInYears } from "date-fns";
+import { differenceInHours, differenceInMinutes, differenceInYears } from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { Location } from "@angular/common";
@@ -65,6 +65,7 @@ import { PopUpComponent } from "../pop-up/pop-up.component";
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
+      <span>{{ this.getLastConnectionText() }}</span>
     </div>
     <div class="form-container">
       <div class="info-container">
@@ -199,6 +200,19 @@ export class ProfileViewComponent implements OnInit {
 
   public getAge(birthDate: Date) {
     return differenceInYears(new Date(), new Date(birthDate));
+  }
+
+  public getLastConnectionText() {
+    let lastConnection = this.user?.lastConnection;
+    if (differenceInMinutes(new Date(), new Date(lastConnection)) < 60) {
+      return (
+        "En ligne il y a" + differenceInMinutes(new Date(), new Date(lastConnection)) + "minutes"
+      );
+    } else if (differenceInHours(new Date(), new Date(lastConnection)) < 24) {
+      return "En ligne il y a" + differenceInHours(new Date(), new Date(lastConnection)) + "heures";
+    } else {
+      return "En ligne il y a plus de 24 heures";
+    }
   }
 
   public backRoute() {

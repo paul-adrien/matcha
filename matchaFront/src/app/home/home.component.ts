@@ -15,6 +15,8 @@ import { Router } from "@angular/router";
         </div>
         <div class="text">Vous n'avez rien reçu ?</div>
         <div (click)="this.resendMail()" class="primary-button">Renvoyer le mail</div>
+
+        <div class="back" (click)="this.logOut()">Retouner sur la page de login</div>
       </div>
       <ng-template #good>
         <nav-bar [selectedId]="this.idNavBar"></nav-bar>
@@ -47,10 +49,14 @@ export class HomeComponent implements OnInit {
     });
     if (this.route.url.includes("profile") && !this.route.url.includes("profile-")) {
       this.idNavBar = "profile";
-    } else if (this.route.url.includes("messaging")) {
+    } else if (this.route.url.includes("messaging") || this.route.url.includes("discussion/")) {
       this.idNavBar = "message";
     }
     console.log(this.route);
+  }
+
+  public logOut() {
+    this.authService.logOut();
   }
 
   public resendMail() {

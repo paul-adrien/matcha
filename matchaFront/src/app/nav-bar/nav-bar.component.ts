@@ -14,6 +14,7 @@ import { userService } from "../_service/user_service";
 import { Notif } from "../../../libs/user";
 import { Route } from "@angular/compiler/src/core";
 import { Router } from "@angular/router";
+import { isToday } from "date-fns";
 
 @Component({
   selector: "nav-bar",
@@ -37,7 +38,9 @@ import { Router } from "@angular/router";
           <span (click)="notif.type === 'msg' ? viewMsg() : viewProfil(notif.sender_id)">{{
             this.getMessageNotif(notif)
           }}</span>
-          <span>{{ notif.date | date: "HH:mm" }}</span>
+          <span>{{
+            notifDate(notif.date) ? (notif.date | date: "HH:mm") : (notif.date | date: "dd/MM")
+          }}</span>
         </div>
       </app-notification>
       <ng-template #noNotif>
@@ -183,6 +186,10 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     this.closeDialog();
     this.selectItem("message");
     this.router.navigate(["home/messaging"]);
+  }
+
+  public notifDate(notifDate: Date) {
+    return isToday(new Date(notifDate));
   }
 
   getMessageNotif(notif: Notif) {

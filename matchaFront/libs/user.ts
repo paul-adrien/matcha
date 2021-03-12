@@ -17,6 +17,7 @@ export interface User {
   profileComplete: boolean;
   link: string;
   currentPosition: boolean;
+  lastConnection: Date;
   pictures: {
     id: string;
     url: string;
@@ -71,6 +72,7 @@ export function mapUserBackToUserFront(user: any): User {
     profileComplete: user["profileComplete"] === "0" || !user["profileComplete"] ? false : true,
     link: user["link"],
     currentPosition: user["currentPosition"] === "0" ? false : true,
+    lastConnection: new Date(user["lastConnection"]),
     pictures: [
       { id: "picture1", url: user["picture1"] as string },
       { id: "picture2", url: user["picture2"] as string },
