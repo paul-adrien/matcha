@@ -43,20 +43,24 @@ async function calcScore() {
       if (results && results.length > 0) {
         await Promise.all(
           results.map(async function (user) {
+            let scoreViews = 0
             if (user != null) {
               if (user.nbViews >= 1000) {
                 scoreViews = 50;
               } else {
-                scoreViews = (100 + ((user.nbViews - 1000) / 1000) * 100) / 2;
+                scoreViews = (((user.nbViews) / 1000) * 100) / 2;
               }
-              if (user.nbLikes >= user.nbViews) {
+              if (user.nbLikes >= user.nbViews && (user.nbLikes != 0 && user.nbViews != 0)) {
                 user.score = Math.round(scoreViews + 50);
+              } else if (user.nbLikes != 0 && user.nbViews != 0) {
+                user.score = Math.round(
+                  scoreViews + (100 + ((user.nbLikes - user.nbViews) / user.nbViews) * 100) / 2
+                );
               } else {
                 user.score = Math.round(
-                  scoreViews + (100 + (user.nbLikes - user.nbViews) / user.nbViews) / 2
+                  scoreViews + 0
                 );
               }
-              console.log(user.score);
               connection.query(
                 "UPDATE users SET score = ? WHERE id = ?",
                 [user.score, user.id],
@@ -78,7 +82,7 @@ async function calcScore() {
   });
 }
 
-//setInterval(calcScore, 300000 );
+setInterval(calcScore, 3000 );
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Gguyot and Plaurent NodeJS Mysql server." });

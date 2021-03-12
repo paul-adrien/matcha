@@ -6,7 +6,7 @@ exports.verifyToken = (req,res) => {
     var token = req.body.token;
     var id = req.body.id;
 
-    if (token && id) {
+    if (token !== undefined && id !== undefined) {
         jwt.verify(token, config.secret, (err, decoded) => {
             if (err) {
             res.json({
