@@ -97,7 +97,7 @@ export class FilterAndSortComponent implements OnInit {
   };
 
   localOptions: Options = {
-    floor: 0,
+    floor: 1,
     ceil: 4000,
     showSelectionBar: true,
   };

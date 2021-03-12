@@ -58,7 +58,11 @@ import { map, switchMap, takeUntil } from "rxjs/operators";
     <div *ngIf="this.yourTags" class="tag-container">
       <div class="tag" *ngFor="let yTag of this.yourTags">
         <span>{{ yTag.name }}</span>
-        <img *ngIf="!this.showMode" src="./assets/x.svg" (click)="this.deleteTag(yTag)" />
+        <img
+          *ngIf="!this.showMode && this.yourTags.length > 1"
+          src="./assets/x.svg"
+          (click)="this.deleteTag(yTag)"
+        />
       </div>
     </div>
   `,
@@ -91,8 +95,10 @@ export class TagsComponent implements OnDestroy {
       this.userService.getAllTags(),
       this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))),
     ]).subscribe(([allTags, yourTags]) => {
-      this.allTags = allTags;
-      this.yourTags = yourTags;
+      if (Array.isArray(allTags) && Array.isArray(yourTags)) {
+        this.allTags = allTags;
+        this.yourTags = yourTags;
+      }
       this.cd.detectChanges();
     });
   }

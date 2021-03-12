@@ -19,6 +19,8 @@
     .select {
       margin: 1rem 0;
       width: 13rem;
+
+      background-color: var(--background-color-primary);
     }
 
     &.sort {
@@ -54,7 +56,8 @@
     background: #fbcf0a44;
   }
 
-  .custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit {
+  .custom-slider .ngx-slider .ngx-slider-bubble.ngx-slider-limit,
+  .custom-slider .ngx-slider .ngx-slider-bubble {
     color: var(--color-text);
   }
 }

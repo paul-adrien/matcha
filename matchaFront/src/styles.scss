@@ -41,6 +41,10 @@ html {
   --background-color-grey: #eaeaea;
   --background-color-primary: white;
 
+  &::-webkit-scrollbar {
+    background: transparent !important;
+    -webkit-appearance: none;
+  }
   @media screen and (max-width: 600px) {
     font-size: 14px;
   }
@@ -74,7 +78,11 @@ select::placeholder,
 input::placeholder {
   font-family: Montserrat;
   color: var(--color-text);
-  background-color: var(--background-color-primary);
+  background-color: var(--background-color-grey);
+}
+
+input::placeholder {
+  color: rgb(177, 177, 177);
 }
 
 .primary-button {

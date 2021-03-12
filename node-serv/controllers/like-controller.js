@@ -289,7 +289,7 @@ exports.likeOrDislike = (req, res) => {
           if (match == 1) {
             if ((await checkIfBlocked()) == 2) {
               notifLike(1);
-              res.json(200);
+              res.json(205);
             } else {
               res.json(200);
             }

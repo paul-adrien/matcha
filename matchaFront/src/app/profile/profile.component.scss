@@ -179,6 +179,10 @@
     .input-loca {
       margin-top: 1rem;
 
+      &::placeholder {
+        background: var(--background-color-primary);
+      }
+
       &:disabled {
         background: var(--background-color-primary);
       }

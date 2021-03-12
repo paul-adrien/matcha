@@ -102,5 +102,8 @@
     &:focus {
       outline: none;
     }
+    &::placeholder {
+      background: var(--background-color-primary);
+    }
   }
 }

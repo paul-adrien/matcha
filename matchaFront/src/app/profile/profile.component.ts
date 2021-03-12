@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   NgZone,
   OnInit,
   Output,
@@ -12,25 +11,37 @@ import {
 } from "@angular/core";
 import { Tags, User } from "@matcha/shared";
 import { profilService } from "../_service/profil_service";
-import { DomSanitizer } from "@angular/platform-browser";
 import { Dimensions, ImageCroppedEvent } from "ngx-image-cropper";
 import { NgxImageCompressService } from "ngx-image-compress";
-import { forkJoin, interval, Observable, Subject } from "rxjs";
+import { combineLatest, forkJoin, Observable, Subject } from "rxjs";
 import { userService } from "../_service/user_service";
-import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
-import { differenceInCalendarYears, differenceInYears, isAfter, isBefore } from "date-fns";
-import { map, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import { FormArray, FormControl, FormGroup } from "@angular/forms";
+import { differenceInYears, isAfter, isBefore } from "date-fns";
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpComponent } from "../pop-up/pop-up.component";
 import { EventEmitter } from "events";
 
 declare var google: any;
 
-function ValidatorLength(control: FormControl) {
+function ValidatorUserNameLength(control: FormControl) {
+  const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
   if (control.value?.length < 3) {
     return { error: "3 caractères minimum" };
   } else if (control.value?.length > 20) {
     return { error: "20 caractères maximum" };
+  } else if (!test.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
+  }
+}
+
+function ValidatorLength(control: FormControl) {
+  const test = /^(?=.{3,20}$)[a-zA-Z]+(?:[-' ][a-zA-Z]+)*$/;
+  if (control.value?.length < 3) {
+    return { error: "3 caractères minimum" };
+  } else if (control.value?.length > 20) {
+    return { error: "20 caractères maximum" };
+  } else if (!test.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
   }
 }
 
@@ -39,6 +50,13 @@ function ValidatorBio(control: FormControl) {
     return { error: "Champs obligatoire" };
   } else if (control.value?.length > 300) {
     return { error: "300 caractères maximun" };
+  }
+}
+
+function ValidatorTags(arr: FormArray) {
+  let tmp = arr.getRawValue();
+  if (tmp?.length === 0) {
+    return { error: "Vous devez avoir au minimun un tag" };
   }
 }
 
@@ -278,6 +296,9 @@ function validatePictures(arr: FormArray) {
           (addNew)="this.addNewTag($event)"
           (delete)="this.deleteTag($event)"
         ></app-tags>
+        <div class="error" *ngIf="this.userForm.get('tags').errors?.error">
+          {{ this.userForm.get("tags").errors.error }}
+        </div>
         <button
           [disabled]="!this.userForm.valid"
           (ngSubmit)="this.onSubmit()"
@@ -370,7 +391,7 @@ export class ProfileComponent implements OnInit {
 
   public user: User = undefined;
   public userForm = new FormGroup({
-    userName: new FormControl("", ValidatorLength),
+    userName: new FormControl("", ValidatorUserNameLength),
     firstName: new FormControl("", ValidatorLength),
     lastName: new FormControl("", ValidatorLength),
     birthDate: new FormControl("", ValidatorBirthDate),
@@ -403,6 +424,7 @@ export class ProfileComponent implements OnInit {
       ],
       validatePictures
     ),
+    tags: new FormArray([], ValidatorTags),
   });
 
   public localizationCase = new FormControl("1");
@@ -450,10 +472,12 @@ export class ProfileComponent implements OnInit {
   public user$: Observable<User> = this.userService.getUser(JSON.parse(localStorage.getItem("id")));
 
   ngOnInit(): void {
-    this.userService
-      .getUser(JSON.parse(localStorage.getItem("id")))
+    combineLatest([
+      this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))),
+      this.userService.getUser(JSON.parse(localStorage.getItem("id"))),
+    ])
       .toPromise()
-      .then(res => {
+      .then(([tagsRes, res]) => {
         this.userForm.patchValue({
           userName: res.userName,
           firstName: res.firstName,
@@ -465,8 +489,26 @@ export class ProfileComponent implements OnInit {
           email: res.email,
           pictures: res.pictures,
         });
+        console.log(
+          tagsRes.map(
+            tag =>
+              new FormGroup({
+                id: new FormControl(tag.id),
+                name: new FormControl(tag.name),
+              })
+          )
+        );
+        tagsRes.forEach(tag => {
+          (this.userForm.get("tags") as FormArray).push(
+            new FormGroup({
+              id: new FormControl(tag.id),
+              name: new FormControl(tag.name),
+            })
+          );
+        });
         this.user = res;
         this.saveEmail = res.email;
+
         this.cd.detectChanges();
       });
   }
@@ -681,7 +723,20 @@ export class ProfileComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status == true) {
+          (this.userForm.get("tags") as FormArray).clear();
+          this.yourTags$.toPromise().then(el =>
+            el.forEach(tag => {
+              (this.userForm.get("tags") as FormArray).push(
+                new FormGroup({
+                  id: new FormControl(tag.id),
+                  name: new FormControl(tag.name),
+                })
+              );
+            })
+          );
           this.yourTags$.subscribe(el => console.log(el));
+          this.userForm.updateValueAndValidity();
+
           this.cd.detectChanges();
         }
       },
@@ -698,7 +753,19 @@ export class ProfileComponent implements OnInit {
       data => {
         console.log(data);
         if (data.status == true) {
-          this.yourTags$.subscribe(el => console.log(el));
+          (this.userForm.get("tags") as FormArray).clear();
+          this.yourTags$.toPromise().then(el =>
+            el.forEach(tag => {
+              (this.userForm.get("tags") as FormArray).push(
+                new FormGroup({
+                  id: new FormControl(tag.id),
+                  name: new FormControl(tag.name),
+                })
+              );
+            })
+          );
+          this.userForm.updateValueAndValidity();
+
           this.cd.detectChanges();
         }
       },
@@ -716,7 +783,19 @@ export class ProfileComponent implements OnInit {
         this.zone.run(() => {
           console.log(data);
           if (data.status == true) {
+            (this.userForm.get("tags") as FormArray).clear();
+            this.yourTags$.toPromise().then(el =>
+              el.forEach(tag => {
+                (this.userForm.get("tags") as FormArray).push(
+                  new FormGroup({
+                    id: new FormControl(tag.id),
+                    name: new FormControl(tag.name),
+                  })
+                );
+              })
+            );
             this.yourTags$.subscribe(el => console.log(el));
+            this.userForm.updateValueAndValidity();
             this.cd.markForCheck();
           }
         });

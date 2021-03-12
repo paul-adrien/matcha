@@ -4,11 +4,25 @@ import { AuthService } from "../_service/auth_service";
 import { User } from "@matcha/shared";
 import { FormControl, FormGroup } from "@angular/forms";
 
-function ValidatorLength(control: FormControl) {
+function ValidatorUserNameLength(control: FormControl) {
+  const test = /^(?=.{3,20}$)[a-zA-Z0-9]+(?:[-' ][a-zA-Z0-9]+)*$/;
   if (control.value?.length < 3) {
     return { error: "3 caractères minimum" };
   } else if (control.value?.length > 20) {
     return { error: "20 caractères maximum" };
+  } else if (!test.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
+  }
+}
+
+function ValidatorLength(control: FormControl) {
+  const test = /^(?=.{3,20}$)[a-zA-Z]+(?:[-' ][a-zA-Z]+)*$/;
+  if (control.value?.length < 3) {
+    return { error: "3 caractères minimum" };
+  } else if (control.value?.length > 20) {
+    return { error: "20 caractères maximum" };
+  } else if (!test.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
   }
   return {};
 }
@@ -216,7 +230,7 @@ function ValidatorPass(control: FormControl) {
 })
 export class LoginPageComponent implements OnInit {
   public registerForm = new FormGroup({
-    userName: new FormControl("", ValidatorLength),
+    userName: new FormControl("", ValidatorUserNameLength),
     firstName: new FormControl("", ValidatorLength),
     lastName: new FormControl("", ValidatorLength),
     password: new FormControl("", ValidatorPass),
@@ -224,7 +238,7 @@ export class LoginPageComponent implements OnInit {
   });
 
   public loginForm = new FormGroup({
-    userName: new FormControl("", ValidatorLength),
+    userName: new FormControl("", ValidatorUserNameLength),
     password: new FormControl(""),
   });
 

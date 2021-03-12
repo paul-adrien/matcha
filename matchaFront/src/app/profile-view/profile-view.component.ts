@@ -12,6 +12,8 @@ import { differenceInYears } from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { Location } from "@angular/common";
+import { MatDialog } from "@angular/material/dialog";
+import { PopUpComponent } from "../pop-up/pop-up.component";
 
 @Component({
   selector: "app-profile-view",
@@ -98,7 +100,8 @@ export class ProfileViewComponent implements OnInit {
     public route: ActivatedRoute,
     private location: Location,
     private userService: userService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   private unsubscribe = new Subject<void>();
@@ -160,6 +163,15 @@ export class ProfileViewComponent implements OnInit {
     this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
       if (res === 200) {
         this.isLike = true;
+      } else if (res === 205) {
+        this.isLike = true;
+        let dialogRef = this.dialog.open(PopUpComponent, {
+          data: {
+            title: "Super !",
+            message: `${this.user?.userName} et vous avez matché !
+            Envoyez un petit message ;)`,
+          },
+        });
       } else if (res === 201) {
         this.isLike = false;
       }
@@ -170,15 +182,19 @@ export class ProfileViewComponent implements OnInit {
   }
 
   block() {
-    this.userService.blockUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
-      console.log(res);
-    });
+    this.userService
+      .blockUser(JSON.parse(localStorage.getItem("id")), this.user.id)
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
   report() {
-    this.userService.reportUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
-      console.log(res);
-    });
+    this.userService
+      .reportUser(JSON.parse(localStorage.getItem("id")), this.user.id)
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
   public getAge(birthDate: Date) {
