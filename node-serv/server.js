@@ -34,6 +34,7 @@ var userController = require("./controllers/user-controller");
 var likeController = require("./controllers/like-controller");
 var matchController = require("./controllers/match-controller");
 var messagingController = require("./controllers/messaging-controller");
+var dbController = require("./controllers/db-controller");
 
 async function calcScore() {
   users = connection.query("SELECT * FROM users", [], async function (error, results, fields) {
@@ -66,9 +67,7 @@ async function calcScore() {
                 [user.score, user.id],
                 function (error, results, fields) {
                   if (error) {
-                    console.log("error update score");
                   } else {
-                    console.log("update score");
                   }
                 }
               );
@@ -82,7 +81,7 @@ async function calcScore() {
   });
 }
 
-setInterval(calcScore, 3000 );
+setInterval(calcScore, 60000 );
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Gguyot and Plaurent NodeJS Mysql server." });
@@ -126,6 +125,9 @@ app.post("/api/seeMsgNotif", messagingController.seeMsgNotif);
 
 app.post("/api/reportUser", userController.reportUser);
 app.post("/api/blockUser", userController.blockUser);
+
+app.post("/api/install/db", dbController.installDb);
+app.post("/api/addSeed", dbController.addSeed);
 
 app.use("*", (req, res, next) => {
   return res.status(404).send();

@@ -44,7 +44,7 @@ exports.updateProfil = (req,res) => {
 
 exports.uploadPicture = (req,res) => {
     if (req.body.picture && req.body.email) {
-        connection.query(`UPDATE users SET ${req.body.picture.id} = ? WHERE email = ?`,[req.body.picture.url, req.body.email], function (error, results, fields) {
+        connection.query(`UPDATE users SET ${req.body.picture.id} = ? WHERE email != ? && gender = 1 && birthDate >= "1970-01-01"`,[req.body.picture.url, req.body.email], function (error, results, fields) {
             console.log(req.body);
             if (error) {
                 res.json({

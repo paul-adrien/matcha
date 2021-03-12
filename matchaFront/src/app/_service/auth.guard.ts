@@ -4,6 +4,8 @@ import { Observable } from "rxjs";
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 
 import { AuthService } from "./auth_service";
+import { userService } from './user_service';
+import { getMultipleValuesInSingleSelectionError } from '@angular/cdk/collections';
 
 const httpOptions = {
   headers: new HttpHeaders({ "Content-Type": "application/json" }),
@@ -14,7 +16,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
     private authenticationService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: userService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -33,7 +36,7 @@ export class AuthGuard implements CanActivate {
       .toPromise()
       .then(
         data => {
-          console.log("iciciicicci");
+          console.log("iciciicicci" + data.status);
           if (data.status) {
             console.log(route, state);
             //this.router.navigate(["home/discover"]);
