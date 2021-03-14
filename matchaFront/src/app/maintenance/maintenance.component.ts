@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../_service/auth_service';
 
 @Component({
   selector: 'app-maintenance',
@@ -9,9 +10,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MaintenanceComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    localStorage.clear();
   }
 
 }
