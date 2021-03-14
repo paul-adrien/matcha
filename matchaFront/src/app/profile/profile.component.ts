@@ -390,6 +390,8 @@ export class ProfileComponent implements OnInit {
   public date = new Date();
 
   public user: User = undefined;
+  public yourTags: Tags[] = [];
+
   public userForm = new FormGroup({
     userName: new FormControl("", ValidatorUserNameLength),
     firstName: new FormControl("", ValidatorLength),
@@ -489,15 +491,7 @@ export class ProfileComponent implements OnInit {
           email: res.email,
           pictures: res.pictures,
         });
-        console.log(
-          tagsRes.map(
-            tag =>
-              new FormGroup({
-                id: new FormControl(tag.id),
-                name: new FormControl(tag.name),
-              })
-          )
-        );
+        this.yourTags = tagsRes;
         tagsRes.forEach(tag => {
           (this.userForm.get("tags") as FormArray).push(
             new FormGroup({
@@ -546,8 +540,7 @@ export class ProfileComponent implements OnInit {
                 result.address_components[3].long_name;
             });
           },
-          error => {},
-          { timeout: 5000 }
+          error => {}
         );
       }
     }
@@ -566,7 +559,8 @@ export class ProfileComponent implements OnInit {
         this.user?.bio !== tmpUser?.bio ||
         this.user?.gender !== tmpUser?.gender ||
         this.user?.showMe !== tmpUser?.showMe ||
-        JSON.stringify(this.user?.pictures) !== JSON.stringify(tmpUser?.pictures))
+        JSON.stringify(this.user?.pictures) !== JSON.stringify(tmpUser?.pictures) ||
+        JSON.stringify(this.yourTags) !== JSON.stringify(tmpUser?.tags))
     ) {
       let dialogRef = this.dialog.open(PopUpComponent, {
         data: {
@@ -575,16 +569,24 @@ export class ProfileComponent implements OnInit {
           two: true,
         },
       });
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) {
-          this.onSubmit();
+      dialogRef.afterClosed().subscribe(
+        res => {
+          if (res === true) {
+            this.onSubmit();
+            this.updateMode = updateMode;
+            this.cd.detectChanges();
+          } else if (res === false) {
+            this.updateMode = updateMode;
+
+            this.cd.detectChanges();
+          }
+          this.updateMode = updateMode;
+          this.cd.detectChanges();
+        },
+        err => {
+          this.route.navigate(["/maintenance"]);
         }
-        this.updateMode = updateMode;
-        this.cd.detectChanges();
-      },
-      err => {
-        this.route.navigate(["/maintenance"]);
-      });
+      );
 
       console.log("diff");
     } else {
@@ -610,10 +612,12 @@ export class ProfileComponent implements OnInit {
     const form: User = this.userForm.getRawValue();
     forkJoin(
       form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
-    ).subscribe(el => console.log(el),
-    err => {
-      this.route.navigate(["/maintenance"]);
-    });
+    ).subscribe(
+      el => console.log(el),
+      err => {
+        this.route.navigate(["/maintenance"]);
+      }
+    );
     this.profilService.update(form, this.saveEmail, true).subscribe(
       data => {
         console.log(data);
@@ -732,7 +736,7 @@ export class ProfileComponent implements OnInit {
         console.log(data);
         if (data.status == true) {
           (this.userForm.get("tags") as FormArray).clear();
-          this.yourTags$.toPromise().then(el =>
+          this.yourTags$.toPromise().then(el => {
             el.forEach(tag => {
               (this.userForm.get("tags") as FormArray).push(
                 new FormGroup({
@@ -740,12 +744,14 @@ export class ProfileComponent implements OnInit {
                   name: new FormControl(tag.name),
                 })
               );
-            })
-          );
-          this.yourTags$.subscribe(el => console.log(el),
-          err => {
-            this.route.navigate(["/maintenance"]);
+            });
           });
+          this.yourTags$.subscribe(
+            el => console.log(el),
+            err => {
+              this.route.navigate(["/maintenance"]);
+            }
+          );
           this.userForm.updateValueAndValidity();
 
           this.cd.detectChanges();
@@ -765,7 +771,7 @@ export class ProfileComponent implements OnInit {
         console.log(data);
         if (data.status == true) {
           (this.userForm.get("tags") as FormArray).clear();
-          this.yourTags$.toPromise().then(el =>
+          this.yourTags$.toPromise().then(el => {
             el.forEach(tag => {
               (this.userForm.get("tags") as FormArray).push(
                 new FormGroup({
@@ -773,8 +779,9 @@ export class ProfileComponent implements OnInit {
                   name: new FormControl(tag.name),
                 })
               );
-            })
-          );
+            });
+            this.cd.detectChanges();
+          });
           this.userForm.updateValueAndValidity();
 
           this.cd.detectChanges();
@@ -795,7 +802,7 @@ export class ProfileComponent implements OnInit {
           console.log(data);
           if (data.status == true) {
             (this.userForm.get("tags") as FormArray).clear();
-            this.yourTags$.toPromise().then(el =>
+            this.yourTags$.toPromise().then(el => {
               el.forEach(tag => {
                 (this.userForm.get("tags") as FormArray).push(
                   new FormGroup({
@@ -803,12 +810,14 @@ export class ProfileComponent implements OnInit {
                     name: new FormControl(tag.name),
                   })
                 );
-              })
-            );
-            this.yourTags$.subscribe(el => console.log(el),
-            err => {
-              this.route.navigate(["/maintenance"]);
+              });
             });
+            this.yourTags$.subscribe(
+              el => console.log(el),
+              err => {
+                this.route.navigate(["/maintenance"]);
+              }
+            );
             this.userForm.updateValueAndValidity();
             this.cd.markForCheck();
           }
@@ -840,27 +849,31 @@ export class ProfileComponent implements OnInit {
         lon,
         this.localizationCase.value
       )
-      .subscribe(el => {
-        if (typeof el === "string") {
-          let dialogRef = this.dialog.open(PopUpComponent, {
-            data: {
-              title: "C'est bon !",
-              message:
-                "Votre position a bien été mis à jour. Vous allez être redirigé sur votre profil.",
-            },
-          });
-          dialogRef.afterClosed().subscribe(el => {
-            this.isSettings = false;
-            this.cd.detectChanges();
-          },
-          err => {
-            this.route.navigate(["/maintenance"]);
-          });
+      .subscribe(
+        el => {
+          if (typeof el === "string") {
+            let dialogRef = this.dialog.open(PopUpComponent, {
+              data: {
+                title: "C'est bon !",
+                message:
+                  "Votre position a bien été mis à jour. Vous allez être redirigé sur votre profil.",
+              },
+            });
+            dialogRef.afterClosed().subscribe(
+              el => {
+                this.isSettings = false;
+                this.cd.detectChanges();
+              },
+              err => {
+                this.route.navigate(["/maintenance"]);
+              }
+            );
+          }
+        },
+        err => {
+          this.route.navigate(["/maintenance"]);
         }
-      },
-      err => {
-        this.route.navigate(["/maintenance"]);
-      });
+      );
   }
 
   public getTheme() {

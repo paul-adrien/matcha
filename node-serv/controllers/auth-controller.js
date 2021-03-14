@@ -22,7 +22,13 @@ async function getUser(id) {
 }
 
 exports.register = (req, res) => {
-  if (req.body.userName && req.body.lastName && req.body.email && req.body.password && req.body.firstName) {
+  if (
+    req.body.userName &&
+    req.body.lastName &&
+    req.body.email &&
+    req.body.password &&
+    req.body.firstName
+  ) {
     connection.query(
       "SELECT * FROM users WHERE userName = ?",
       [req.body.userName],
@@ -92,7 +98,7 @@ exports.register = (req, res) => {
 
                                   var mailOptions = {
                                     from: "42.noreplymatcha@gmail.com",
-                                    to: "paul.adrien.76@gmail.com",
+                                    to: "gabin.guyot17@gmail.com",
                                     subject: "Please confirm your Email account",
                                     html:
                                       "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
@@ -134,8 +140,8 @@ exports.register = (req, res) => {
     );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };
@@ -192,8 +198,8 @@ exports.authenticate = (req, res) => {
     );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };
@@ -244,8 +250,8 @@ exports.verifyEmail = (req, res) => {
     );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };
@@ -254,70 +260,74 @@ exports.forgotPass_send = (req, res) => {
   var email = req.body.email;
 
   if (email) {
-    connection.query("SELECT * FROM users WHERE email = ?", email, function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "there are some error with query",
-        });
-      } else {
-        if (results.length > 0) {
-          var rand = Math.floor(Math.random() * 100 + 54);
-          var link = "http://localhost:8081/forgotPass/" + rand;
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: "42.noreplymatcha@gmail.com",
-              pass: "GguyotPlaurent76",
-            },
-          });
-
-          var mailOptions = {
-            from: "42.noreplymatcha@gmail.com",
-            to: "paul.adrien.76@gmail.com",
-            subject: "Please confirm your Email account",
-            html:
-              "Hello,<br> Please Click on the link to reset your password.<br><a href=" +
-              link +
-              ">Click here to verify</a>",
-          };
-
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Email sent: " + info.response);
-            }
-          });
-          connection.query(
-            "UPDATE users SET link = ? WHERE email = ?",
-            [rand, req.body.email],
-            function (error, results, fields) {
-              if (error) {
-                res.json({
-                  status: false,
-                  message: "there are some error with query update",
-                });
-              } else {
-                res.json({
-                  status: true,
-                  message: "successfully sending email",
-                });
-              }
-            }
-          );
-        } else {
+    connection.query(
+      "SELECT * FROM users WHERE email = ?",
+      email,
+      function (error, results, fields) {
+        if (error) {
           res.json({
             status: false,
-            message: "Username does not exits",
+            message: "there are some error with query",
           });
+        } else {
+          if (results.length > 0) {
+            var rand = Math.floor(Math.random() * 100 + 54);
+            var link = "http://localhost:8081/forgotPass/" + rand;
+            var transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: "42.noreplymatcha@gmail.com",
+                pass: "GguyotPlaurent76",
+              },
+            });
+
+            var mailOptions = {
+              from: "42.noreplymatcha@gmail.com",
+              to: "gabin.guyot17@gmail.com",
+              subject: "Please confirm your Email account",
+              html:
+                "Hello,<br> Please Click on the link to reset your password.<br><a href=" +
+                link +
+                ">Click here to verify</a>",
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            });
+            connection.query(
+              "UPDATE users SET link = ? WHERE email = ?",
+              [rand, req.body.email],
+              function (error, results, fields) {
+                if (error) {
+                  res.json({
+                    status: false,
+                    message: "there are some error with query update",
+                  });
+                } else {
+                  res.json({
+                    status: true,
+                    message: "successfully sending email",
+                  });
+                }
+              }
+            );
+          } else {
+            res.json({
+              status: false,
+              message: "Username does not exits",
+            });
+          }
         }
       }
-    });
+    );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };
@@ -340,7 +350,7 @@ exports.verifyEmail_send = async (req, res) => {
 
     var mailOptions = {
       from: "42.noreplymatcha@gmail.com",
-      to: "paul.adrien.76@gmail.com",
+      to: "gabin.guyot17@gmail.com",
       subject: "Please confirm your Email account",
       html:
         "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
@@ -384,55 +394,59 @@ exports.forgotPass_change = (req, res) => {
   var id = req.body.id;
 
   if (password && id) {
-    connection.query("SELECT * FROM users WHERE email = ?", email, function (error, results, fields) {
-      if (error) {
-        res.json({
-          status: false,
-          message: "there are some error with query",
-        });
-      } else {
-        if (results.length > 0) {
-          if (id == results[0]["link"]) {
-            bcrypt.genSalt(saltRounds, function (err, salt) {
-              bcrypt.hash(password, salt, function (err, hash) {
-                connection.query(
-                  "UPDATE users SET password = ? WHERE email = ?",
-                  [hash, email],
-                  function (error, results, fields) {
-                    if (error) {
-                      res.json({
-                        status: false,
-                        message: "there are some error with query update password",
-                      });
-                    } else {
-                      res.json({
-                        status: true,
-                        data: results,
-                        message: "Password was changed",
-                      });
+    connection.query(
+      "SELECT * FROM users WHERE email = ?",
+      email,
+      function (error, results, fields) {
+        if (error) {
+          res.json({
+            status: false,
+            message: "there are some error with query",
+          });
+        } else {
+          if (results.length > 0) {
+            if (id == results[0]["link"]) {
+              bcrypt.genSalt(saltRounds, function (err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
+                  connection.query(
+                    "UPDATE users SET password = ? WHERE email = ?",
+                    [hash, email],
+                    function (error, results, fields) {
+                      if (error) {
+                        res.json({
+                          status: false,
+                          message: "there are some error with query update password",
+                        });
+                      } else {
+                        res.json({
+                          status: true,
+                          data: results,
+                          message: "Password was changed",
+                        });
+                      }
                     }
-                  }
-                );
+                  );
+                });
               });
-            });
+            } else {
+              res.json({
+                status: false,
+                message: "wrong email",
+              });
+            }
           } else {
             res.json({
               status: false,
-              message: "wrong email",
+              message: "Email does not exits",
             });
           }
-        } else {
-          res.json({
-            status: false,
-            message: "Email does not exits",
-          });
         }
       }
-    });
+    );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };

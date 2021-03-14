@@ -138,18 +138,20 @@ export class ProfileViewComponent implements OnInit {
     combineLatest([
       this.userService.getUser(this.userId),
       this.userService.likeOrNot(JSON.parse(localStorage.getItem("id")), this.userId),
-    ]).subscribe(([user, like]) => {
-      this.user = user;
-      if (like === 200) {
-        this.isLike = true;
-      } else {
-        this.isLike = false;
+    ]).subscribe(
+      ([user, like]) => {
+        this.user = user;
+        if (like === 200) {
+          this.isLike = true;
+        } else {
+          this.isLike = false;
+        }
+        this.cd.detectChanges();
+      },
+      err => {
+        this.router.navigate(["/maintenance"]);
       }
-      this.cd.detectChanges();
-    },
-    err => {
-      this.router.navigate(["/maintenance"]);
-    });
+    );
 
     this.yourTags$ = this.userService.getYourTags(this.userId).pipe(
       map(tags => tags),
@@ -161,57 +163,61 @@ export class ProfileViewComponent implements OnInit {
       takeUntil(this.unsubscribe)
     );
 
-    this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe(err => {
+    this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe(
+      () => {},
+      err => {
         this.router.navigate(["/maintenance"]);
-      });
+      }
+    );
   }
 
   like() {
-    this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(res => {
-      if (res === 200) {
-        this.isLike = true;
-      } else if (res === 205) {
-        this.isLike = true;
-        let dialogRef = this.dialog.open(PopUpComponent, {
-          data: {
-            title: "Super !",
-            message: `${this.user?.userName} et vous avez matché !
+    this.userService.like(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(
+      res => {
+        if (res === 200) {
+          this.isLike = true;
+        } else if (res === 205) {
+          this.isLike = true;
+          let dialogRef = this.dialog.open(PopUpComponent, {
+            data: {
+              title: "Super !",
+              message: `${this.user?.userName} et vous avez matché !
             Envoyez un petit message ;)`,
-          },
-        });
-      } else if (res === 201) {
-        this.isLike = false;
+            },
+          });
+        } else if (res === 201) {
+          this.isLike = false;
+        }
+        console.log(res);
+        console.log(this.isLike ? "like" : "dislike");
+        this.cd.detectChanges();
+      },
+      err => {
+        this.router.navigate(["/maintenance"]);
       }
-      console.log(res);
-      console.log(this.isLike ? "like" : "dislike");
-      this.cd.detectChanges();
-    },
-    err => {
-      this.router.navigate(["/maintenance"]);
-    }
     );
   }
 
   block() {
-    this.userService
-      .blockUser(JSON.parse(localStorage.getItem("id")), this.user.id)
-      .subscribe(res => {
+    this.userService.blockUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(
+      res => {
         console.log(res);
       },
       err => {
         this.router.navigate(["/maintenance"]);
-      });
+      }
+    );
   }
 
   report() {
-    this.userService
-      .reportUser(JSON.parse(localStorage.getItem("id")), this.user.id)
-      .subscribe(res => {
+    this.userService.reportUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(
+      res => {
         console.log(res);
       },
       err => {
         this.router.navigate(["/maintenance"]);
-      });
+      }
+    );
   }
 
   public getAge(birthDate: Date) {

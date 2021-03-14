@@ -16,7 +16,8 @@ import {
 import { userService } from "../_service/user_service";
 import { Subject, Observable, timer, combineLatest } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-tags",
@@ -53,6 +54,7 @@ import { Router } from '@angular/router';
         type="text"
         pattern="#[a-zA-ZÀ-ÿ0-9]"
         placeholder="#..."
+        maxlength="20"
         (keyup.enter)="this.addNewTag()"
       />
     </form>
@@ -61,7 +63,7 @@ import { Router } from '@angular/router';
         <span>{{ yTag.name }}</span>
         <img
           *ngIf="!this.showMode && this.yourTags.length > 1"
-          src="./assets/x.svg"
+          src="./assets/x-black.svg"
           (click)="this.deleteTag(yTag)"
         />
       </div>
@@ -78,7 +80,12 @@ export class TagsComponent implements OnDestroy {
 
   private unsubscribe = new Subject<void>();
 
-  constructor(private userService: userService, private cd: ChangeDetectorRef, private route: Router) {}
+  constructor(
+    private userService: userService,
+    private cd: ChangeDetectorRef,
+    public route: ActivatedRoute,
+    public router: Router
+  ) {}
 
   public form: Partial<Tags> = { id: "default" };
 
@@ -90,21 +97,27 @@ export class TagsComponent implements OnDestroy {
 
   public allTags$: Tags[] = [];
 
+  public userId: string = JSON.parse(localStorage.getItem("id"));
+
   ngOnInit(): void {
-    console.log("wes");
+    if (this.route.snapshot.params?.id) {
+      this.userId = this.route.snapshot.params?.id;
+    }
     combineLatest([
       this.userService.getAllTags(),
-      this.userService.getYourTags(JSON.parse(localStorage.getItem("id"))),
-    ]).subscribe(([allTags, yourTags]) => {
-      if (Array.isArray(allTags) && Array.isArray(yourTags)) {
-        this.allTags = allTags;
-        this.yourTags = yourTags;
+      this.userService.getYourTags(this.userId),
+    ]).subscribe(
+      ([allTags, yourTags]) => {
+        if (Array.isArray(allTags) && Array.isArray(yourTags)) {
+          this.allTags = allTags;
+          this.yourTags = yourTags;
+        }
+        this.cd.detectChanges();
+      },
+      err => {
+        this.router.navigate(["/maintenance"]);
       }
-      this.cd.detectChanges();
-    },
-    err => {
-      this.route.navigate(["/maintenance"]);
-    });
+    );
   }
 
   addExistTag() {

@@ -24,14 +24,13 @@ exports.getAllTags = (req, res) => {
 };
 
 exports.getYourTags = (req, res) => {
-  resultat = [];
+  let resultat = [];
 
-  if (req.params.id)
-    getAllTags();
+  if (req.params.id) getAllTags();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -108,13 +107,11 @@ exports.getYourTags = (req, res) => {
 };
 
 exports.addExistTag = (req, res) => {
-  
-  if (req.body.user_id && req.body.tag_id)
-    addTags();
+  if (req.body.user_id && req.body.tag_id) addTags();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -169,12 +166,11 @@ exports.addExistTag = (req, res) => {
 exports.addNonExistTag = (req, res) => {
   resultat = [];
 
-  if (req.body.id && req.body.name)
-    getAllTags();
+  if (req.body.id && req.body.name) getAllTags();
   else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 
@@ -327,8 +323,8 @@ exports.deleteTag = (req, res) => {
     );
   } else {
     res.json({
-      status:false,
-      message:'wrong data input'
+      status: false,
+      message: "wrong data input",
     });
   }
 };
