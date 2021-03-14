@@ -31,7 +31,9 @@ export class ForgotPassChangeComponent implements OnInit {
           console.log(data);
         }
       },
-      err => {}
+      err => {
+        this.router.navigate(["/maintenance"]);
+      }
     );
   }
 }

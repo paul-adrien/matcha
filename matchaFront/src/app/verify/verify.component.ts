@@ -27,7 +27,9 @@ export class VerifyComponent implements OnInit {
         console.log(data);
         this.router.navigate(["login"]);
       },
-      err => {}
+      err => {
+        this.router.navigate(["/maintenance"]);
+      }
     );
   }
 }

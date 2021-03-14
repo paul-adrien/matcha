@@ -25,21 +25,22 @@ exports.verifyToken = async (req,res) => {
     if (token !== undefined && id !== undefined && await getUser(id) != null) {
         jwt.verify(token, config.secret, (err, decoded) => {
             if (err) {
-            res.json({
+                res.json({
                     status:false,
                     message: "Unauthorized!"
-            });
-            }
-            if (decoded['id'] === id) {
-                res.json({
-                    status:true,
-                    message:'successfully validating token'
-                })
+                });
             } else {
-                res.json({
-                    status:false,
-                    message:'wrong token'
-                })
+                if (decoded !== undefined && decoded['id'] === id) {
+                    res.json({
+                        status:true,
+                        message:'successfully validating token'
+                    })
+                } else {
+                    res.json({
+                        status:false,
+                        message:'wrong token'
+                    })
+                }
             }
         });
     } else {

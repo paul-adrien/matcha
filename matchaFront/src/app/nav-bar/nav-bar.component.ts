@@ -112,7 +112,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       },
       err => {
-        console.log(err);
+        this.router.navigate(["/maintenance"]);
       }
     );
     this.notifInter = setInterval(x => {
@@ -124,7 +124,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
         },
         err => {
-          console.log(err);
+          this.router.navigate(["/maintenance"]);
         }
       );
     }, 10000);
@@ -155,7 +155,9 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
     let modal_t = document.getElementById("modal_1");
     modal_t.classList.remove("hhidden");
     modal_t.classList.add("sshow");
-    this.userService.seeNotifs(JSON.parse(localStorage.getItem("id"))).subscribe();
+    this.userService.seeNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(err => {
+        this.router.navigate(["/maintenance"]);
+      });
     this.userService.getNotifs(JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
         console.log(data);
@@ -164,7 +166,7 @@ export class NavigationBarComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       },
       err => {
-        console.log(err);
+        this.router.navigate(["/maintenance"]);
       }
     );
     this.nbUnViewNotif = 0;

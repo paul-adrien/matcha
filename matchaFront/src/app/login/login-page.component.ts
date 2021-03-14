@@ -266,7 +266,6 @@ export class LoginPageComponent implements OnInit {
       const form: Partial<User> = this.registerForm.getRawValue();
       this.authService.register(form).subscribe(
         data => {
-          console.log(data);
           if (data.status === true) {
             localStorage.clear();
             localStorage.setItem("id", JSON.stringify(data.user["id"]));
@@ -285,7 +284,6 @@ export class LoginPageComponent implements OnInit {
       const form: Partial<User> = this.loginForm.getRawValue();
       this.authService.login(form).subscribe(
         data => {
-          console.log(data);
           if (data.status === true) {
             this.isLoginFailed = false;
             localStorage.clear();

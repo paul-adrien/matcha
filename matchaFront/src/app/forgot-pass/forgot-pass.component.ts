@@ -28,7 +28,9 @@ export class ForgotPassComponent implements OnInit {
           console.log(data);
         }
       },
-      err => {}
+      err => {
+        this.router.navigate(["/maintenance"]);
+      }
     );
   }
 }

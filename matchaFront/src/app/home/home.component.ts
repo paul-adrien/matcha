@@ -46,6 +46,9 @@ export class HomeComponent implements OnInit {
     this.userService.getUser(localStorage.getItem("id")).subscribe(res => {
       this.user = res;
       this.cd.detectChanges();
+    },
+    err => {
+      this.route.navigate(["/maintenance"]);
     });
     if (this.route.url.includes("profile") && !this.route.url.includes("profile-")) {
       this.idNavBar = "profile";
@@ -60,6 +63,8 @@ export class HomeComponent implements OnInit {
   }
 
   public resendMail() {
-    this.authService.resendVerify(this.user.id).subscribe();
+    this.authService.resendVerify(this.user.id).subscribe(err => {
+        this.route.navigate(["/maintenance"]);
+      });
   }
 }

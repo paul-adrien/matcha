@@ -133,7 +133,10 @@ export class DiscoverComponent implements OnInit {
             long = position.coords.longitude;
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
-              .subscribe(el => console.log());
+              .subscribe(el => console.log(),
+              err => {
+                this.router.navigate(["/maintenance"]);
+              });
           },
           error => {
             switch (error.code) {
@@ -149,7 +152,10 @@ export class DiscoverComponent implements OnInit {
             }
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
-              .subscribe(el => console.log());
+              .subscribe(el => console.log(),
+              err => {
+                this.router.navigate(["/maintenance"]);
+              });
           },
           { timeout: 5000 }
         );

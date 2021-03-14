@@ -581,6 +581,9 @@ export class ProfileComponent implements OnInit {
         }
         this.updateMode = updateMode;
         this.cd.detectChanges();
+      },
+      err => {
+        this.route.navigate(["/maintenance"]);
       });
 
       console.log("diff");
@@ -607,7 +610,10 @@ export class ProfileComponent implements OnInit {
     const form: User = this.userForm.getRawValue();
     forkJoin(
       form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
-    ).subscribe(el => console.log(el));
+    ).subscribe(el => console.log(el),
+    err => {
+      this.route.navigate(["/maintenance"]);
+    });
     this.profilService.update(form, this.saveEmail, true).subscribe(
       data => {
         console.log(data);
@@ -627,7 +633,9 @@ export class ProfileComponent implements OnInit {
           });
         }
       },
-      err => {}
+      err => {
+        this.route.navigate(["/maintenance"]);
+      }
     );
   }
 
@@ -734,7 +742,10 @@ export class ProfileComponent implements OnInit {
               );
             })
           );
-          this.yourTags$.subscribe(el => console.log(el));
+          this.yourTags$.subscribe(el => console.log(el),
+          err => {
+            this.route.navigate(["/maintenance"]);
+          });
           this.userForm.updateValueAndValidity();
 
           this.cd.detectChanges();
@@ -794,7 +805,10 @@ export class ProfileComponent implements OnInit {
                 );
               })
             );
-            this.yourTags$.subscribe(el => console.log(el));
+            this.yourTags$.subscribe(el => console.log(el),
+            err => {
+              this.route.navigate(["/maintenance"]);
+            });
             this.userForm.updateValueAndValidity();
             this.cd.markForCheck();
           }
@@ -838,8 +852,14 @@ export class ProfileComponent implements OnInit {
           dialogRef.afterClosed().subscribe(el => {
             this.isSettings = false;
             this.cd.detectChanges();
+          },
+          err => {
+            this.route.navigate(["/maintenance"]);
           });
         }
+      },
+      err => {
+        this.route.navigate(["/maintenance"]);
       });
   }
 

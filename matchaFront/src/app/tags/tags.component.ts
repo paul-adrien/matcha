@@ -16,6 +16,7 @@ import {
 import { userService } from "../_service/user_service";
 import { Subject, Observable, timer, combineLatest } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
+import { Router } from '@angular/router';
 
 @Component({
   selector: "app-tags",
@@ -77,7 +78,7 @@ export class TagsComponent implements OnDestroy {
 
   private unsubscribe = new Subject<void>();
 
-  constructor(private userService: userService, private cd: ChangeDetectorRef) {}
+  constructor(private userService: userService, private cd: ChangeDetectorRef, private route: Router) {}
 
   public form: Partial<Tags> = { id: "default" };
 
@@ -100,6 +101,9 @@ export class TagsComponent implements OnDestroy {
         this.yourTags = yourTags;
       }
       this.cd.detectChanges();
+    },
+    err => {
+      this.route.navigate(["/maintenance"]);
     });
   }
 

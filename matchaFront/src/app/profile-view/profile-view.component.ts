@@ -102,7 +102,8 @@ export class ProfileViewComponent implements OnInit {
     private location: Location,
     private userService: userService,
     private cd: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   private unsubscribe = new Subject<void>();
@@ -145,6 +146,9 @@ export class ProfileViewComponent implements OnInit {
         this.isLike = false;
       }
       this.cd.detectChanges();
+    },
+    err => {
+      this.router.navigate(["/maintenance"]);
     });
 
     this.yourTags$ = this.userService.getYourTags(this.userId).pipe(
@@ -157,7 +161,9 @@ export class ProfileViewComponent implements OnInit {
       takeUntil(this.unsubscribe)
     );
 
-    this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe();
+    this.userService.viewedProfil(JSON.parse(localStorage.getItem("id")), this.userId).subscribe(err => {
+        this.router.navigate(["/maintenance"]);
+      });
   }
 
   like() {
@@ -179,7 +185,11 @@ export class ProfileViewComponent implements OnInit {
       console.log(res);
       console.log(this.isLike ? "like" : "dislike");
       this.cd.detectChanges();
-    });
+    },
+    err => {
+      this.router.navigate(["/maintenance"]);
+    }
+    );
   }
 
   block() {
@@ -187,6 +197,9 @@ export class ProfileViewComponent implements OnInit {
       .blockUser(JSON.parse(localStorage.getItem("id")), this.user.id)
       .subscribe(res => {
         console.log(res);
+      },
+      err => {
+        this.router.navigate(["/maintenance"]);
       });
   }
 
@@ -195,6 +208,9 @@ export class ProfileViewComponent implements OnInit {
       .reportUser(JSON.parse(localStorage.getItem("id")), this.user.id)
       .subscribe(res => {
         console.log(res);
+      },
+      err => {
+        this.router.navigate(["/maintenance"]);
       });
   }
 
