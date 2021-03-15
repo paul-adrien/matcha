@@ -53,15 +53,23 @@
     font-family: Montserrat-semi-bold;
     position: relative;
     max-width: 40rem;
+  }
 
-    .last-connection {
-      position: absolute;
-      right: 1rem;
-      width: 6rem;
+  .info-city-connection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 40rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
+
+    .last-connection, .city {
+      margin-top: 1rem;
+
       font-family: 'Montserrat';
-      text-align: center;
     font-size: 0.9rem;
     }
+
   }
 
   .big-profile-picture {

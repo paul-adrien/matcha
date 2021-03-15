@@ -47,6 +47,7 @@ import { map, switchMap } from "rxjs/operators";
       >
         <div class="content-filter" *ngIf="usersSuggestions?.length > 0">
           <app-interactive-map
+            *ngIf="this.showMap || !(this.user$ | async)?.currentPosition"
             [users]="this.usersSuggestions"
             [me]="this.user$ | async"
           ></app-interactive-map>
@@ -63,6 +64,7 @@ import { map, switchMap } from "rxjs/operators";
         <div *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters; else loading">
           <div class="content-filter" *ngIf="usersFilters?.length > 0">
             <app-interactive-map
+              *ngIf="this.showMap || !(this.user$ | async)?.currentPosition"
               [users]="this.usersFilters"
               [me]="this.user$ | async"
             ></app-interactive-map>
@@ -102,6 +104,8 @@ export class DiscoverComponent implements OnInit {
 
   public isShowFilter = false;
 
+  public showMap = false;
+
   constructor(
     private profilService: profilService,
     private matchService: matchService,
@@ -138,7 +142,10 @@ export class DiscoverComponent implements OnInit {
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
               .subscribe(
-                el => console.log(),
+                el => {
+                  console.log(el);
+                  this.showMap = true;
+                },
                 err => {
                   this.router.navigate(["/maintenance"]);
                 }
@@ -147,9 +154,11 @@ export class DiscoverComponent implements OnInit {
           error => {
             switch (error.code) {
               case error.PERMISSION_DENIED:
+                this.showMap = false;
                 console.log("User denied the request for Geolocation.");
                 break;
               case error.POSITION_UNAVAILABLE:
+                this.showMap = false;
                 console.log("Location information is unavailable.");
                 break;
               case error.TIMEOUT:

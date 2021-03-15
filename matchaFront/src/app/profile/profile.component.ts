@@ -134,6 +134,10 @@ function validatePictures(arr: FormArray) {
           (click)="this.primaryPictureId = this.primaryPictureId + 1"
           src="./assets/chevron-right.svg"
         />
+        <div class="primary-button score">
+          {{ this.user?.score }}
+          <img src="./assets/star.svg" />
+        </div>
       </div>
       <div *ngIf="!this.updateMode" class="content-name">
         <span
@@ -540,7 +544,9 @@ export class ProfileComponent implements OnInit {
                 result.address_components[3].long_name;
             });
           },
-          error => {}
+          error => {
+            console.log(error);
+          }
         );
       }
     }

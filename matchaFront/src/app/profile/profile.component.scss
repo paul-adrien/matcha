@@ -153,6 +153,24 @@
       object-fit: contain;
       border-radius: 1rem;
     }
+
+    .primary-button {
+      width: fit-content;
+      height: 2.5rem;
+      width: auto;
+      position: absolute;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      bottom: 0;
+      align-items: center;
+
+      &.score {
+        left: 1rem;
+        width: 4.5rem;
+        cursor: default;
+      }
+    }
   }
   .input-file {
     display: none;

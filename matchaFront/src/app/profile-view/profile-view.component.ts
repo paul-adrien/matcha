@@ -15,6 +15,8 @@ import { Location } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpComponent } from "../pop-up/pop-up.component";
 
+declare var google: any;
+
 @Component({
   selector: "app-profile-view",
   template: `
@@ -65,7 +67,10 @@ import { PopUpComponent } from "../pop-up/pop-up.component";
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
+    </div>
+    <div class="info-city-connection">
       <span class="last-connection">{{ this.getLastConnectionText() }}</span>
+      <div class="city">{{ this.city }}</div>
     </div>
     <div class="form-container">
       <div class="info-container">
@@ -94,6 +99,8 @@ export class ProfileViewComponent implements OnInit {
   public user: User;
 
   public primaryPictureId: number = 0;
+
+  public city = "";
 
   public isOpenDropdown = false;
 
@@ -146,6 +153,7 @@ export class ProfileViewComponent implements OnInit {
         } else {
           this.isLike = false;
         }
+        this.getCity();
         this.cd.detectChanges();
       },
       err => {
@@ -236,6 +244,31 @@ export class ProfileViewComponent implements OnInit {
       );
     } else {
       return "En ligne il y a plus de 24 heures";
+    }
+  }
+
+  public getCity() {
+    let result;
+    if (this.user?.latitude && this.user?.longitude) {
+      let geocoder = new google.maps.Geocoder();
+
+      var geolocate = new google.maps.LatLng(
+        parseFloat(this.user?.latitude),
+        parseFloat(this.user?.longitude)
+      );
+
+      geocoder.geocode({ latLng: geolocate }, (results, status) => {
+        if (status == google.maps.GeocoderStatus.OK) {
+          if (results.length > 1) {
+            result = results[1];
+          } else {
+            result = results[0];
+          }
+          console.log(result);
+          this.city = result?.formatted_address;
+          this.cd.detectChanges();
+        }
+      });
     }
   }
 
