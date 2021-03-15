@@ -325,7 +325,7 @@ exports.updatePosition = async (req, res) => {
 
             connection.query(
               "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
-              [lat, long, "0", id],
+              [lat, long, currentPosition, id],
               function (error, results, fields) {
                 if (error) {
                   res.json({

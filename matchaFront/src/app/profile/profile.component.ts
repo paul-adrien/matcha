@@ -274,7 +274,7 @@ function validatePictures(arr: FormArray) {
           <select *ngIf="this.updateMode" formControlName="gender">
             <option id="Homme" name="Homme" value="1">Homme</option>
             <option id="Femme" name="Femme" value="2">Femme</option>
-            <option id="Kamoulox" name="Kamoulox" value="3">Kamoulox</option>
+            <option id="Kamoulox" name="Kamoulox" value="3">autre</option>
           </select>
           <div class="error" *ngIf="this.userForm.get('gender').errors?.error">
             {{ this.userForm.get("gender").errors.error }}
@@ -285,7 +285,7 @@ function validatePictures(arr: FormArray) {
           <select formControlName="showMe">
             <option id="Homme" name="Homme" value="1">des hommes</option>
             <option id="Femme" name="Femme" value="2">des femmes</option>
-            <option id="Kamoulox" name="Kamoulox" value="3">les deux</option>
+            <option id="Kamoulox" name="Kamoulox" value="3">peu importe</option>
           </select>
           <div class="error" *ngIf="this.userForm.get('showMe').errors?.error">
             {{ this.userForm.get("showMe").errors.error }}
@@ -377,13 +377,13 @@ export class ProfileComponent implements OnInit {
   public genderOptions: { [key_id: string]: string } = {
     "1": "un Homme",
     "2": "une Femme",
-    "3": "Kamoulox",
+    "3": "autre",
   };
 
   public showOptions: { [key_id: string]: string } = {
     "1": "des Hommes",
     "2": "des Femmes",
-    "3": "les deux",
+    "3": "peu importe",
   };
 
   public primaryPictureId = 0;
@@ -811,6 +811,7 @@ export class ProfileComponent implements OnInit {
                   })
                 );
               });
+              this.cd.detectChanges();
             });
             this.yourTags$.subscribe(
               el => console.log(el),
@@ -819,7 +820,7 @@ export class ProfileComponent implements OnInit {
               }
             );
             this.userForm.updateValueAndValidity();
-            this.cd.markForCheck();
+            this.cd.detectChanges();
           }
         });
       },

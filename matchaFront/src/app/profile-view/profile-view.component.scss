@@ -51,6 +51,17 @@
     align-items: center;
     width: 100%;
     font-family: Montserrat-semi-bold;
+    position: relative;
+    max-width: 40rem;
+
+    .last-connection {
+      position: absolute;
+      right: 1rem;
+      width: 6rem;
+      font-family: 'Montserrat';
+      text-align: center;
+    font-size: 0.9rem;
+    }
   }
 
   .big-profile-picture {

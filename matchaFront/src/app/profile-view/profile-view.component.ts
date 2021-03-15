@@ -65,7 +65,7 @@ import { PopUpComponent } from "../pop-up/pop-up.component";
     <div class="content-name">
       <span>{{ this.user?.userName }} {{ this.getAge(this.user?.birthDate) }} ans</span>
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
-      <span>{{ this.getLastConnectionText() }}</span>
+      <span class="last-connection">{{ this.getLastConnectionText() }}</span>
     </div>
     <div class="form-container">
       <div class="info-container">
@@ -228,10 +228,12 @@ export class ProfileViewComponent implements OnInit {
     let lastConnection = this.user?.lastConnection;
     if (differenceInMinutes(new Date(), new Date(lastConnection)) < 60) {
       return (
-        "En ligne il y a" + differenceInMinutes(new Date(), new Date(lastConnection)) + "minutes"
+        "En ligne il y a " + differenceInMinutes(new Date(), new Date(lastConnection)) + " minutes"
       );
     } else if (differenceInHours(new Date(), new Date(lastConnection)) < 24) {
-      return "En ligne il y a" + differenceInHours(new Date(), new Date(lastConnection)) + "heures";
+      return (
+        "En ligne il y a " + differenceInHours(new Date(), new Date(lastConnection)) + " heures"
+      );
     } else {
       return "En ligne il y a plus de 24 heures";
     }

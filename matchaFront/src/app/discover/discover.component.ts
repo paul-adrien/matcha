@@ -80,7 +80,11 @@ import { map, switchMap } from "rxjs/operators";
         <mat-spinner class="spinner"></mat-spinner>
       </ng-template>
     </div>
-    <ng-template #error><span> Complètes ton profil bg </span> </ng-template>
+    <ng-template #error
+      ><span class="error-profile">
+        Complètez votre profil pour commencer à rencontrer des gens.</span
+      >
+    </ng-template>
   `,
   styleUrls: ["./discover.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -133,10 +137,12 @@ export class DiscoverComponent implements OnInit {
             long = position.coords.longitude;
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
-              .subscribe(el => console.log(),
-              err => {
-                this.router.navigate(["/maintenance"]);
-              });
+              .subscribe(
+                el => console.log(),
+                err => {
+                  this.router.navigate(["/maintenance"]);
+                }
+              );
           },
           error => {
             switch (error.code) {
@@ -152,10 +158,12 @@ export class DiscoverComponent implements OnInit {
             }
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
-              .subscribe(el => console.log(),
-              err => {
-                this.router.navigate(["/maintenance"]);
-              });
+              .subscribe(
+                el => console.log(),
+                err => {
+                  this.router.navigate(["/maintenance"]);
+                }
+              );
           },
           { timeout: 5000 }
         );
