@@ -750,6 +750,9 @@ export class ProfileComponent implements OnInit {
       tmpArray[this.pictureId].url = imgResultAfterCompress;
       tmpArray = tmpArray.sort((a, b) => {
         if (a.url === "" || a.url === null) {
+          const tmp = b.id;
+          b.id = a.id;
+          a.id = tmp;
           return 1;
         } else if (b.url === "" || b.url === null) {
           const tmp = b.id;
