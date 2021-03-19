@@ -69,6 +69,7 @@ declare var google: any;
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
     </div>
     <div class="info-city-connection">
+      <span class="last-connection">{{ this.isLikeMe ? "Vous like" : "Ne vous like pas" }}</span>
       <span class="last-connection">{{ this.getLastConnectionText() }}</span>
       <div class="city">{{ this.city }}</div>
     </div>
@@ -128,6 +129,7 @@ export class ProfileViewComponent implements OnInit {
   };
 
   public isLike: boolean;
+  public isLikeMe: boolean;
 
   public userId: string = this.route.snapshot.params.id;
 
@@ -145,13 +147,19 @@ export class ProfileViewComponent implements OnInit {
     combineLatest([
       this.userService.getUser(this.userId),
       this.userService.likeOrNot(JSON.parse(localStorage.getItem("id")), this.userId),
+      this.userService.likeOrNot(this.userId, JSON.parse(localStorage.getItem("id"))),
     ]).subscribe(
-      ([user, like]) => {
+      ([user, like, likeMe]) => {
         this.user = user;
         if (like === 200) {
           this.isLike = true;
         } else {
           this.isLike = false;
+        }
+        if (likeMe === 200) {
+          this.isLikeMe = true;
+        } else {
+          this.isLikeMe = false;
         }
         this.getCity();
         this.cd.detectChanges();

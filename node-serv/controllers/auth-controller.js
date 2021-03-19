@@ -98,7 +98,7 @@ exports.register = (req, res) => {
 
                                   var mailOptions = {
                                     from: "42.noreplymatcha@gmail.com",
-                                    to: "gabin.guyot17@gmail.com",
+                                    to: "paul.adrien.76@gmail.com",
                                     subject: "Please confirm your Email account",
                                     html:
                                       "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
@@ -283,7 +283,7 @@ exports.forgotPass_send = (req, res) => {
 
             var mailOptions = {
               from: "42.noreplymatcha@gmail.com",
-              to: "gabin.guyot17@gmail.com",
+              to: "paul.adrien.76@gmail.com",
               subject: "Please confirm your Email account",
               html:
                 "Hello,<br> Please Click on the link to reset your password.<br><a href=" +
@@ -350,7 +350,7 @@ exports.verifyEmail_send = async (req, res) => {
 
     var mailOptions = {
       from: "42.noreplymatcha@gmail.com",
-      to: "gabin.guyot17@gmail.com",
+      to: "paul.adrien.76@gmail.com",
       subject: "Please confirm your Email account",
       html:
         "Hello,<br> Please Click on the link to verify your email.<br><a href=" +

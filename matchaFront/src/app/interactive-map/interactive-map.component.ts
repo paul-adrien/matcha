@@ -108,7 +108,7 @@ export class InteractiveMapComponent implements OnChanges, AfterViewInit {
             this.users[i].lastName +
             " " +
             this.users[i].firstName +
-            "</a>",
+            "</a>"
         });
         marker.addListener("click", () => {
           let infoWindow = new google.maps.InfoWindow({
