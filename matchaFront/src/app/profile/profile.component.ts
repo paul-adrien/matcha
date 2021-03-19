@@ -348,6 +348,7 @@ function validatePictures(arr: FormArray) {
             #loca
             placeholder="Localisation"
           />
+          <div class="error" *ngIf="this.errorLoca">Veuillez entrer une ville existante.</div>
         </div>
         <div class="primary-button" (click)="this.saveLocalization()">Enregistrer</div>
         <div class="info-container">
@@ -446,6 +447,7 @@ export class ProfileComponent implements OnInit {
   public pictureId = "";
 
   public isSettings = false;
+  public errorLoca = false;
 
   public lat: number;
   public long: number;
@@ -680,7 +682,37 @@ export class ProfileComponent implements OnInit {
 
   public fileChangeEvent(event: any, pictureId: string): void {
     this.pictureId = pictureId;
-    this.imageChangedEvent = event;
+    this.validateAndUpload(event);
+  }
+
+  public validateAndUpload(event) {
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      if (file) {
+        const img = new Image();
+
+        img.onload = () => {
+          const height = img.naturalHeight;
+          const width = img.naturalWidth;
+          console.log("Width and Height", width, height);
+          this.imageChangedEvent = event;
+          this.cd.detectChanges();
+        };
+        if ((reader.result as string).length > 5) {
+          img.src = reader.result as string;
+        } else {
+          let dialogRef = this.dialog.open(PopUpComponent, {
+            data: {
+              title: "Attention",
+              message: "Votre photo n'est pas valide, veuillez essayer avec une autre photo.",
+            },
+          });
+        }
+      }
+    };
   }
   public imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.base64;
@@ -840,47 +872,52 @@ export class ProfileComponent implements OnInit {
 
   public saveLocalization() {
     const place = this.autocomplete.getPlace();
-    let lat: number;
-    let lon: number;
-    if (this.localizationCase.value === "1") {
-      lat = this.lat;
-      lon = this.long;
-    } else if (this.localizationCase.value === "0") {
-      lat = place.geometry.location.lat();
-      lon = place.geometry.location.lng();
-    }
-    this.userService
-      .updateUserPosition(
-        JSON.parse(localStorage.getItem("id")),
-        lat,
-        lon,
-        this.localizationCase.value
-      )
-      .subscribe(
-        el => {
-          if (typeof el === "string") {
-            let dialogRef = this.dialog.open(PopUpComponent, {
-              data: {
-                title: "C'est bon !",
-                message:
-                  "Votre position a bien été mis à jour. Vous allez être redirigé sur votre profil.",
-              },
-            });
-            dialogRef.afterClosed().subscribe(
-              el => {
-                this.isSettings = false;
-                this.cd.detectChanges();
-              },
-              err => {
-                this.route.navigate(["/maintenance"]);
-              }
-            );
+    if (place === undefined && this.localizationCase.value === "0") {
+      this.errorLoca = true;
+    } else {
+      this.errorLoca = false;
+      let lat: number;
+      let lon: number;
+      if (this.localizationCase.value === "1") {
+        lat = this.lat;
+        lon = this.long;
+      } else if (this.localizationCase.value === "0") {
+        lat = place.geometry.location.lat();
+        lon = place.geometry.location.lng();
+      }
+      this.userService
+        .updateUserPosition(
+          JSON.parse(localStorage.getItem("id")),
+          lat,
+          lon,
+          this.localizationCase.value
+        )
+        .subscribe(
+          el => {
+            if (typeof el === "string") {
+              let dialogRef = this.dialog.open(PopUpComponent, {
+                data: {
+                  title: "C'est bon !",
+                  message:
+                    "Votre position a bien été mis à jour. Vous allez être redirigé sur votre profil.",
+                },
+              });
+              dialogRef.afterClosed().subscribe(
+                el => {
+                  this.isSettings = false;
+                  this.cd.detectChanges();
+                },
+                err => {
+                  this.route.navigate(["/maintenance"]);
+                }
+              );
+            }
+          },
+          err => {
+            this.route.navigate(["/maintenance"]);
           }
-        },
-        err => {
-          this.route.navigate(["/maintenance"]);
-        }
-      );
+        );
+    }
   }
 
   public getTheme() {
