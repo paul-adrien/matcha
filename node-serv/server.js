@@ -38,9 +38,7 @@ var dbController = require("./controllers/db-controller");
 
 async function calcScore() {
   users = connection.query("SELECT * FROM users", [], async function (error, results, fields) {
-    if (error) {
-      console.log("error get users");
-    } else {
+    if (error) {} else {
       if (results && results.length > 0) {
         await Promise.all(
           results.map(async function (user) {
@@ -74,9 +72,7 @@ async function calcScore() {
             }
           })
         );
-      } else {
-        console.log("error get users");
-      }
+      } else {}
     }
   });
 }
@@ -135,5 +131,5 @@ app.use("*", (req, res, next) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  //console.log(`Server is running on port ${PORT}.`);
 });

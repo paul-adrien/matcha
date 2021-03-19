@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
     } else if (this.route.url.includes("messaging") || this.route.url.includes("discussion/")) {
       this.idNavBar = "message";
     }
-    console.log(this.route);
   }
 
   public logOut() {

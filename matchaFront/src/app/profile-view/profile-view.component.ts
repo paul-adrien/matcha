@@ -221,8 +221,6 @@ export class ProfileViewComponent implements OnInit {
         } else if (res === 201) {
           this.isLike = false;
         }
-        console.log(res);
-        console.log(this.isLike ? "like" : "dislike");
         this.cd.detectChanges();
       },
       err => {
@@ -233,9 +231,7 @@ export class ProfileViewComponent implements OnInit {
 
   block() {
     this.userService.blockUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(
-      res => {
-        console.log(res);
-      },
+      res => {},
       err => {
         this.router.navigate(["/maintenance"]);
       }
@@ -244,9 +240,7 @@ export class ProfileViewComponent implements OnInit {
 
   report() {
     this.userService.reportUser(JSON.parse(localStorage.getItem("id")), this.user.id).subscribe(
-      res => {
-        console.log(res);
-      },
+      res => {},
       err => {
         this.router.navigate(["/maintenance"]);
       }
@@ -295,7 +289,6 @@ export class ProfileViewComponent implements OnInit {
           } else {
             result = results[0];
           }
-          console.log(result);
           this.city =
             result.address_components[2].long_name + ", " + result.address_components[3].long_name;
           this.cd.detectChanges();

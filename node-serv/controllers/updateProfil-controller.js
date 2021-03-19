@@ -77,7 +77,6 @@ exports.uploadPicture = (req, res) => {
       `UPDATE users SET ${req.body.picture.id} = ? WHERE email = ?`,
       [req.body.picture.url, req.body.email],
       function (error, results, fields) {
-        console.log(req.body);
         if (error) {
           res.json({
             error: error,

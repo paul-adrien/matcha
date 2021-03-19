@@ -251,7 +251,6 @@ exports.viewedProfil = (req, res) => {
       if ((await checkIfBlocked()) === null) notifView();
       if ((await checkView()) === null) {
         if (await addView()) {
-          console.log("test");
           res.json({
             status: true,
             message: "profile view",
@@ -321,8 +320,6 @@ exports.updatePosition = async (req, res) => {
             lat = body.latitude;
             long = body.longitude;
 
-            console.log(body);
-
             connection.query(
               "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",
               [lat, long, currentPosition, id],
@@ -342,7 +339,6 @@ exports.updatePosition = async (req, res) => {
         }
       );
     } else {
-      console.log(id);
 
       connection.query(
         "UPDATE users SET latitude = ?, longitude = ?, currentPosition = ? WHERE id = ?",

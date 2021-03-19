@@ -143,7 +143,6 @@ export class DiscoverComponent implements OnInit {
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
               .subscribe(
                 el => {
-                  console.log(el);
                   this.showMap = true;
                 },
                 err => {
@@ -155,20 +154,17 @@ export class DiscoverComponent implements OnInit {
             switch (error.code) {
               case error.PERMISSION_DENIED:
                 this.showMap = false;
-                console.log("User denied the request for Geolocation.");
                 break;
               case error.POSITION_UNAVAILABLE:
                 this.showMap = false;
-                console.log("Location information is unavailable.");
                 break;
               case error.TIMEOUT:
-                console.log("The request to get user location timed out.");
                 break;
             }
             this.userService
               .updateUserPosition(JSON.parse(localStorage.getItem("id")), lat, long, "1")
               .subscribe(
-                el => console.log(),
+                el => {},
                 err => {
                   this.router.navigate(["/maintenance"]);
                 }

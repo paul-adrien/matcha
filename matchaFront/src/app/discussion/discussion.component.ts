@@ -136,7 +136,7 @@ export class DiscussionComponent implements OnInit, OnDestroy {
         }
       },
       err => {
-        console.log(err);
+        this.router.navigate(["/maintenance"]);
       }
     );
   }
@@ -150,7 +150,7 @@ export class DiscussionComponent implements OnInit, OnDestroy {
           this.form.msg = "";
         },
         err => {
-          console.log(err);
+          this.router.navigate(["/maintenance"]);
         }
       );
   }

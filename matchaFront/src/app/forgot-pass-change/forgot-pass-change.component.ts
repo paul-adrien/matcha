@@ -25,10 +25,8 @@ export class ForgotPassChangeComponent implements OnInit {
     this.authService.forgotPass_c(this.form, this.id).subscribe(
       data => {
         if (data.status == true) {
-          console.log(data);
           this.router.navigate(["login"]);
         } else {
-          console.log(data);
         }
       },
       err => {

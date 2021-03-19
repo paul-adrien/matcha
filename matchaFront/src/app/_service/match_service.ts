@@ -21,14 +21,12 @@ export class matchService {
     //ok
     return this.http.get(AUTH_API + `users/${id}/getSuggestion`, httpOptions).pipe(
       map(res => {
-        console.log(res);
         return Array.isArray(res) && res.map(user => mapUserBackToUserFront(user));
       })
     );
   }
 
   filtreUsersBy(id: string, filtre: Partial<Filtre>, suggestion: boolean): Observable<User[]> {
-    console.log(filtre);
     let params = new HttpParams().set("suggestion", suggestion ? "true" : "false");
     return this.http
       .get(

@@ -36,19 +36,15 @@ export class AuthGuard implements CanActivate {
       .toPromise()
       .then(
         data => {
-          console.log("iciciicicci" + data.status);
           if (data.status) {
-            console.log(route, state);
             //this.router.navigate(["home/discover"]);
             return true;
           } else {
-            console.log("not valid token");
             this.authenticationService.logOut();
             return false;
           }
         },
         err => {
-          console.log(err);
           this.authenticationService.logOut();
           return false;
         }

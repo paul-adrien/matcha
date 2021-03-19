@@ -539,7 +539,6 @@ export class ProfileComponent implements OnInit {
                 } else {
                   result = results[0];
                 }
-                //console.log(result);
               }
               this.loca.nativeElement.value =
                 result.address_components[2].long_name +
@@ -548,7 +547,6 @@ export class ProfileComponent implements OnInit {
             });
           },
           error => {
-            console.log(error);
           }
         );
       }
@@ -596,8 +594,6 @@ export class ProfileComponent implements OnInit {
           this.route.navigate(["/maintenance"]);
         }
       );
-
-      console.log("diff");
     } else {
       this.updateMode = updateMode;
     }
@@ -622,14 +618,13 @@ export class ProfileComponent implements OnInit {
     forkJoin(
       form.pictures.map(picture => this.profilService.uploadPicture(picture, this.saveEmail))
     ).subscribe(
-      el => console.log(el),
+      el => {},
       err => {
         this.route.navigate(["/maintenance"]);
       }
     );
     this.profilService.update(form, this.saveEmail, true).subscribe(
       data => {
-        console.log(data);
         if (data.status == true) {
           this.ngOnInit();
           this.primaryPictureId = 0;
@@ -698,7 +693,6 @@ export class ProfileComponent implements OnInit {
         img.onload = () => {
           const height = img.naturalHeight;
           const width = img.naturalWidth;
-          console.log("Width and Height", width, height);
           this.imageChangedEvent = event;
           this.cd.detectChanges();
         };
@@ -720,17 +714,14 @@ export class ProfileComponent implements OnInit {
   }
 
   public imageLoaded() {
-    console.log("Image loaded");
     if (this.updateMode) {
       this.showCropper = true;
     }
   }
 
   public cropperReady(sourceImageDimensions: Dimensions) {
-    console.log("Cropper ready", sourceImageDimensions);
   }
   public loadImageFailed() {
-    console.log("image fail");
   }
 
   public confirmCropped() {
@@ -761,7 +752,6 @@ export class ProfileComponent implements OnInit {
   addExistTag(tagId: string) {
     this.userService.addExistTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
       data => {
-        console.log(data);
         if (data.status == true) {
           (this.userForm.get("tags") as FormArray).clear();
           this.yourTags$.toPromise().then(el => {
@@ -775,7 +765,7 @@ export class ProfileComponent implements OnInit {
             });
           });
           this.yourTags$.subscribe(
-            el => console.log(el),
+            el => {},
             err => {
               this.route.navigate(["/maintenance"]);
             }
@@ -785,9 +775,7 @@ export class ProfileComponent implements OnInit {
           this.cd.detectChanges();
         }
       },
-      err => {
-        console.log(err);
-      }
+      err => {}
     );
     this.cd.markForCheck();
     this.cd.detectChanges();
@@ -796,7 +784,6 @@ export class ProfileComponent implements OnInit {
   addNewTag(tag: string) {
     this.userService.addNonExistTag(tag, JSON.parse(localStorage.getItem("id"))).subscribe(
       data => {
-        console.log(data);
         if (data.status == true) {
           (this.userForm.get("tags") as FormArray).clear();
           this.yourTags$.toPromise().then(el => {
@@ -815,9 +802,7 @@ export class ProfileComponent implements OnInit {
           this.cd.detectChanges();
         }
       },
-      err => {
-        console.log(err);
-      }
+      err => {}
     );
     this.cd.detectChanges();
     this.cd.markForCheck();
@@ -827,7 +812,6 @@ export class ProfileComponent implements OnInit {
     this.userService.deleteTag(JSON.parse(localStorage.getItem("id")), tagId).subscribe(
       data => {
         this.zone.run(() => {
-          console.log(data);
           if (data.status == true) {
             (this.userForm.get("tags") as FormArray).clear();
             this.yourTags$.toPromise().then(el => {
@@ -842,7 +826,7 @@ export class ProfileComponent implements OnInit {
               this.cd.detectChanges();
             });
             this.yourTags$.subscribe(
-              el => console.log(el),
+              el => {},
               err => {
                 this.route.navigate(["/maintenance"]);
               }
@@ -852,9 +836,7 @@ export class ProfileComponent implements OnInit {
           }
         });
       },
-      err => {
-        console.log(err);
-      }
+      err => {}
     );
     this.cd.detectChanges();
     this.cd.markForCheck();

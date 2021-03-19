@@ -107,11 +107,7 @@ exports.register = (req, res) => {
                                   };
 
                                   transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {
-                                      console.log(error);
-                                    } else {
-                                      console.log("Email sent: " + info.response);
-                                    }
+                                    if (error) {} else {}
                                   });
 
                                   const token = jwt.sign({ id: results[0]["id"] }, config.secret, {
@@ -287,10 +283,7 @@ exports.forgotPass_send = (req, res) => {
 
             transporter.sendMail(mailOptions, function (error, info) {
               if (error) {
-                console.log(error);
-              } else {
-                console.log("Email sent: " + info.response);
-              }
+              } else {}
             });
             connection.query(
               "UPDATE users SET link = ? WHERE email = ?",
@@ -353,9 +346,7 @@ exports.verifyEmail_send = async (req, res) => {
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
+      if (error) {} else {
         res.json({
           status: true,
           message: "mail sended sucessfully",

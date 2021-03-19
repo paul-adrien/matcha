@@ -145,7 +145,6 @@ exports.likeOrDislike = (req, res) => {
   }
 
   function notifLike(mode) {
-    console.log("entrer notif like");
     if (mode == 1) {
       connection.query(
         'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "matched"',
@@ -222,7 +221,6 @@ exports.likeOrDislike = (req, res) => {
   }
 
   function notifDisLike() {
-    console.log("entrer notif like");
     connection.query(
       'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "unMatched"',
       [req.body.like_id, req.body.user_id],
@@ -269,7 +267,6 @@ exports.likeOrDislike = (req, res) => {
           if (error) {
             resultat(2);
           } else {
-            console.log("check if block");
             if (results && results.length > 0) {
               resultat(1);
             } else {

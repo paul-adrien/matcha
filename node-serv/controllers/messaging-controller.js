@@ -38,7 +38,6 @@ exports.possiblyConv = (req, res) => {
             resultat(null);
           } else {
             if (results && results.length > 0) {
-              console.log(results);
               resultat(results);
             } else {
               resultat(null);
@@ -260,7 +259,6 @@ exports.sendMessage = (req, res) => {
   }
 
   function notifMsg() {
-    console.log("notif msg", user_id, sender_id);
     connection.query(
       'SELECT * FROM notif WHERE userId = ? AND sender_id = ? AND type = "msg"',
       [user_id, sender_id],
@@ -269,7 +267,6 @@ exports.sendMessage = (req, res) => {
           return null;
         } else {
           if (results && results.length > 0) {
-            console.log(results[0]);
             connection.query(
               'UPDATE notif SET date = ?, see = 0 WHERE userId = ? AND sender_id = ? AND type = "msg"',
               [date.toString(), user_id, sender_id],

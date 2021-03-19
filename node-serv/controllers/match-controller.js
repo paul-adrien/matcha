@@ -105,7 +105,6 @@ async function checkIfMatch(user, otherUser) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
-            console.log("matched");
             resultat(1);
           } else {
             resultat(null);
@@ -146,7 +145,6 @@ async function checkIfBlocked(user, otherUser) {
           resultat(null);
         } else {
           if (results && results.length > 0) {
-            console.log("blocked");
             resultat(1);
           } else {
             resultat(null);
@@ -463,13 +461,10 @@ exports.filtreUsersBy = (req, res) => {
         (await Promise.all(
           usersSort?.map(async function (user) {
             let age = datefns.differenceInYears(new Date(), new Date(user.birthDate));
-            if (user.id === 6) console.log(age);
             let dist = 0;
             dist = locat(myUser, user);
             tags = 0;
             tags = await tagsMatch(myUser, user);
-            console.log(minAge, maxAge, minTag, maxLoc, minScore);
-            console.log(age, dist, tags, user.score);
 
             let view = await checkIfView(id, user.id);
 
@@ -488,7 +483,6 @@ exports.filtreUsersBy = (req, res) => {
             }
           })
         ));
-      console.log(usersSort);
       usersSort = usersSort.filter(user => user !== undefined);
       if (sortBy === "age") {
         usersSort.sort((a, b) => {

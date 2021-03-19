@@ -24,7 +24,6 @@ export class VerifyComponent implements OnInit {
   onSubmit() {
     this.authService.verify(this.form, this.id).subscribe(
       data => {
-        console.log(data);
         this.router.navigate(["login"]);
       },
       err => {

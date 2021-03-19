@@ -22,10 +22,8 @@ export class ForgotPassComponent implements OnInit {
     this.authService.forgotPass_s(this.form).subscribe(
       data => {
         if (data.status == true) {
-          console.log(data);
           this.router.navigate(["login"]);
         } else {
-          console.log(data);
         }
       },
       err => {
