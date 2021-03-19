@@ -498,6 +498,7 @@ export class ProfileComponent implements OnInit {
           pictures: res.pictures,
         });
         this.yourTags = tagsRes;
+        (this.userForm.get("tags") as FormArray).clear();
         tagsRes.forEach(tag => {
           (this.userForm.get("tags") as FormArray).push(
             new FormGroup({
