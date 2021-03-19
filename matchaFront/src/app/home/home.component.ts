@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
   }
 
   public resendMail() {
-    this.authService.resendVerify(this.user.id).subscribe(
+    this.authService.resendVerify(this.user.id, this.user.email).subscribe(
       () => {},
       err => {
         this.route.navigate(["/maintenance"]);

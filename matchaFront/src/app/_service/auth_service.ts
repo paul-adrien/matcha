@@ -61,11 +61,12 @@ export class AuthService {
     );
   }
 
-  resendVerify(id: string): Observable<any> {
+  resendVerify(id: string, email: string): Observable<any> {
     return this.http.post(
       AUTH_API + "resend-verify",
       {
         id: id,
+        email: email
       },
       httpOptions
     );
