@@ -740,29 +740,15 @@ export class ProfileComponent implements OnInit {
 
   public compressFile(imgResultBeforeCompress: string) {
     let imgResultAfterCompress = "";
-
     this.imageCompress.compressFile(imgResultBeforeCompress, -1, 50, 50).then(result => {
       imgResultAfterCompress = result;
       let tmpArray: {
         id: string;
         url: string;
       }[] = this.pictures.getRawValue();
-      tmpArray[this.pictureId].url = imgResultAfterCompress;
-      tmpArray = tmpArray.sort((a, b) => {
-        if (a.url === "" || a.url === null) {
-          const tmp = b.id;
-          b.id = a.id;
-          a.id = tmp;
-          return 1;
-        } else if (b.url === "" || b.url === null) {
-          const tmp = b.id;
-          b.id = a.id;
-          a.id = tmp;
-          return -1;
-        } else {
-          return 0;
-        }
-      });
+      let index = tmpArray.findIndex(el => el.url === null || el.url === "");
+      tmpArray[index].url = imgResultAfterCompress;
+
       this.pictures.patchValue(tmpArray);
       this.cd.detectChanges();
     });
