@@ -1,5 +1,5 @@
 import { Router } from "@angular/router";
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
 import { User } from "@matcha/shared";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -171,6 +171,7 @@ function ValidatorPass(control: FormControl) {
             {{ this.registerForm.get("password").errors.error }}
           </div>
         </div>
+        <div class="error">{{this.errorMessageReg}}</div>
         <button class="primary-button" (click)="test()">
           {{ this.loginMode ? "Se connecter" : "Créer un compte" }}
         </button>
@@ -211,6 +212,7 @@ function ValidatorPass(control: FormControl) {
             "
           />
         </div>
+        <div class="error">{{this.errorMessageLog}}</div>
         <button class="primary-button" (click)="test()">
           {{ this.loginMode ? "Se connecter" : "Créer un compte" }}
         </button>
@@ -247,9 +249,11 @@ export class LoginPageComponent implements OnInit {
   isSignUpFailed = false;
   isLoggedIn = false;
   isLoginFailed = false;
-  errorMessage = "";
+  errorMessageReg = "";
+  errorMessageLog = "";
 
-  constructor(private authService: AuthService, private route: Router) {}
+  constructor(private authService: AuthService, private route: Router,
+    private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {}
 
@@ -273,6 +277,9 @@ export class LoginPageComponent implements OnInit {
             this.route.navigate(["home/discover"]);
             this.isSuccessful = true;
             this.isSignUpFailed = false;
+          } else {
+            this.errorMessageReg = data.message;
+            this.cd.detectChanges();
           }
         },
         err => {
@@ -294,7 +301,8 @@ export class LoginPageComponent implements OnInit {
             //this.isLoggedIn = true;
             //window.location.reload();
           } else {
-            this.errorMessage = data.message;
+            this.errorMessageLog = data.message;
+            this.cd.detectChanges();
           }
         },
         err => {

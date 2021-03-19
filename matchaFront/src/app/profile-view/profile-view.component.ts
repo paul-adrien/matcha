@@ -74,7 +74,8 @@ declare var google: any;
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
     </div>
     <div class="info-city-connection">
-      <span class="last-connection">{{ this.isLikeMe ? "Vous like" : "" }}</span>
+      <span class="last-connection" *ngIf="this.isLikeMe == 1">Vous avez matché ensemble</span>
+      <span class="last-connection" *ngIf="this.isLikeMe == 2">Vous like</span>
       <div class="last-connection">
         <img [src]="this.isLog ? './assets/circle.svg' : './assets/moon.svg'" />
         {{ this.getLastConnectionText() }}
@@ -140,7 +141,7 @@ export class ProfileViewComponent implements OnInit {
   };
 
   public isLike: boolean;
-  public isLikeMe: boolean;
+  public isLikeMe: number = 0;
 
   public isLog = false;
 
@@ -169,10 +170,13 @@ export class ProfileViewComponent implements OnInit {
         } else {
           this.isLike = false;
         }
-        if (likeMe === 200) {
-          this.isLikeMe = true;
+        if (likeMe === 200 && like === 200) {
+          this.isLikeMe = 1;
+        }
+        else if (likeMe === 200) {
+          this.isLikeMe = 2;
         } else {
-          this.isLikeMe = false;
+          this.isLikeMe = 0;
         }
         this.getCity();
         this.cd.detectChanges();

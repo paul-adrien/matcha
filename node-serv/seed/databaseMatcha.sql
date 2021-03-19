@@ -184,6 +184,8 @@ CREATE TABLE `users_views` (
   `viewed_id` varchar(255) NOT NULL,
   `views_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE users_views ADD viewDate VARCHAR(255) NOT NULL;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

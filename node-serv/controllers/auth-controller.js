@@ -42,7 +42,7 @@ exports.register = (req, res) => {
           if (results.length > 0) {
             res.json({
               status: false,
-              message: "this username already exist",
+              message: "Ce nom d'utilisateur est déjà utilisé",
             });
           } else {
             connection.query(
@@ -58,7 +58,7 @@ exports.register = (req, res) => {
                   if (results.length > 0) {
                     res.json({
                       status: false,
-                      message: "this email already exist",
+                      message: "Cette email est déjà utilisé",
                     });
                   } else {
                     bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -141,7 +141,7 @@ exports.register = (req, res) => {
   } else {
     res.json({
       status: false,
-      message: "wrong data input",
+      message: "Veuillez réessayer",
     });
   }
 };
@@ -158,7 +158,7 @@ exports.authenticate = (req, res) => {
         if (error) {
           res.json({
             status: false,
-            message: "there are some error with query",
+            message: "Veuillez réessayer",
           });
         } else {
           if (results.length > 0) {
@@ -177,20 +177,14 @@ exports.authenticate = (req, res) => {
                 res.json({
                   status: false,
                   message:
-                    "userName and password does not match password: " +
-                    password +
-                    " hash: " +
-                    results[0]["password"] +
-                    " userName: " +
-                    userName +
-                    "",
+                    "Mot de passe invalide",
                 });
               }
             });
           } else {
             res.json({
               status: false,
-              message: "UserName does not exits",
+              message: "Ce nom d'utilisateur n'existe pas",
             });
           }
         }
@@ -199,7 +193,7 @@ exports.authenticate = (req, res) => {
   } else {
     res.json({
       status: false,
-      message: "wrong data input",
+      message: "Veuillez réessayer",
     });
   }
 };
