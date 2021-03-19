@@ -8,7 +8,12 @@ import {
 import { Tags, User } from "@matcha/shared";
 import { ActivatedRoute, Routes, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { userService } from "../_service/user_service";
-import { differenceInHours, differenceInMinutes, differenceInYears } from "date-fns";
+import {
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  differenceInYears,
+} from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { Location } from "@angular/common";
@@ -69,9 +74,15 @@ declare var google: any;
       <span>{{ this.user?.firstName }} {{ this.user?.lastName }}</span>
     </div>
     <div class="info-city-connection">
-      <span class="last-connection">{{ this.isLikeMe ? "Vous like" : "Ne vous like pas" }}</span>
-      <span class="last-connection">{{ this.getLastConnectionText() }}</span>
-      <div class="city">{{ this.city }}</div>
+      <span class="last-connection">{{ this.isLikeMe ? "Vous like" : "" }}</span>
+      <div class="last-connection">
+        <img [src]="this.isLog ? './assets/circle.svg' : './assets/moon.svg'" />
+        {{ this.getLastConnectionText() }}
+      </div>
+      <div class="city">
+        <img src="./assets/map-pin.svg" />
+        {{ this.city }}
+      </div>
     </div>
     <div class="form-container">
       <div class="info-container">
@@ -130,6 +141,8 @@ export class ProfileViewComponent implements OnInit {
 
   public isLike: boolean;
   public isLikeMe: boolean;
+
+  public isLog = false;
 
   public userId: string = this.route.snapshot.params.id;
 
@@ -242,15 +255,21 @@ export class ProfileViewComponent implements OnInit {
 
   public getLastConnectionText() {
     let lastConnection = this.user?.lastConnection;
-    if (differenceInMinutes(new Date(), new Date(lastConnection)) < 60) {
+    if (differenceInSeconds(new Date(), new Date(lastConnection)) < 60) {
+      this.isLog = true;
+      return "En ligne actuellement";
+    } else if (differenceInMinutes(new Date(), new Date(lastConnection)) < 60) {
+      this.isLog = false;
       return (
         "En ligne il y a " + differenceInMinutes(new Date(), new Date(lastConnection)) + " minutes"
       );
     } else if (differenceInHours(new Date(), new Date(lastConnection)) < 24) {
+      this.isLog = false;
       return (
         "En ligne il y a " + differenceInHours(new Date(), new Date(lastConnection)) + " heures"
       );
     } else {
+      this.isLog = false;
       return "En ligne il y a plus de 24 heures";
     }
   }
@@ -273,7 +292,8 @@ export class ProfileViewComponent implements OnInit {
             result = results[0];
           }
           console.log(result);
-          this.city = result?.formatted_address;
+          this.city =
+            result.address_components[2].long_name + ", " + result.address_components[3].long_name;
           this.cd.detectChanges();
         }
       });

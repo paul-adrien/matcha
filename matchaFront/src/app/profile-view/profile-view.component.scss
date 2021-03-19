@@ -65,9 +65,16 @@
 
     .last-connection, .city {
       margin-top: 1rem;
-
       font-family: 'Montserrat';
-    font-size: 0.9rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 0.9rem;
+        object-fit: contain;
+        margin-right: 4px;
+      }
     }
 
   }

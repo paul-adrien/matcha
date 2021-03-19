@@ -42,16 +42,17 @@ html {
   --background-color-primary: white;
 
   &::-webkit-scrollbar {
-    background: transparent !important;
-    -webkit-appearance: none;
+    display: none !important;
   }
+
   @media screen and (max-width: 600px) {
     font-size: 14px;
   }
-  &::-webkit-scrollbar {
-    background: red !important;
-    -webkit-appearance: none !important;
-  }
+
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+
 }
 
 .dark,
