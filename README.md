@@ -4,6 +4,7 @@ MATCHA:
 sudo mysql;
 CREATE DATABASE matcha;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+mettre "password: 'password'" dans db.js en dessous de root
 
 
 //front
