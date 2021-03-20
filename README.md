@@ -14,6 +14,8 @@ npm install;
 sudo npm install -g @angular/cli@9.0.0;
 ng serve --port 8081
 
+pour enlever l'erreur WDS : ng serve --live-reload=false --port 8081
+
 
 //back
 cd /node_server;
