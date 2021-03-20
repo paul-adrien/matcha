@@ -268,7 +268,7 @@ export class ProfileViewComponent implements OnInit {
       return (
         "En ligne il y a " + differenceInHours(new Date(), new Date(lastConnection)) + " heures"
       );
-    } else {
+    } else if (lastConnection === undefined) {
       this.isLog = false;
       return "En ligne pour la dernière fois le " + format(new Date(lastConnection), "dd/MM/yyyy");
     }
