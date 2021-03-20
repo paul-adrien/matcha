@@ -1,14 +1,53 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FormControl, FormGroup } from "@angular/forms";
+
+function ValidatorEmail(control: FormControl) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (!re.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
+  }
+  return {};
+}
 
 @Component({
   selector: "app-forgot-pass",
-  templateUrl: "./forgot-pass.component.html",
+  template: ` <div class="no-verify-container">
+    <div class="title">
+      Veuillez entrer l'adresse mail de votre compte. Un email vous sera envoyé.
+    </div>
+
+    <form
+      [formGroup]="this.loginForm"
+      name="form"
+      (ngSubmit)="f.form.valid && onSubmit()"
+      #f="ngForm"
+      novalidate
+    >
+      <div class="form-container">
+        <input
+          type="email"
+          class="form-control"
+          name="email"
+          required
+          email
+          formControlName="email"
+          placeholder="Email"
+        />
+        <div class="error" *ngIf="this.loginForm.get('email').errors?.error">
+          {{ this.loginForm.get("email").errors.error }}
+        </div>
+        <button class="primary-button">Vérifier</button>
+      </div>
+    </form>
+  </div>`,
   styleUrls: ["./forgot-pass.component.scss"],
 })
 export class ForgotPassComponent implements OnInit {
-  form: any = {};
+  public loginForm = new FormGroup({
+    email: new FormControl("", ValidatorEmail),
+  });
 
   constructor(
     private authService: AuthService,
@@ -19,7 +58,7 @@ export class ForgotPassComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit() {
-    this.authService.forgotPass_s(this.form).subscribe(
+    this.authService.forgotPass_s(this.loginForm.getRawValue()).subscribe(
       data => {
         if (data.status == true) {
           this.router.navigate(["login"]);

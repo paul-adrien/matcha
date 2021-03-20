@@ -1,14 +1,52 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { AuthService } from "../_service/auth_service";
 import { ActivatedRoute, Routes, Router } from "@angular/router";
+import { FormControl, FormGroup } from "@angular/forms";
+
+function ValidatorEmail(control: FormControl) {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (!re.test(String(control.value).toLowerCase())) {
+    return { error: "Mauvais format" };
+  }
+  return {};
+}
 
 @Component({
   selector: "app-verify",
-  templateUrl: "./verify.component.html",
+  template: `
+    <div class="no-verify-container">
+      <div class="title">Veuillez entrer l'adresse mail de votre compte.</div>
+      <form
+        [formGroup]="this.loginForm"
+        name="form"
+        (ngSubmit)="f.form.valid && onSubmit()"
+        #f="ngForm"
+        novalidate
+      >
+        <div class="form-container">
+          <input
+            type="email"
+            class="form-control"
+            name="email"
+            required
+            email
+            placeholder="Email"
+            formControlName="email"
+          />
+          <div class="error" *ngIf="this.loginForm.get('email').errors?.error">
+            {{ this.loginForm.get("email").errors.error }}
+          </div>
+          <button class="primary-button">Vérifier</button>
+        </div>
+      </form>
+    </div>
+  `,
   styleUrls: ["./verify.component.scss"],
 })
 export class VerifyComponent implements OnInit {
-  form: any = {};
+  public loginForm = new FormGroup({
+    email: new FormControl("", ValidatorEmail),
+  });
   id = 0;
 
   constructor(
@@ -22,7 +60,7 @@ export class VerifyComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authService.verify(this.form, this.id).subscribe(
+    this.authService.verify(this.loginForm.getRawValue(), this.id).subscribe(
       data => {
         this.router.navigate(["login"]);
       },

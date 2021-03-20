@@ -43,6 +43,7 @@ import { map, switchMap } from "rxjs/operators";
     ></app-filter-and-sort>
     <div class="suggestion-container" *ngIf="(this.user$ | async)?.profileComplete; else error">
       <div
+        [style]="'width: 100%'"
         *ngIf="this.updateMode && this.usersSuggestion$ | async as usersSuggestions; else filter"
       >
         <div class="content-filter" *ngIf="usersSuggestions?.length > 0">
@@ -61,7 +62,10 @@ import { map, switchMap } from "rxjs/operators";
         </div>
       </div>
       <ng-template #filter>
-        <div *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters; else loading">
+        <div
+          [style]="'width: 100%'"
+          *ngIf="!this.updateMode && this.usersFilter$ | async as usersFilters; else loading"
+        >
           <div class="content-filter" *ngIf="usersFilters?.length > 0">
             <app-interactive-map
               *ngIf="this.showMap || !(this.user$ | async)?.currentPosition"
@@ -74,7 +78,7 @@ import { map, switchMap } from "rxjs/operators";
             ></app-profil-card>
           </div>
           <div *ngIf="usersFilters?.length === 0" #noResult>
-            <span>Aucun résultat</span>
+            <span class="error-profile">Aucun résultat</span>
           </div>
         </div>
       </ng-template>
