@@ -2,6 +2,23 @@ var connection = require('./../config/db');
 
 const fs = require('fs');
 
+
+async function verifIfDbExist(id) {
+  return new Promise(resultat =>
+    connection.query("SELECT id FROM users", function (error, results, fields) {
+      if (error) {
+        resultat(null);
+      } else {
+        if (results && results.length > 0) {
+          resultat(1);
+        } else {
+          resultat(1);
+        }
+      }
+    })
+  );
+}
+
 async function getUser(id) {
   return new Promise(resultat =>
     connection.query("SELECT * FROM users", function (error, results, fields) {
@@ -40,6 +57,10 @@ exports.addSeed = async (req,res) => {
 		res.status(401).json({ message: "Unauthorized 401 : Can't install you need to use the good password" });
 		// console.log("Unauthorized 401 : Can't install you need to use the instalation password");
 		return;
+  }
+  if ((await verifIfDbExist()) !== 1) {
+    res.status(200).json({ message: 'error with database' });
+    return;
   }
   if (req.body.seed === "1000users") {
 		connection.query('DELETE FROM users');
@@ -82,17 +103,19 @@ exports.addSeed = async (req,res) => {
 
     users = await getUser();
     i = 1
-    await Promise.all(
-      users.map(async function (user) {
-        if (i > 29)
-          i = 1;
-        connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)', [i, user.id]);
-        i++;
-      })
-    );
-
-    //connection.query(query);
-	  res.status(200).json({ message: 'add seed tag SUCCESS' });
+    if (users !== null) {
+      await Promise.all(
+        users.map(async function (user) {
+          if (i > 29)
+            i = 1;
+          connection.query('INSERT INTO user_tag (tag_id, user_id) VALUES (?, ?)', [i, user.id]);
+          i++;
+        })
+      );
+      res.status(200).json({ message: 'add seed tag SUCCESS' });
+    } else {
+      res.status(400).json({ message: 'No users' });
+    }
   } else {
     res.status(400).json({ message: 'wrong parameters' });
   }
