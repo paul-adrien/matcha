@@ -13,10 +13,11 @@ import {
   differenceInMinutes,
   differenceInSeconds,
   differenceInYears,
+  format,
 } from "date-fns";
 import { map, takeUntil } from "rxjs/operators";
 import { combineLatest, Observable, Subject } from "rxjs";
-import { Location } from "@angular/common";
+import { formatDate, Location } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpComponent } from "../pop-up/pop-up.component";
 
@@ -269,7 +270,7 @@ export class ProfileViewComponent implements OnInit {
       );
     } else {
       this.isLog = false;
-      return "En ligne il y a plus de 24 heures";
+      return "En ligne pour la dernière fois le " + format(new Date(lastConnection), "dd/MM/yyyy");
     }
   }
 
