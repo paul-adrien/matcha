@@ -172,8 +172,7 @@ export class ProfileViewComponent implements OnInit {
         }
         if (likeMe === 200 && like === 200) {
           this.isLikeMe = 1;
-        }
-        else if (likeMe === 200) {
+        } else if (likeMe === 200) {
           this.isLikeMe = 2;
         } else {
           this.isLikeMe = 0;
@@ -211,6 +210,7 @@ export class ProfileViewComponent implements OnInit {
           this.isLike = true;
         } else if (res === 205) {
           this.isLike = true;
+          this.isLikeMe = 1;
           let dialogRef = this.dialog.open(PopUpComponent, {
             data: {
               title: "Super !",
@@ -220,6 +220,7 @@ export class ProfileViewComponent implements OnInit {
           });
         } else if (res === 201) {
           this.isLike = false;
+          this.isLikeMe = 2;
         }
         this.cd.detectChanges();
       },

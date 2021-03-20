@@ -546,8 +546,7 @@ export class ProfileComponent implements OnInit {
                 result.address_components[3].long_name;
             });
           },
-          error => {
-          }
+          error => {}
         );
       }
     }
@@ -719,10 +718,8 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  public cropperReady(sourceImageDimensions: Dimensions) {
-  }
-  public loadImageFailed() {
-  }
+  public cropperReady(sourceImageDimensions: Dimensions) {}
+  public loadImageFailed() {}
 
   public confirmCropped() {
     this.compressFile(this.croppedImage);
@@ -844,7 +841,7 @@ export class ProfileComponent implements OnInit {
 
   public saveLocalization() {
     const place = this.autocomplete.getPlace();
-    if (place === undefined && this.localizationCase.value === "0") {
+    if (place?.geometry === undefined && this.localizationCase.value === "0") {
       this.errorLoca = true;
     } else {
       this.errorLoca = false;
