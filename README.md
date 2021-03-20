@@ -2,7 +2,7 @@ MATCHA:
 
 //mysql
 sudo mysql;
-CREATE DATABASE matcha;
+CREATE DATABASE IF NOT EXISTS matcha  DEFAULT CHARACTER SET utf8mb4;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 mettre "password: 'password'" dans db.js en dessous de root
 
