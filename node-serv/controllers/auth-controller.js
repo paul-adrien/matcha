@@ -107,7 +107,9 @@ exports.register = (req, res) => {
                                   };
 
                                   transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {} else {}
+                                    if (error) {
+                                    } else {
+                                    }
                                   });
 
                                   const token = jwt.sign({ id: results[0]["id"] }, config.secret, {
@@ -172,8 +174,7 @@ exports.authenticate = (req, res) => {
               } else {
                 res.json({
                   status: false,
-                  message:
-                    "Mot de passe invalide",
+                  message: "Mot de passe invalide",
                 });
               }
             });
@@ -274,7 +275,7 @@ exports.forgotPass_send = (req, res) => {
             var mailOptions = {
               from: "42.noreplymatcha@gmail.com",
               to: email,
-              subject: "Please confirm your Email account",
+              subject: "Reset password",
               html:
                 "Hello,<br> Please Click on the link to reset your password.<br><a href=" +
                 link +
@@ -283,7 +284,8 @@ exports.forgotPass_send = (req, res) => {
 
             transporter.sendMail(mailOptions, function (error, info) {
               if (error) {
-              } else {}
+              } else {
+              }
             });
             connection.query(
               "UPDATE users SET link = ? WHERE email = ?",
@@ -346,7 +348,8 @@ exports.verifyEmail_send = async (req, res) => {
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {} else {
+      if (error) {
+      } else {
         res.json({
           status: true,
           message: "mail sended sucessfully",
